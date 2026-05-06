@@ -130,6 +130,7 @@ validate_email function. Updated tests/auth_test.py to test it.
 | "WIP" / "checkpoint" commits left in history | They rot the log. Squash them before merge. |
 | Commit message describes files, not behaviour | The diff describes files. The message describes intent. |
 | References to ticket numbers, "as discussed", "per review" | Belongs in the PR description, not in durable history. |
+| Subject reuses the plan's milestone label (e.g. `Phase 2 M5: ...`) | The plan is scaffolding for the implementer; subjects describe outcome with a Conventional Commits type. |
 
 ## When milestones are too big
 

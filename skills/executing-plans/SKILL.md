@@ -118,7 +118,7 @@ Verify the refactor didn't break anything. Use **verifying-before-done** before 
 
 ### Step 8 — One milestone commit
 
-Commit the entire milestone (feature + refactor) as one commit per **milestone-commits**. Message describes the *why* of the slice — not a play-by-play of files touched.
+Invoke **milestone-commits**, then write one commit for the entire milestone (feature + refactor). The plan's milestone titles and identifiers are reasoning scaffolding for *you* — they do not belong in the commit subject. Describe the outcome with a Conventional Commits type.
 
 ### Repeat for each milestone.
 
