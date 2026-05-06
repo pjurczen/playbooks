@@ -69,7 +69,10 @@ Return:
 **Important** (should fix before merge):
 - `<file:line>` — <description>
 
-**Minor** (note for followup):
+**Minor** (in-scope cleanup — fix in the review-fix milestone, including pre-existing issues in code touched by this feature):
+- `<file:line>` — <description>
+
+**Followup** (architectural — needs its own design / plan to address):
 - `<file:line>` — <description>
 
 ### Assessment

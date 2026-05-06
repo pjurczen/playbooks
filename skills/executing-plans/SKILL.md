@@ -94,6 +94,8 @@ Re-read the milestone goal from the plan. Look at the diff for *only this milest
 If something's off: fix in place before continuing.
 If something's a note for later: add it to your in-session `## Findings` block (see "Findings" below).
 
+"Added X but didn't wire it up at the call sites the plan named" is incomplete milestone work, not a finding — fix it now.
+
 ### Step 6 — Refactor pass
 
 Spend a few minutes looking around the area you just touched and improve what you can. Boy scout rule: leave it better than you found it.
@@ -133,7 +135,7 @@ Maintain a running `## Findings` block in the conversation as you work. Three su
 This block is part of the input to the end-of-feature reviewer subagent.
 
 **Tier 2 — Durable followups** (outlive the feature).
-Live at `docs/playbooks/followups.md`. Append-only. Format:
+Live at `docs/playbooks/followups.md`. Append-only. Only items that would need their own design / plan to address — architectural refactorings, generalizations, structural changes. Anything fixable in a boy-scout pass is in scope of the current feature; do not promote it. Format:
 
 ````markdown
 ## YYYY-MM-DD — short title
@@ -145,8 +147,8 @@ One-line description. File: src/path/file.py:line. Discovered while: feature-nam
 After the last milestone commits, run a single review pass before `finishing-branch`:
 
 1. Dispatch ONE reviewer subagent using the prompt at `./end-of-feature-reviewer-prompt.md`. The reviewer gets: the design doc, the plan, the full feature diff (BASE_SHA..HEAD_SHA), and the in-session `## Findings` block.
-2. Review returns: Strengths / Issues (Critical / Important / Minor) / Assessment.
-3. Fix Critical and Important issues. Note Minor unless trivial.
+2. Review returns: Strengths / Issues (Critical / Important / Minor / Followup) / Assessment.
+3. Fix Critical, Important, and Minor. Only Followup-tier items go to `followups.md` (per the Tier-2 definition above).
 4. Commit the fixes as one "review fixes" milestone (same loop: self-checkpoint, refactor pass if applicable, one commit).
 5. **Do not re-dispatch the reviewer.** One pass, fix, move on. If the fixes are large enough that you instinctively want a re-review, that's a signal a milestone was wrong; don't re-loop.
 
@@ -156,7 +158,7 @@ After the end-of-feature review and its fixes:
 
 1. Read your in-session `## Findings` block.
 2. Drop anything that was addressed during the work.
-3. Promote what's still actionable to `docs/playbooks/followups.md`.
+3. Promote only Tier-2 items per the definition above. Anything else gets fixed in a small follow-up commit or dropped.
 4. Commit the followups update.
 
 ## Hand off
@@ -184,3 +186,4 @@ Required output from any dispatched subagent: a `## Findings` block with `Change
 | "I'll dispatch a subagent to make this faster" | Default to main session. Subagents are situational. |
 | "I'll re-run the reviewer until it's perfect" | One pass, fix, move on. |
 | "I'll skip the verification because tests passed locally last time" | Run **verifying-before-done** every time. No exceptions. |
+| "It's pre-existing, my change didn't introduce it" | Boy-scout rule. Pre-existing ≠ out-of-scope. |
