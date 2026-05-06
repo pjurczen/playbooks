@@ -1,5 +1,11 @@
 # Playbooks Release Notes
 
+## v0.2.1 (2026-05-06)
+
+### Milestone-commits invocation made explicit
+
+`executing-plans` Step 8 read as a cross-reference ("commit per **milestone-commits**") and the skill body wasn't being loaded — agents fell back to using the plan's milestone titles as commit subjects (e.g. `Phase 2 M5: ReActAgent tool_calls writes`). Step 8 now explicitly invokes the skill, with a sentence noting the plan's milestone titles are reasoning scaffolding for the implementer, not commit material. `milestone-commits` anti-patterns table gains a row naming this failure mode.
+
 ## v0.2.0 (2026-05-06)
 
 ### End-of-feature review tightened
