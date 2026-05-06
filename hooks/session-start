@@ -1,0 +1,35 @@
+#!/usr/bin/env bash
+# SessionStart hook for the playbooks plugin.
+# Loads using-playbooks/SKILL.md and injects it as additionalContext so the
+# main session knows what playbooks exist and when to invoke them.
+
+set -euo pipefail
+
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+PLUGIN_ROOT="$(cd "${SCRIPT_DIR}/.." && pwd)"
+
+using_playbooks_content=$(cat "${PLUGIN_ROOT}/skills/using-playbooks/SKILL.md" 2>&1 \
+  || echo "Error reading using-playbooks skill")
+
+# Escape a string for safe embedding inside a JSON string literal.
+escape_for_json() {
+    local s="$1"
+    s="${s//\\/\\\\}"
+    s="${s//\"/\\\"}"
+    s="${s//$'\n'/\\n}"
+    s="${s//$'\r'/\\r}"
+    s="${s//$'\t'/\\t}"
+    printf '%s' "$s"
+}
+
+content_escaped=$(escape_for_json "$using_playbooks_content")
+
+# The literal \n sequences inside this double-quoted string are 2-character
+# backslash-n (bash does not interpret \n in double quotes), which is exactly
+# what JSON expects inside a string literal.
+session_context="You have access to playbooks — a small library of workflow skills loaded into this session. Below is the using-playbooks skill, your guide to the library. Use the Skill tool to invoke other skills; do not Read SKILL.md files manually.\n\n${content_escaped}"
+
+# Claude Code expects hookSpecificOutput.additionalContext.
+printf '{\n  "hookSpecificOutput": {\n    "hookEventName": "SessionStart",\n    "additionalContext": "%s"\n  }\n}\n' "$session_context"
+
+exit 0
