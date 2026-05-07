@@ -66,22 +66,22 @@ We follow [Conventional Commits 1.0.0](https://www.conventionalcommits.org/en/v1
 
 **For a milestone commit, pick the type that matches the primary outcome of the slice.** A milestone that adds a feature is `feat`, even though it includes a test and a small refactor pass. Don't fragment a milestone across multiple types — that's micro-commit thinking.
 
-**Scope (optional but encouraged):** the subsystem touched. `feat(auth):`, `fix(login):`, `refactor(parser):`. Skip the scope for cross-cutting work where naming a single subsystem would mislead.
+**Scope (optional but encouraged):** the feature name as a short kebab-case slug — typically the topic from the design / plan filename (e.g. `feat(blacklist):`, `feat(agent-capture):`). Skip scope for cross-cutting work (architecture docs, repo-wide config, tooling) where any feature name would mislead.
 
 **Breaking changes:** add `!` after the type/scope AND mention it in the body or as a `BREAKING CHANGE:` footer.
 
 ```
-feat(auth)!: rotate session cookies on every request
+feat(session-rotation)!: rotate session cookies on every request
 
 BREAKING CHANGE: clients caching session cookies across requests will
-break and need to refresh per request. Migration guide: docs/auth-migration.md.
+break and need to refresh per request. Migration guide: docs/session-rotation-migration.md.
 ```
 
 ## Examples
 
 Good (feat milestone):
 ```
-feat(auth): reject malformed login requests with 400
+feat(login-validation): reject malformed login requests with 400
 
 Previously the auth endpoint silently accepted requests missing the
 client_id field, returning a 500 from the downstream service. Now the
@@ -90,15 +90,15 @@ request is validated up front and a 400 is returned with a clear error.
 
 Good (review-fix milestone):
 ```
-fix(auth): validate client_id length, not just presence
+fix(login-validation): validate client_id length, not just presence
 
 End-of-feature review caught that a 0-length client_id was passing the
 presence check and still triggering the downstream 500.
 ```
 
-Good (refactor-only milestone):
+Good (refactor-only milestone, no scope — cross-cutting cleanup):
 ```
-refactor(parser): extract token-classification into TokenClassifier
+refactor: extract token-classification into TokenClassifier
 
 Behaviour-preserving extraction. Drops request_parser from 380 to 210
 lines and lets the classifier be unit-tested in isolation.
@@ -106,10 +106,10 @@ lines and lets the classifier be unit-tested in isolation.
 
 Bad (micro-commit churn — same milestone fragmented across 4 commits, squash into one):
 ```
-test(auth): add failing test for empty email
-feat(auth): add empty email check
-refactor(auth): extract validator
-fix(auth): typo
+test(login-validation): add failing test for empty email
+feat(login-validation): add empty email check
+refactor(login-validation): extract validator
+fix(login-validation): typo
 ```
 The format is fine — the *granularity* is wrong. The four together are one milestone, so they should be one commit.
 
@@ -131,6 +131,7 @@ validate_email function. Updated tests/auth_test.py to test it.
 | Commit message describes files, not behaviour | The diff describes files. The message describes intent. |
 | References to ticket numbers, "as discussed", "per review" | Belongs in the PR description, not in durable history. |
 | Subject reuses the plan's milestone label (e.g. `Phase 2 M5: ...`) | The plan is scaffolding for the implementer; subjects describe outcome with a Conventional Commits type. |
+| Scope is the doc's audience, the AI tool, or the plugin used to author it (`(claude)`, `(playbooks)`) | Scope = feature slug, not who reads the file or what produced it. |
 
 ## When milestones are too big
 
