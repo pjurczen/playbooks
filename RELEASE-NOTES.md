@@ -1,5 +1,11 @@
 # Playbooks Release Notes
 
+## v0.2.2 (2026-05-07)
+
+### Commit scope redefined as feature name
+
+`milestone-commits` previously defined `(scope)` as "the subsystem touched", which agents misread — using the doc's audience (`chore(claude):`), the plugin used to author it (`docs(playbooks):`), or the filename's stem as the scope. Scope is now defined as the feature name as a short kebab-case slug — typically the topic from the design / plan filename (e.g. `feat(blacklist):`, `feat(agent-capture):`). Cross-cutting work (architecture docs, repo-wide config, tooling) keeps the no-scope carve-out. Examples and the anti-patterns table updated to match.
+
 ## v0.2.1 (2026-05-06)
 
 ### Milestone-commits invocation made explicit
