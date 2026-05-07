@@ -13,7 +13,7 @@ Implement the plan in the main session, milestone by milestone. Default executio
 
 1. Read the plan file once. Extract: the goal, the decomposition, the behaviours to verify, the full list of milestones with their done-when criteria.
 2. Re-read it critically. Any milestone unclear? Any missing dependency? Any behaviour you can't see how to verify? Raise it with the user before any code is written.
-3. If you're working on `main` or `master`, ask the user explicitly before starting. Default to creating or being on a feature branch.
+3. Invoke **using-git-worktrees** to choose a workspace mode. Default is a new worktree on a new feature branch; the user can opt for a feature branch in the current checkout, or current-branch with explicit confirmation.
 4. Create one TODO entry per milestone for tracking.
 
 ## Clean code defaults
