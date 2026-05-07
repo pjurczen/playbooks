@@ -1,7 +1,7 @@
 {
   "name": "playbooks",
   "description": "A lean library of workflow skills for Claude Code: brainstorming designs, writing intent-shaped plans, executing them milestone by milestone with BDD-flavoured tests and a refactor pass.",
-  "version": "0.2.2",
+  "version": "0.3.0",
   "author": {
     "name": "Piotr Jurczenko",
     "email": "16348752+pjurczen@users.noreply.github.com"

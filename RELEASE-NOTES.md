@@ -1,5 +1,19 @@
 # Playbooks Release Notes
 
+## v0.3.0 (2026-05-07)
+
+### `using-git-worktrees` added; worktrees are now the default workspace mode
+
+A new `using-git-worktrees` skill is invoked from `executing-plans` Step 3 before any code is written. It detects existing isolation (linked worktrees, submodules) and then asks the user via `AskUserQuestion`:
+
+1. **New worktree on a new feature branch** *(default — current checkout stays untouched)*
+2. New feature branch in the current checkout
+3. Work directly on the current branch *(requires explicit confirmation on `main` / `master`)*
+
+User-declared preferences in CLAUDE.md / AGENTS.md / the request itself bypass the question. Native harness worktree tools are preferred over `git worktree add` when both are available; project-local `.worktrees/` paths are verified `.gitignore`-covered before creation.
+
+This reverses the original v0.1.0 stance ("worktrees opt-in") documented in `docs/DESIGN.md` — solo work in practice benefits enough from the isolation to make it the default. `executing-plans` Step 3 wording updated accordingly.
+
 ## v0.2.2 (2026-05-07)
 
 ### Commit scope redefined as feature name
