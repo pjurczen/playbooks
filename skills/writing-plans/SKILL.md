@@ -19,7 +19,7 @@ A plan must be readable end-to-end in 2-3 minutes. If yours is not, the plan is 
 
 If you catch yourself writing pre-canned test code, full class definitions, or step-by-step commit instructions, stop. The plan is not a script.
 
-**Save plans to:** `docs/playbooks/plans/YYYY-MM-DD-<feature>.md`
+**Save plans to:** `docs/playbooks/plans/YYYY-MM-DD-<feature>.md` and commit.
 
 ## Scope check
 
