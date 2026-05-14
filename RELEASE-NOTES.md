@@ -1,5 +1,11 @@
 # Playbooks Release Notes
 
+## v0.3.1 (2026-05-14)
+
+### `writing-plans` now requires committing the plan
+
+`brainstorming` step 5 explicitly says "save and commit" for the design doc; `writing-plans` mentioned the commit only via the user-review gate template ("Plan written and committed to `<path>`"), with no enumerated commit step. The plan was occasionally landing as uncommitted changes. The "Save plans to:" line now reads "save and commit", restoring symmetry between the two skills. Design and plan commits land on the current branch / worktree, before any new worktree is created at the start of `executing-plans`.
+
 ## v0.3.0 (2026-05-07)
 
 ### `using-git-worktrees` added; worktrees are now the default workspace mode
