@@ -5,7 +5,7 @@ description: Use when implementation is complete and tests pass, to integrate th
 
 # Finishing a Development Branch
 
-Verify tests → detect environment → present options → execute choice → clean up.
+Verify tests → detect environment → present options → consolidate docs (when landing) → execute choice → clean up.
 
 **Announce at start:** "Using finishing-branch to complete this work."
 
@@ -77,6 +77,8 @@ Which option?
 Don't add explanation — keep options concise.
 
 ### Step 5: Execute choice
+
+**Before executing Option 1 or 2** (the work is landing), invoke **consolidating-docs** to graduate durable decisions from this feature's design/plan files into the repo's docs and delete the husks. It commits that as one change, so the doc updates land with the feature. Skip for Options 3 and 4 — nothing is landing.
 
 #### Option 1: Merge locally
 
