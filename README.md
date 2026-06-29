@@ -61,7 +61,7 @@ brainstorming → writing-plans → executing-plans → finishing-branch
 Each stage produces a small, readable artifact:
 - `docs/playbooks/designs/<date>-<topic>.md` — the design
 - `docs/playbooks/plans/<date>-<feature>.md` — the implementation plan
-- `docs/playbooks/followups.md` — durable notes from past work
+- `docs/followups.md` — durable notes from past work
 
 For trivial questions, read-only exploration, and one-off changes, the agent skips the pipeline and just answers.
 

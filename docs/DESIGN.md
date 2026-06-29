@@ -311,7 +311,7 @@ Findings come in two flavours with different lifespans, and they live in two dif
 Live as a running `## Findings` block in the conversation. The agent appends to this block whenever it notices something during the work — discovered helpers, small surprises, deferred refactor items, gotchas, things the next milestone should know. The block has three subsections: `Changes` (what was done), `Gotchas` (things future milestones should know), `Open questions` (refactor items too big for the current milestone, design questions, anything that was deferred). This block is part of the input to the end-of-feature reviewer subagent.
 
 **Tier 2 — Durable followups** (outlive the feature).
-Live on disk at `docs/playbooks/followups.md`. One file per project, append-only during work. Format is deliberately light — no effort estimates, no priority labels, no ceremony:
+Live on disk at `docs/followups.md`. One file per project, append-only during work. Format is deliberately light — no effort estimates, no priority labels, no ceremony:
 
 ```markdown
 # Followups
@@ -325,10 +325,10 @@ auth-area work. File: src/auth/handler.py:120. Discovered while: session-cookie-
 ```
 
 **Promotion: when Tier 1 becomes Tier 2.**
-At end-of-feature, *after* the review pass and *before* `finishing-branch`, the agent reads the running in-session `## Findings` block, drops anything that was addressed during the work, and promotes anything still actionable to `docs/playbooks/followups.md`.
+At end-of-feature, *after* the review pass and *before* `finishing-branch`, the agent reads the running in-session `## Findings` block, drops anything that was addressed during the work, and promotes anything still actionable to `docs/followups.md`.
 
 **Read-back: closing the loop.**
-Findings that don't get re-read are findings that rot. So `brainstorming` and `writing-plans` must check `docs/playbooks/followups.md` during their "explore project context" / decomposition step. If a followup intersects with the feature being planned, fold it in. If it doesn't, leave it alone — don't snowball every adjacent cleanup into the current plan.
+Findings that don't get re-read are findings that rot. So `brainstorming` and `writing-plans` must check `docs/followups.md` during their "explore project context" / decomposition step. If a followup intersects with the feature being planned, fold it in. If it doesn't, leave it alone — don't snowball every adjacent cleanup into the current plan.
 
 #### Review timing
 

@@ -135,7 +135,7 @@ Maintain a running `## Findings` block in the conversation as you work. Three su
 This block is part of the input to the end-of-feature reviewer subagent.
 
 **Tier 2 — Durable followups** (outlive the feature).
-Live at `docs/playbooks/followups.md`. Append-only. Only items that would need their own design / plan to address — architectural refactorings, generalizations, structural changes. Anything fixable in a boy-scout pass is in scope of the current feature; do not promote it. Format:
+Live at `docs/followups.md`. Append-only. Only items that would need their own design / plan to address — architectural refactorings, generalizations, structural changes. Anything fixable in a boy-scout pass is in scope of the current feature; do not promote it. Format:
 
 ````markdown
 ## YYYY-MM-DD — short title
