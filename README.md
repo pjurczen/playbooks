@@ -2,7 +2,7 @@
 
 A lean, opinionated library of workflow skills for Claude Code.
 
-Playbooks gives Claude a small set of process skills — for designing features, planning, executing in milestones, testing, and finishing branches — that auto-load at the start of every session. The library is intentionally small: nine skills, roughly 1,200 lines of markdown total. Less to read, less ceremony, more trust in the model.
+Playbooks gives Claude a small set of process skills — for designing features, planning, executing in milestones, testing, and finishing branches — that auto-load at the start of every session. The library is intentionally small: eleven skills, roughly 1,500 lines of markdown total. Less to read, less ceremony, more trust in the model.
 
 ## Why not just use [superpowers](https://github.com/obra/superpowers)?
 
@@ -38,8 +38,10 @@ Once loaded, the `SessionStart` hook fires on session start / clear / compact an
 - `writing-plans` — design → intent-shaped implementation plan
 - `executing-plans` — main-session milestone loop with self-checkpoints, refactor pass, end-of-feature review
 - `finishing-branch` — verify tests, then merge / PR / keep / discard
+- `consolidating-docs` — on landing, graduate durable decisions into real docs and delete the design/plan husks
 
 **Implementation** (how to do the work):
+- `using-git-worktrees` — pick a workspace mode before writing code (default: new worktree on a new branch)
 - `bdd-testing` — behaviour-shaped tests for code with interesting logic
 - `milestone-commits` — one commit per slice, Conventional Commits format
 
@@ -62,6 +64,8 @@ Each stage produces a small, readable artifact:
 - `docs/playbooks/designs/<date>-<topic>.md` — the design
 - `docs/playbooks/plans/<date>-<feature>.md` — the implementation plan
 - `docs/followups.md` — durable notes from past work
+
+When a feature lands, `consolidating-docs` graduates the durable decisions from its design and plan into the repo's real documentation — guided by `.claude/documentation.md`, a map of where docs live — and removes the husks.
 
 For trivial questions, read-only exploration, and one-off changes, the agent skips the pipeline and just answers.
 

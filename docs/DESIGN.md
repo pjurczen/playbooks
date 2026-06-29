@@ -399,3 +399,13 @@ If we want to actually start, I'd propose this sequence (each one a real milesto
 - The parts I want to rewrite: **writing-plans (intent not code), executing-plans (main session not subagents, with one self-checkpoint per milestone + one focused review pass at the end), bdd-testing (no structural tests), milestone-commits (one per slice, not one per step)**.
 - The parts I want to drop or downplay: **subagent-driven-development as default, the "1% chance" extreme tone in `using-superpowers`, multi-harness support, writing-skills meta-skill, default-on worktrees, visual companion, Red Flags tables on everyday skills**.
 - Resulting plugin is ~10 SKILL.md files plus a hook script — roughly a quarter of superpowers' total markdown. That's the whole thing.
+
+---
+
+## 9. Addendum — doc consolidation & cleanup (2026-06)
+
+Two changes after v1, both extending the existing two-tier knowledge model (in-session `## Findings` → durable `followups.md`) to the design and plan artifacts themselves.
+
+**`consolidating-docs` skill + `.claude/documentation.md`.** Design docs and plans are working artifacts; their durable decisions belong in the repo's real documentation, not piled up in `docs/playbooks/`. The new skill extracts the durable content, routes it per a `.claude/documentation.md` map (a general doc-maintenance guide, usable beyond playbooks), then deletes the husks — capture-then-delete, with git keeping the history. It's fired by `finishing-branch` on the merge/PR paths (so doc updates land with the feature) and can be invoked manually to sweep the backlog. When the map is absent it offers to bootstrap one. Rationale: dated husks were accumulating and the decisions inside them were never re-read.
+
+**`followups.md` → `docs/followups.md`.** It's a durable, active backlog, unlike the ephemeral design/plan husks, so it moves out of `docs/playbooks/`, which now holds only working artifacts.
