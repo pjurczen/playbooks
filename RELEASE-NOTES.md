@@ -1,5 +1,15 @@
 # Playbooks Release Notes
 
+## v0.4.0 (2026-06-29)
+
+### `consolidating-docs` skill — graduate decisions, delete the husks
+
+Design docs and plans accumulated in `docs/playbooks/designs/` and `plans/` and were never cleaned up; the durable decisions inside them never reached the repo's real documentation. A new `consolidating-docs` skill extracts the durable content (decisions, rationale, alternatives, constraints), routes it per a `.claude/documentation.md` map — a general-purpose guide to where docs live and how they're maintained, usable beyond playbooks — then deletes the spent files (capture-then-delete; git keeps the history). It's fired by `finishing-branch` on the landing paths (merge / PR) so doc updates ship with the feature, and can be invoked manually to sweep the backlog. When the map is absent it offers to bootstrap one. `using-playbooks` advertises the skill and points any doc-touching task at the map.
+
+### `followups.md` relocated to `docs/followups.md`
+
+The durable followups backlog moves out of `docs/playbooks/` — now reserved for ephemeral design/plan working artifacts — up to `docs/followups.md`. The skills that read or write it (`brainstorming`, `writing-plans`, `executing-plans`) are updated accordingly.
+
 ## v0.3.1 (2026-05-14)
 
 ### `writing-plans` now requires committing the plan
