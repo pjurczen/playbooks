@@ -52,6 +52,7 @@ digraph invoke_check {
 | Starting non-trivial creative work (new feature, new component, behaviour change) | **brainstorming** (then **writing-plans** → **executing-plans**) |
 | About to claim "done" / "fixed" / "passing" / "complete" | **verifying-before-done** |
 | Finishing a feature branch (merge / PR / cleanup) | **finishing-branch** |
+| Cleaning up accumulated design / plan docs into real documentation | **consolidating-docs** |
 | 2+ genuinely independent investigations runnable in parallel | **using-parallel-agents** |
 
 The creative-work pipeline is **brainstorming → writing-plans → executing-plans**, in that order. Do not skip brainstorming and start writing code. Do not skip writing-plans and start executing.
@@ -85,6 +86,7 @@ The bar is **clearly applies**, not *might apply if I squint*. If you have to ar
 - **writing-plans** — turn an approved design into an intent-shaped implementation plan.
 - **executing-plans** — work the plan in the main session, milestone by milestone, with self-checkpoints, a refactor pass, and an end-of-feature review.
 - **finishing-branch** — verify tests, then present a fixed menu (merge / PR / keep / discard).
+- **consolidating-docs** — graduate durable decisions from design/plan files into the repo's real docs, then delete the husks. Fired by finishing-branch when landing work; also invocable to sweep the backlog.
 
 **Implementation** (how to do the work):
 - **using-git-worktrees** — pick a workspace mode (default: new worktree on a new feature branch) before any code is written.
@@ -96,6 +98,10 @@ The bar is **clearly applies**, not *might apply if I squint*. If you have to ar
 
 **Situational**:
 - **using-parallel-agents** — dispatch focused subagents in parallel for genuinely independent investigations.
+
+## Documentation
+
+When you add, move, or substantially change documentation, consult `.claude/documentation.md` if it exists — it describes where docs live and how they're maintained in this repo. The **consolidating-docs** skill uses it as a routing map.
 
 ## How to invoke
 

@@ -26,7 +26,7 @@ If you catch yourself writing pre-canned test code, full class definitions, or s
 Before defining the plan:
 
 1. Does the approved design cover a single coherent feature? If it sprawls across multiple independent subsystems, send it back to brainstorming for decomposition. Each sub-feature gets its own design → plan → implementation cycle.
-2. Read `docs/playbooks/followups.md` if it exists. Any open followups intersect with this work? If so, fold them in *explicitly* — as their own milestones or as part of existing ones. Don't quietly extend scope.
+2. Read `docs/followups.md` if it exists. Any open followups intersect with this work? If so, fold them in *explicitly* — as their own milestones or as part of existing ones. Don't quietly extend scope.
 
 ## The plan shape
 
