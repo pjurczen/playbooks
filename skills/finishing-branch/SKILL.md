@@ -78,7 +78,7 @@ Don't add explanation — keep options concise.
 
 ### Step 5: Execute choice
 
-**Before executing Option 1 or 2** (the work is landing), invoke **consolidating-docs** to graduate durable decisions from this feature's design/plan files into the repo's docs and delete the husks. It commits that as one change, so the doc updates land with the feature. Skip for Options 3 and 4 — nothing is landing.
+**Before executing a landing option** (merge or PR — whichever option integrates the work, in either the 4-option or detached-HEAD menu), invoke **consolidating-docs** to graduate durable decisions from this feature's design/plan files into the repo's docs and delete the husks. It commits that as one change, so the doc updates land with the feature. Skip the keep and discard options — nothing is landing.
 
 #### Option 1: Merge locally
 

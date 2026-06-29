@@ -71,7 +71,7 @@ Then commit (see below).
 
 ## Scope by entry point
 
-- **Per-feature (finishing-branch):** the design and plan files for the feature being landed — those added on this branch under `docs/playbooks/designs/` and `plans/`.
+- **Per-feature (finishing-branch):** the design and plan files for the feature being landed — those added on this branch under `docs/playbooks/designs/` and `plans/`. Identify them with `git diff --name-only <base>..HEAD`, where `<base>` is the branch point finishing-branch establishes in its Step 3.
 - **Sweep (manual):** every file under `docs/playbooks/designs/` and `plans/`. Summarize what you intend to consolidate and where *before* touching anything, then work file by file.
 
 ## Durable vs ephemeral
