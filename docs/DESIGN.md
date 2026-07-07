@@ -197,6 +197,8 @@ In short: skill files are not the bloat target. The plan document is. Shape skil
 
 ### 5.1 Repo / plugin layout
 
+> **Superseded** — the shipped set differs (a `debugging` skill was deferred then shipped in v0.5.0; `using-git-worktrees`, `milestone-commits`, and `consolidating-docs` were added). See §10. The skills directory is the source of truth.
+
 ```
 playbooks/
 ├── .claude-plugin/
@@ -409,3 +411,15 @@ Two changes after v1, both extending the existing two-tier knowledge model (in-s
 **`consolidating-docs` skill + `.claude/documentation.md`.** Design docs and plans are working artifacts; their durable decisions belong in the repo's real documentation, not piled up in `docs/playbooks/`. The new skill extracts the durable content, routes it per a `.claude/documentation.md` map (a general doc-maintenance guide, usable beyond playbooks), then deletes the husks — capture-then-delete, with git keeping the history. It's fired by `finishing-branch` on the merge/PR paths (so doc updates land with the feature) and can be invoked manually to sweep the backlog. When the map is absent it offers to bootstrap one. Rationale: dated husks were accumulating and the decisions inside them were never re-read.
 
 **`followups.md` → `docs/followups.md`.** It's a durable, active backlog, unlike the ephemeral design/plan husks, so it moves out of `docs/playbooks/`, which now holds only working artifacts.
+
+---
+
+## 10. Addendum — reconciling the Decisions with the shipped skills (2026-07)
+
+A comprehensive review of the skill set (v0.5.0) found this doc's §6 "Decisions" had drifted from what actually shipped. The skills are the source of truth; this section records the reversals so the doc stops asserting things the plugin doesn't do.
+
+1. **Worktrees are default-on, chosen during brainstorming — Decision #1 reversed.** v0.3.0 reintroduced a mandatory workspace choice (worktree-on-new-branch as default) at the start of executing-plans; that release claimed the reversal was documented here, but it never was — this entry is that documentation. v0.5.0 moved the choice earlier still: **using-git-worktrees fires at the end of brainstorming**, after design approval and before the design doc is committed. Rationale: every artifact (design, plan, milestones) lands on the feature branch, which is what makes consolidating-docs' `base..HEAD` scoping find the husks, lets discard clean up everything, and keeps unconfirmed commits off `main`. The report now records a `BASE_SHA` that the end-of-feature review diffs against.
+2. **Red Flags tables ship on nearly every skill — Decision #5 reversed.** Practice showed the tables drive compliance cheaply. The guard against ceremony is the repo rule that strong framing is always paired with an explicit "when to skip" carve-out (see CLAUDE.md), not table scarcity.
+3. **The bootstrap kept the strong tone — §5.6 superseded.** The soft "clearly applies, follow it" wording under-triggered; shipped `using-playbooks` uses MUST-framing plus an explicit skip list and Red Flags table. Same guard as above: carve-outs, not softness.
+4. **`debugging` shipped (v0.5.0).** The condensed root-cause-first skill sketched in §4.5 — reproduce, hypothesis-with-evidence, confirm, red-first regression test, fix the cause — plus a bug-fix trigger row in using-playbooks. §7's "decide based on whether I miss it" is resolved: it was missed; bug fixes fell through the trigger table entirely.
+5. **v0.5.0 also filled coverage gaps** the original design didn't consider: resuming a half-executed plan after a session clear, greenfield/non-git projects (offer `git init`; don't block on a missing test suite), mid-pipeline entry when the user brings an approved design or plan, and characterization tests on existing code (bdd-testing's red-first rule now has a mutate-and-restore carve-out).
