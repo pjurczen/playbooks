@@ -29,7 +29,6 @@ User instructions in CLAUDE.md / AGENTS.md / direct messages always take precede
 digraph invoke_check {
     "User message received" [shape=doublecircle];
     "Does any skill clearly apply?" [shape=diamond];
-    "Is it trivial / read-only / one-off?" [shape=diamond];
     "Invoke matching skill via Skill tool" [shape=box];
     "Announce: 'Using [skill] to [purpose]'" [shape=box];
     "Just answer / just do the work" [shape=box];
@@ -37,9 +36,7 @@ digraph invoke_check {
 
     "User message received" -> "Does any skill clearly apply?";
     "Does any skill clearly apply?" -> "Invoke matching skill via Skill tool" [label="yes"];
-    "Does any skill clearly apply?" -> "Is it trivial / read-only / one-off?" [label="no"];
-    "Is it trivial / read-only / one-off?" -> "Just answer / just do the work" [label="yes"];
-    "Is it trivial / read-only / one-off?" -> "Just answer / just do the work" [label="no, but no skill matched"];
+    "Does any skill clearly apply?" -> "Just answer / just do the work" [label="no (incl. trivial / read-only / one-off)"];
     "Invoke matching skill via Skill tool" -> "Announce: 'Using [skill] to [purpose]'";
     "Announce: 'Using [skill] to [purpose]'" -> "Follow the skill exactly";
 }

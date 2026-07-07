@@ -7,13 +7,17 @@ description: Use before any non-trivial creative work (features, components, beh
 
 Turn an idea into a fully formed design through natural dialogue. Ask questions one at a time. Propose 2–3 approaches. Settle on a design with the user, write it to disk, hand off to writing-plans.
 
+**Announce at start:** "Using brainstorming to turn this idea into a design."
+
 <HARD-GATE>
 Do NOT invoke writing-plans, write any code, scaffold any project, or take any implementation action until you have presented a design and the user has approved it. This applies to EVERY project regardless of perceived simplicity.
 </HARD-GATE>
 
 ## Anti-pattern: "this is too simple to need a design"
 
-Every project goes through this process. A todo list, a single-function utility, a config change — all of them. "Simple" projects are where unexamined assumptions cause the most wasted work. The design can be short (a few sentences for truly simple things), but you MUST present it and get approval.
+Every project that enters this skill goes through the full process. A todo list, a single-function utility, a config change — all of them. "Simple" projects are where unexamined assumptions cause the most wasted work. The design can be short (a few sentences for truly simple things), but you MUST present it and get approval.
+
+(Truly trivial one-off tweaks — a typo, a renamed local, an adjusted constant — never enter brainstorming at all; that's using-playbooks' skip list. But once you're here, don't skip the design.)
 
 ## Checklist
 
