@@ -26,30 +26,46 @@ Cannot proceed with merge / PR until tests pass.
 
 Stop. Do not proceed to Step 2.
 
-### Step 2: Detect environment
+### Step 2: Detect environment — capture state NOW, from inside the workspace
+
+Run these once, from the workspace you implemented in, and keep the values. Step 6 consumes them *after* you've `cd`'d away — re-running the detection from the main checkout always concludes "no worktree".
 
 ```bash
 GIT_DIR=$(cd "$(git rev-parse --git-dir)" 2>/dev/null && pwd -P)
 GIT_COMMON=$(cd "$(git rev-parse --git-common-dir)" 2>/dev/null && pwd -P)
+WORKTREE_PATH=$(git rev-parse --show-toplevel)
+CURRENT_BRANCH=$(git rev-parse --abbrev-ref HEAD)   # prints "HEAD" when detached
+MAIN_ROOT=$(git -C "$GIT_COMMON/.." rev-parse --show-toplevel)
 ```
 
 | State | Menu | Cleanup |
 |-------|------|---------|
-| `GIT_DIR == GIT_COMMON` (normal repo) | Standard 4 options | No worktree to clean up |
-| `GIT_DIR != GIT_COMMON`, named branch | Standard 4 options | Provenance-based (Step 6) |
-| `GIT_DIR != GIT_COMMON`, detached HEAD | Reduced 3 options (no merge) | None (externally managed) |
+| `CURRENT_BRANCH` is the base branch (current-branch mode) | On-base menu (B1–B2) | None |
+| `GIT_DIR == GIT_COMMON`, feature branch (normal repo) | Standard menu (1–4) | No worktree to clean up |
+| `GIT_DIR != GIT_COMMON`, named branch (worktree) | Standard menu (1–4) | Provenance-based (Step 6) |
+| `GIT_DIR != GIT_COMMON`, detached HEAD | Detached menu (D1–D3) | None (externally managed) |
 
 ### Step 3: Determine base branch
 
+You need the base branch *name* (later commands check it out) and the branch point:
+
 ```bash
-git merge-base HEAD main 2>/dev/null || git merge-base HEAD master 2>/dev/null
+BASE_BRANCH=$(git symbolic-ref --short refs/remotes/origin/HEAD 2>/dev/null | sed 's|^origin/||')
 ```
 
-Or ask: "This branch split from main — is that correct?"
+If that's unset, look for a local `main` / `master`; if still ambiguous, ask: "This branch split from main — is that correct?" Then:
+
+```bash
+BASE_POINT=$(git merge-base HEAD "$BASE_BRANCH")
+```
+
+In current-branch mode `merge-base` is just `HEAD` — use the `BASE_SHA` recorded in the using-git-worktrees report as the branch point instead.
 
 ### Step 4: Present options
 
-**Normal repo or named-branch worktree — exactly these 4 options:**
+Don't add explanation — keep options concise.
+
+**Standard menu (normal repo or named-branch worktree):**
 
 ```
 Implementation complete. What would you like to do?
@@ -62,31 +78,38 @@ Implementation complete. What would you like to do?
 Which option?
 ```
 
-**Detached HEAD — exactly these 3 options:**
+**Detached menu (detached HEAD — externally managed workspace):**
 
 ```
-Implementation complete. You're on a detached HEAD (externally managed workspace).
+Implementation complete. You're on a detached HEAD.
 
-1. Push as new branch and create a Pull Request
-2. Keep as-is (I'll handle it later)
-3. Discard this work
+D1. Push as new branch and create a Pull Request
+D2. Keep as-is (I'll handle it later)
+D3. Discard this work
 
 Which option?
 ```
 
-Don't add explanation — keep options concise.
+**On-base menu (work was committed directly on <base-branch>):**
+
+```
+Implementation complete — the commits are already on <base-branch>.
+
+B1. Keep them (work is landed)
+B2. Revert the feature commits
+
+Which option?
+```
 
 ### Step 5: Execute choice
 
-**Before executing a landing option** (merge or PR — whichever option integrates the work, in either the 4-option or detached-HEAD menu), invoke **consolidating-docs** to graduate durable decisions from this feature's design/plan files into the repo's docs and delete the husks. It commits that as one change, so the doc updates land with the feature. Skip the keep and discard options — nothing is landing.
+**Consolidation gate:** before executing any landing option (1, 2, D1, B1 — anything that integrates the work), invoke **consolidating-docs** to graduate durable decisions from this feature's design/plan files into the repo's docs and delete the husks. It commits that as one change, so the doc updates land with the feature. For keep and discard options (3, 4, D2, D3, B2), skip consolidation — nothing is landing.
 
 #### Option 1: Merge locally
 
 ```bash
-MAIN_ROOT=$(git -C "$(git rev-parse --git-common-dir)/.." rev-parse --show-toplevel)
 cd "$MAIN_ROOT"
-
-git checkout <base-branch>
+git checkout "$BASE_BRANCH"
 git pull
 git merge <feature-branch>
 
@@ -94,7 +117,7 @@ git merge <feature-branch>
 <test command>
 ```
 
-Then: cleanup worktree (Step 6), then delete branch:
+Then: cleanup worktree (Step 6, using the Step-2 values), then delete branch:
 ```bash
 git branch -d <feature-branch>
 ```
@@ -118,9 +141,7 @@ EOF
 
 #### Option 3: Keep as-is
 
-Report: "Keeping branch <name>. Worktree preserved at <path>."
-
-**Don't clean up the worktree.**
+Report: "Keeping branch <name>. Worktree preserved at <path>." **Don't clean up the worktree.**
 
 #### Option 4: Discard
 
@@ -134,63 +155,87 @@ This will permanently delete:
 Type 'discard' to confirm.
 ```
 
-Wait for the exact word "discard". If confirmed:
-
-```bash
-MAIN_ROOT=$(git -C "$(git rev-parse --git-common-dir)/.." rev-parse --show-toplevel)
-cd "$MAIN_ROOT"
-```
-
-Then: cleanup worktree (Step 6), then force-delete branch:
+Wait for the exact word "discard". If confirmed: `cd "$MAIN_ROOT"`, cleanup worktree (Step 6), then force-delete branch:
 ```bash
 git branch -D <feature-branch>
 ```
 
-### Step 6: Cleanup workspace
+#### Option D1: Push detached work as a new branch + PR
 
-**Only runs for Options 1 and 4.** Options 2 and 3 always preserve the worktree.
+There is no local branch — push HEAD to a new remote branch (ask for or derive a name):
 
 ```bash
-GIT_DIR=$(cd "$(git rev-parse --git-dir)" 2>/dev/null && pwd -P)
-GIT_COMMON=$(cd "$(git rev-parse --git-common-dir)" 2>/dev/null && pwd -P)
-WORKTREE_PATH=$(git rev-parse --show-toplevel)
+git push origin HEAD:refs/heads/<new-branch>
+gh pr create --head <new-branch> --title "<title>" --body "<as Option 2>"
 ```
 
-- **If `GIT_DIR == GIT_COMMON`:** Normal repo, no worktree to clean up. Done.
-- **If worktree path is under `.worktrees/`, `worktrees/`, or `~/.config/playbooks/worktrees/`:** Playbooks created this worktree — we own cleanup.
+Leave the workspace alone — it's externally managed.
+
+#### Option D2: Keep as-is (detached)
+
+Report: "Keeping work at <HEAD SHA>. Workspace preserved." Nothing else to do.
+
+#### Option D3: Discard (detached)
+
+Confirm with the typed word "discard" (list the commits, as Option 4). There is no branch to delete and the workspace is externally managed — report the HEAD SHA so the commits stay recoverable, and leave everything in place.
+
+#### Option B1: Keep work already on base
+
+The commits are already on `<base-branch>`. After the consolidation gate, report and stop — no merge, no cleanup.
+
+#### Option B2: Revert the feature commits
+
+List the commits in `BASE_SHA..HEAD` and confirm with the typed word "revert". Then:
+
+```bash
+git revert --no-edit <BASE_SHA>..HEAD
+```
+
+**Never** delete or reset the base branch — revert adds inverse commits and keeps history intact.
+
+### Step 6: Cleanup workspace
+
+**Only runs for Options 1 and 4.** Options 2 and 3 preserve the worktree; detached and on-base modes never clean up. Use the values captured in Step 2 — do not re-detect from the main checkout.
+
+- **If `GIT_DIR == GIT_COMMON`:** normal repo, no worktree to clean up. Done.
+- **If `WORKTREE_PATH` is under `.worktrees/`, `worktrees/`, or `~/.config/playbooks/worktrees/`:** playbooks created this worktree — we own cleanup.
   ```bash
-  MAIN_ROOT=$(git -C "$(git rev-parse --git-common-dir)/.." rev-parse --show-toplevel)
   cd "$MAIN_ROOT"
   git worktree remove "$WORKTREE_PATH"
   git worktree prune
   ```
-- **Otherwise:** The harness owns this workspace. Do NOT remove it. Use the harness's exit tool if available; otherwise leave it.
+- **Otherwise:** the harness owns this workspace. Do NOT remove it. Use the harness's exit tool if available; otherwise leave it.
 
 ## Quick reference
 
-| Option | Merge | Push | Keep worktree | Cleanup branch |
-|--------|-------|------|---------------|----------------|
-| 1. Merge locally | yes | - | - | yes |
-| 2. Create PR | - | yes | yes | - |
+| Option | Integrates | Push | Keep workspace | Branch cleanup |
+|--------|-----------|------|----------------|----------------|
+| 1. Merge locally | yes | - | removed (Step 6) | delete |
+| 2. Create PR | via PR | yes | yes | - |
 | 3. Keep as-is | - | - | yes | - |
-| 4. Discard | - | - | - | yes (force) |
+| 4. Discard | - | - | removed (Step 6) | force-delete |
+| D1. Push + PR | via PR | yes | yes (external) | - |
+| D2. Keep | - | - | yes (external) | - |
+| D3. Discard | - | - | yes (external) | none exists |
+| B1. Keep on base | already landed | - | yes | - |
+| B2. Revert | - | - | yes | revert commits |
 
 ## Red Flags
 
 **Never:**
 - Proceed with failing tests
 - Merge without verifying tests on the merged result
-- Delete work without typed confirmation
+- Delete or revert work without typed confirmation
 - Force-push without explicit user request
 - Remove a worktree before the merge succeeds
 - Clean up worktrees you didn't create (provenance check)
 - Run `git worktree remove` from inside the worktree being removed
+- Re-run the Step-2 detection after leaving the workspace — from the main checkout it always says "no worktree"
+- Delete or `git reset` the base branch — B2 reverts, nothing else
 
 **Always:**
 - Verify tests before offering options
-- Detect environment before presenting menu
-- Present exactly 4 options (or 3 for detached HEAD)
-- Get typed "discard" confirmation for Option 4
-- Clean up the worktree only for Options 1 and 4
-- `cd` to main repo root before worktree removal
-- Run `git worktree prune` after removal
+- Capture Step-2 state from inside the workspace, before any `cd`
+- Present exactly the menu the Step-2 table names (1–4, D1–D3, or B1–B2)
+- Get typed confirmation for discard and revert
+- `cd` to `$MAIN_ROOT` before worktree removal, and `git worktree prune` after
