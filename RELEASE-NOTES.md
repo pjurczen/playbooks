@@ -1,5 +1,32 @@
 # Playbooks Release Notes
 
+## v0.5.0 (2026-07-07)
+
+A comprehensive review of the skill set (all 11 skills, the reviewer prompt, and `docs/DESIGN.md`) surfaced five workflow-breaking bugs, a set of coverage gaps, and drift between the design doc and the shipped skills. This release fixes all of it.
+
+### Workspace is now chosen during brainstorming, before the first commit
+
+Design and plan docs were committed to the current branch (usually `main`) before `executing-plans` created the feature branch — so `consolidating-docs`' `base..HEAD` scoping could never find them, discard left husks on `main`, and the end-of-feature review had no base to diff from. `using-git-worktrees` now fires at the end of `brainstorming` (after design approval, before the design doc is committed), and its report records a `BASE_SHA` that the end-of-feature review diffs against. `executing-plans` confirms the existing workspace instead of creating one.
+
+### `finishing-branch` overhauled
+
+Step 6 re-detected the worktree *after* `cd`-ing to the main checkout, so cleanup never fired and the branch delete failed; the detached-HEAD menu's 1–3 numbering collided with the Option 1–4 execution headers; and current-branch mode had no handling at all, letting the discard path offer to force-delete the base branch. Now: state is captured once from inside the workspace, detached choices get their own D1–D3 blocks (`git push origin HEAD:refs/heads/<name>`), on-base work gets a B1/B2 menu (keep / `git revert` — never deletion or reset), and Step 3 derives the base branch *name*, not a SHA. All flows verified against a scratch repo.
+
+### New `debugging` skill
+
+Bug fixes fell through the trigger table entirely. The condensed root-cause-first skill sketched in `docs/DESIGN.md` §4.5 now ships: reproduce, state the hypothesis with evidence, confirm, pin with a red-first regression test (`bdd-testing`), fix the cause not the symptom, verify (`verifying-before-done`). Escalates to `brainstorming` when the root cause is a design problem.
+
+### Coverage gaps closed
+
+- **Resume:** a trigger row and a Resuming section in `executing-plans` for continuing a half-executed plan after a session clear — find the workspace, diff milestones against `git log`, don't create a second worktree.
+- **Greenfield / non-git:** `brainstorming` and `using-git-worktrees` offer `git init` (ask first); a missing test suite no longer blocks `using-git-worktrees` or `finishing-branch`; `writing-plans` puts minimal test scaffolding in milestone 1.
+- **Mid-pipeline entry:** user brings an approved design → start at `writing-plans`; an approved plan → `executing-plans`.
+- **Characterization tests:** `bdd-testing` now permits pass-on-first-run tests for existing code, verified by mutate-and-restore.
+
+### Operational and consistency fixes
+
+Worktree ignore-check now checks the chosen directory (previously an OR of two could pass while the chosen one was unignored); setup commands key off lockfiles instead of guessing the package manager, and skip for reused checkouts; `milestone-commits`' "when to commit" table no longer licenses the WIP checkpoints its own Red Flags forbid; `brainstorming` gains its announce line and an explicit trivial-tweak carve-out; `docs/DESIGN.md` gains a dated addendum (§10) reconciling its Decisions section with what actually shipped.
+
 ## v0.4.0 (2026-06-29)
 
 ### `consolidating-docs` skill — graduate decisions, delete the husks

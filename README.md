@@ -2,7 +2,7 @@
 
 A lean, opinionated library of workflow skills for Claude Code.
 
-Playbooks gives Claude a small set of process skills — for designing features, planning, executing in milestones, testing, and finishing branches — that auto-load at the start of every session. The library is intentionally small: eleven skills, roughly 1,500 lines of markdown total. Less to read, less ceremony, more trust in the model.
+Playbooks gives Claude a small set of process skills — for designing features, planning, executing in milestones, debugging, testing, and finishing branches — that auto-load at the start of every session. The library is intentionally small: twelve skills, roughly 1,600 lines of markdown total. Less to read, less ceremony, more trust in the model.
 
 ## Why not just use [superpowers](https://github.com/obra/superpowers)?
 
@@ -37,11 +37,12 @@ Once loaded, the `SessionStart` hook fires on session start / clear / compact an
 - `brainstorming` — design dialogue → committed design doc
 - `writing-plans` — design → intent-shaped implementation plan
 - `executing-plans` — main-session milestone loop with self-checkpoints, refactor pass, end-of-feature review
+- `debugging` — root cause with evidence before any fix, pinned by a red-first regression test
 - `finishing-branch` — verify tests, then merge / PR / keep / discard
 - `consolidating-docs` — on landing, graduate durable decisions into real docs and delete the design/plan husks
 
 **Implementation** (how to do the work):
-- `using-git-worktrees` — pick a workspace mode before writing code (default: new worktree on a new branch)
+- `using-git-worktrees` — pick a workspace mode before anything is committed (default: new worktree on a new branch)
 - `bdd-testing` — behaviour-shaped tests for code with interesting logic
 - `milestone-commits` — one commit per slice, Conventional Commits format
 
