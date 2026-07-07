@@ -17,6 +17,7 @@ GIT_COMMON=$(cd "$(git rev-parse --git-common-dir)" 2>/dev/null && pwd -P)
 SUPER=$(git rev-parse --show-superproject-working-tree 2>/dev/null)
 ```
 
+- `git rev-parse` fails entirely → not a git repo. Offer `git init` (ask first); if declined, skip workspace setup and warn that the pipeline's commits and doc consolidation won't work.
 - `GIT_DIR != GIT_COMMON` and `SUPER` empty → you're already in a linked worktree. Skip to Step 2. Do NOT nest another worktree.
 - `GIT_DIR != GIT_COMMON` and `SUPER` non-empty → you're in a submodule. Treat as a normal repo and continue.
 - `GIT_DIR == GIT_COMMON` → normal checkout. Continue.
@@ -88,6 +89,8 @@ Auto-detect and run:
 ## Step 3: Verify clean baseline
 
 Run the project's test command. If tests fail: report failures and ask whether to proceed or investigate first — don't silently continue.
+
+No test infrastructure yet (greenfield)? Say so and continue — don't block. The plan's first milestone should establish it (see writing-plans).
 
 ## Report
 

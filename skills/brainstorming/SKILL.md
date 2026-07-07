@@ -19,7 +19,7 @@ Every project goes through this process. A todo list, a single-function utility,
 
 Track these as todos and complete them in order:
 
-1. **Explore project context** — files, recent commits, and `docs/followups.md` if it exists (any open followups intersect with this work? fold them in if so)
+1. **Explore project context** — files, recent commits, and `docs/followups.md` if it exists (any open followups intersect with this work? fold them in if so). Not a git repo yet? Offer `git init` (ask first) — the pipeline commits its artifacts.
 2. **Ask clarifying questions** — one at a time; focus on purpose, constraints, success criteria
 3. **Propose 2–3 approaches** — with trade-offs and your recommendation
 4. **Present the design in sections** — get user approval after each section

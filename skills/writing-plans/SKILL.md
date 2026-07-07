@@ -60,6 +60,8 @@ submits an empty form, they see the validation error".
 Each milestone is a vertical slice with observable progress. Sized so a
 self-checkpoint and a refactor pass can both happen meaningfully — small
 enough to commit cleanly, big enough to be more than a single edit.
+Greenfield project? Milestone 1 includes the minimal test scaffolding
+(runner plus one passing behavioural test).
 
 ## Risk / open questions
 - Anything that might block work or requires the user to choose at execution time.

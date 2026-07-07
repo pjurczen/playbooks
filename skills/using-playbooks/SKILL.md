@@ -51,12 +51,15 @@ digraph invoke_check {
 |---------|-------|
 | Starting non-trivial creative work (new feature, new component, behaviour change) | **brainstorming** (then **writing-plans** → **executing-plans**) |
 | Fixing a bug / investigating a failure | **debugging** |
+| Resuming a feature that has a plan in `docs/playbooks/plans/` (e.g. after a cleared session) | **executing-plans** (see its Resuming section) |
 | About to claim "done" / "fixed" / "passing" / "complete" | **verifying-before-done** |
 | Finishing a feature branch (merge / PR / cleanup) | **finishing-branch** |
 | Cleaning up accumulated design / plan docs into real documentation | **consolidating-docs** |
 | 2+ genuinely independent investigations runnable in parallel | **using-parallel-agents** |
 
 The creative-work pipeline is **brainstorming → writing-plans → executing-plans**, in that order. Do not skip brainstorming and start writing code. Do not skip writing-plans and start executing.
+
+**Mid-pipeline entry:** if the user brings an already-approved design, enter at **writing-plans**; an already-approved plan, enter at **executing-plans**. Don't re-interrogate work the user has signed off on.
 
 ## When to skip
 

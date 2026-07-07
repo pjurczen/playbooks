@@ -16,6 +16,10 @@ Implement the plan in the main session, milestone by milestone. Default executio
 3. Confirm the workspace chosen during brainstorming (branch, path, and the recorded `BASE_SHA` from the using-git-worktrees report). Invoke **using-git-worktrees** now only if there is no workspace yet — e.g. the user brought their own plan and skipped the earlier pipeline stages.
 4. Create one TODO entry per milestone for tracking.
 
+## Resuming a partially executed plan
+
+If the session was cleared or compacted mid-feature: locate the existing branch/worktree (`git worktree list`, `git branch --list`) — do **not** re-run using-git-worktrees when the workspace already exists. Compare the plan's milestones against `git log <BASE_SHA>..HEAD` to find the first incomplete one. Reconstruct what you can of the `## Findings` block from the milestone commit messages, note that it's partial, and continue the loop from there.
+
 ## Clean code defaults
 
 These are standing rules that apply during **both** the GREEN step (writing the smallest thing) and the refactor pass (cleaning up). They are not goals to tick at the end — they shape how you write code in the first place.

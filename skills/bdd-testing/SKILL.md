@@ -76,7 +76,11 @@ Watch it fail. Confirm:
 - The failure message is what you expected
 - It fails because the behaviour isn't implemented (not because of plumbing)
 
-If the test passes immediately, you're testing existing behaviour — rewrite the test.
+If the test passes immediately, you're testing existing behaviour — rewrite the test (unless you're writing characterization tests on purpose; see below).
+
+## Characterization tests (existing code)
+
+When the task is adding tests to code that already works, passing-on-first-run is the expected outcome, not an error. But verify each test actually bites: temporarily mutate the behaviour under test, watch the test fail, restore, watch it pass. A characterization test you never saw red proves nothing.
 
 ## GREEN — Smallest implementation
 
@@ -110,7 +114,7 @@ If you find yourself mocking everything, the design is too coupled. The test is 
 
 - Writing test code without watching it fail first
 - Writing tests after the implementation is "done"
-- Tests pass immediately on first run (you're testing existing behaviour, not new)
+- Tests pass immediately on first run when testing *new* behaviour (for deliberate characterization tests, see above — verify by mutate-and-restore)
 - Test asserts existence of structure rather than result of behaviour
 - Cannot describe what behaviour the test would catch failing
 - Mock setup is more than half the test

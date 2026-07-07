@@ -26,6 +26,8 @@ Cannot proceed with merge / PR until tests pass.
 
 Stop. Do not proceed to Step 2.
 
+If the project has **no test suite at all**, state that explicitly and continue — a missing suite is not a failing suite.
+
 ### Step 2: Detect environment — capture state NOW, from inside the workspace
 
 Run these once, from the workspace you implemented in, and keep the values. Step 6 consumes them *after* you've `cd`'d away — re-running the detection from the main checkout always concludes "no worktree".
