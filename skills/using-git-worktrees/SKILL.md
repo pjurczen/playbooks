@@ -1,11 +1,11 @@
 ---
 name: using-git-worktrees
-description: Use before any implementation work, to choose a workspace mode and set it up clean — defaults to a new worktree on a new feature branch.
+description: Use when a design is approved and before any artifact is committed, to choose a workspace mode and set it up clean — defaults to a new worktree on a new feature branch.
 ---
 
 # Using Git Worktrees
 
-Choose where the implementation will run before any code is written. Default is a new worktree on a new feature branch — it keeps your current checkout untouched and lets multiple features run in parallel.
+Choose where the work will land before anything is committed. Normally fired from **brainstorming** right after design approval — so the design doc, plan, and implementation all end up on the feature branch. Default is a new worktree on a new feature branch — it keeps your current checkout untouched and lets multiple features run in parallel.
 
 **Announce at start:** "Using using-git-worktrees to choose a workspace mode."
 
@@ -91,12 +91,15 @@ Run the project's test command. If tests fail: report failures and ask whether t
 
 ## Report
 
+Record `BASE_SHA` now — it marks where the feature starts. The end-of-feature review (executing-plans) diffs `BASE_SHA..HEAD`, and in current-branch mode it's the only thing that identifies the feature's commits.
+
 ```
 Workspace mode: <worktree | feature-branch | current-branch>
 Path:           <full-path>
 Branch:         <branch-name>
+Base SHA:       <output of `git rev-parse HEAD`>
 Tests:          <N passed, 0 failed>
-Ready to implement <feature-name>.
+Ready to work on <feature-name>.
 ```
 
 ## Red Flags

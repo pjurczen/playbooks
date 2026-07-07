@@ -89,7 +89,7 @@ The bar is **clearly applies**, not *might apply if I squint*. If you have to ar
 - **consolidating-docs** — graduate durable decisions from design/plan files into the repo's real docs, then delete the husks. Fired by finishing-branch when landing work; also invocable to sweep the backlog.
 
 **Implementation** (how to do the work):
-- **using-git-worktrees** — pick a workspace mode (default: new worktree on a new feature branch) before any code is written.
+- **using-git-worktrees** — pick a workspace mode (default: new worktree on a new feature branch). Fired from brainstorming after design approval, before anything is committed.
 - **bdd-testing** — write behaviour-shaped tests for code with interesting logic. Skip for data-only constructs.
 - **milestone-commits** — one commit per meaningful slice; the message describes the *why*.
 

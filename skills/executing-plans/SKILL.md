@@ -13,7 +13,7 @@ Implement the plan in the main session, milestone by milestone. Default executio
 
 1. Read the plan file once. Extract: the goal, the decomposition, the behaviours to verify, the full list of milestones with their done-when criteria.
 2. Re-read it critically. Any milestone unclear? Any missing dependency? Any behaviour you can't see how to verify? Raise it with the user before any code is written.
-3. Invoke **using-git-worktrees** to choose a workspace mode. Default is a new worktree on a new feature branch; the user can opt for a feature branch in the current checkout, or current-branch with explicit confirmation.
+3. Confirm the workspace chosen during brainstorming (branch, path, and the recorded `BASE_SHA` from the using-git-worktrees report). Invoke **using-git-worktrees** now only if there is no workspace yet — e.g. the user brought their own plan and skipped the earlier pipeline stages.
 4. Create one TODO entry per milestone for tracking.
 
 ## Clean code defaults
@@ -146,7 +146,7 @@ One-line description. File: src/path/file.py:line. Discovered while: feature-nam
 
 After the last milestone commits, run a single review pass before `finishing-branch`:
 
-1. Dispatch ONE reviewer subagent using the prompt at `./end-of-feature-reviewer-prompt.md`. The reviewer gets: the design doc, the plan, the full feature diff (BASE_SHA..HEAD_SHA), and the in-session `## Findings` block.
+1. Dispatch ONE reviewer subagent using the companion prompt `end-of-feature-reviewer-prompt.md` that ships alongside this skill (in the plugin's `skills/executing-plans/` directory). The reviewer gets: the design doc, the plan, the full feature diff (`BASE_SHA..HEAD` — `BASE_SHA` is the value recorded in the using-git-worktrees report), and the in-session `## Findings` block.
 2. Review returns: Strengths / Issues (Critical / Important / Minor / Followup) / Assessment.
 3. Fix Critical, Important, and Minor. Only Followup-tier items go to `followups.md` (per the Tier-2 definition above).
 4. Commit the fixes as one "review fixes" milestone (same loop: self-checkpoint, refactor pass if applicable, one commit).

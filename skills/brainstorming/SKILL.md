@@ -23,10 +23,11 @@ Track these as todos and complete them in order:
 2. **Ask clarifying questions** — one at a time; focus on purpose, constraints, success criteria
 3. **Propose 2–3 approaches** — with trade-offs and your recommendation
 4. **Present the design in sections** — get user approval after each section
-5. **Write design doc** — save to `docs/playbooks/designs/YYYY-MM-DD-<topic>.md` and commit
-6. **Self-review the doc** — placeholders, contradictions, ambiguity, scope (see below)
-7. **Ask the user to review the written doc** — wait for explicit approval
-8. **Transition to writing-plans** — invoke that skill; do not invoke any other implementation skill
+5. **Choose workspace** — invoke **using-git-worktrees**. This happens *before* anything is committed, so the design doc, the plan, and the implementation all land on the feature branch — that's what lets finishing-branch and consolidating-docs find and clean them up later. It waits until after design approval so abandoned brainstorms leave no orphan branches.
+6. **Write design doc** — save to `docs/playbooks/designs/YYYY-MM-DD-<topic>.md` and commit
+7. **Self-review the doc** — placeholders, contradictions, ambiguity, scope (see below)
+8. **Ask the user to review the written doc** — wait for explicit approval
+9. **Transition to writing-plans** — invoke that skill; do not invoke any other implementation skill
 
 ## Decision flow
 
@@ -37,6 +38,7 @@ digraph brainstorming {
     "Propose 2-3 approaches" [shape=box];
     "Present design sections" [shape=box];
     "User approves design?" [shape=diamond];
+    "Choose workspace (using-git-worktrees)" [shape=box];
     "Write design doc" [shape=box];
     "Self-review doc" [shape=box];
     "User reviews written doc?" [shape=diamond];
@@ -47,7 +49,8 @@ digraph brainstorming {
     "Propose 2-3 approaches" -> "Present design sections";
     "Present design sections" -> "User approves design?";
     "User approves design?" -> "Present design sections" [label="no, revise"];
-    "User approves design?" -> "Write design doc" [label="yes"];
+    "User approves design?" -> "Choose workspace (using-git-worktrees)" [label="yes"];
+    "Choose workspace (using-git-worktrees)" -> "Write design doc";
     "Write design doc" -> "Self-review doc";
     "Self-review doc" -> "User reviews written doc?";
     "User reviews written doc?" -> "Write design doc" [label="changes requested"];
