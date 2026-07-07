@@ -24,8 +24,8 @@ If you find yourself making 5 micro-commits per milestone (failing test → impl
 |--------|--------------|
 | At the end of a milestone (test + impl + refactor together) | After writing a failing test (no implementation yet) |
 | At the end of an end-of-feature review-fix pass | After every individual file edit |
-| Before a risky refactor (so you can revert) | After every TDD step (red, green, refactor each as own commit) |
-| When switching to a different milestone for context reasons | "Just to checkpoint" without a meaningful slice |
+| Before a risky refactor — commit the *completed sub-slice* as its own milestone first (see "When milestones are too big"); never a WIP snapshot | After every TDD step (red, green, refactor each as own commit) |
+| When switching milestones — same rule: the finished sub-slice, not a half-done state | "Just to checkpoint" without a meaningful slice |
 
 ## Commit message shape
 

@@ -2,7 +2,8 @@
 
 Used by `executing-plans` to dispatch a single review subagent before
 `finishing-branch`. The orchestrator fills in the placeholders and dispatches
-via the Task tool with `subagent_type: general-purpose`.
+via the harness's agent-dispatch tool (`Task` / `Agent`, depending on version)
+with a general-purpose subagent.
 
 ---
 

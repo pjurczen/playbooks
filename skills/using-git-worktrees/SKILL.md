@@ -47,10 +47,10 @@ Otherwise, git fallback:
 3. Existing `~/.config/playbooks/worktrees/<project>/`.
 4. Default: create `.worktrees/` at project root.
 
-**Verify ignored** (project-local paths only):
+**Verify ignored** (project-local paths only) — check the directory you actually chose, not any alternative:
 
 ```bash
-git check-ignore -q .worktrees 2>/dev/null || git check-ignore -q worktrees 2>/dev/null
+git check-ignore -q "<chosen-dir>"
 ```
 
 If not ignored: add to `.gitignore`, commit, then proceed.
@@ -76,15 +76,21 @@ Stay where you are. If on `main` / `master`, the second confirmation from Step 1
 
 ## Step 2: Project setup
 
-Auto-detect and run:
+**Only for option 1 (fresh worktree).** Options 2 and 3 reuse the current checkout, which is already set up.
+
+Key off the lockfile — it names the package manager; guessing from the manifest alone installs with the wrong tool:
 
 ```bash
-[ -f package.json ]      && npm install
+[ -f pnpm-lock.yaml ]    && pnpm install
+[ -f yarn.lock ]         && yarn install
+[ -f package-lock.json ] && npm install
+[ -f uv.lock ]           && uv sync
+[ -f poetry.lock ]       && poetry install
 [ -f Cargo.toml ]        && cargo build
-[ -f requirements.txt ]  && pip install -r requirements.txt
-[ -f pyproject.toml ]    && poetry install
 [ -f go.mod ]            && go mod download
 ```
+
+No lockfile match? Use whatever the project's README / CI config declares — don't improvise a package manager.
 
 ## Step 3: Verify clean baseline
 
