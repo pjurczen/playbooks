@@ -50,6 +50,7 @@ digraph invoke_check {
 | Trigger | Skill |
 |---------|-------|
 | Starting non-trivial creative work (new feature, new component, behaviour change) | **brainstorming** (then **writing-plans** → **executing-plans**) |
+| Fixing a bug / investigating a failure | **debugging** |
 | About to claim "done" / "fixed" / "passing" / "complete" | **verifying-before-done** |
 | Finishing a feature branch (merge / PR / cleanup) | **finishing-branch** |
 | Cleaning up accumulated design / plan docs into real documentation | **consolidating-docs** |
@@ -85,6 +86,7 @@ The bar is **clearly applies**, not *might apply if I squint*. If you have to ar
 - **brainstorming** — turn an idea into a design through clarifying questions and proposed approaches.
 - **writing-plans** — turn an approved design into an intent-shaped implementation plan.
 - **executing-plans** — work the plan in the main session, milestone by milestone, with self-checkpoints, a refactor pass, and an end-of-feature review.
+- **debugging** — reproduce, state the root cause with evidence, pin it with a red-first regression test, then fix.
 - **finishing-branch** — verify tests, then present a fixed menu (merge / PR / keep / discard).
 - **consolidating-docs** — graduate durable decisions from design/plan files into the repo's real docs, then delete the husks. Fired by finishing-branch when landing work; also invocable to sweep the backlog.
 
