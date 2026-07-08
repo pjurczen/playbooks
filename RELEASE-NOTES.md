@@ -1,5 +1,11 @@
 # Playbooks Release Notes
 
+## v0.6.0 (2026-07-08)
+
+### Catch designs that degenerate under load
+
+A hard problem's wrong abstraction was getting patched into slop because the pipeline is one-way with no reverse edge — "the design is wrong" kept becoming "patch it locally," N times over. Two edits add that reverse edge, at both ends of the pipeline. `brainstorming` gains a **failure-mode pass**: any approach that puts an unreliable component (an LLM at a generation boundary, a heuristic trusted to hold a structural invariant) on a load-bearing seam gets checked for how it degenerates under real load — the fix is to make the structure deterministic and move the unreliable part off the boundary, not to fence it with post-hoc patches. `executing-plans` gains a **circuit-breaker** (and a matching Red Flag): a second compensating patch, churn on the same contract, or each milestone needing more scaffolding than the last means the design is wrong, not the milestone hard — STOP and re-open it instead of patching. Together they catch the failure at design time and again mid-build, long before the end-of-feature review is too late to unwind it.
+
 ## v0.5.0 (2026-07-07)
 
 A comprehensive review of the skill set (all 11 skills, the reviewer prompt, and `docs/DESIGN.md`) surfaced five workflow-breaking bugs, a set of coverage gaps, and drift between the design doc and the shipped skills. This release fixes all of it.
