@@ -126,6 +126,16 @@ Invoke **milestone-commits**, then write one commit for the entire milestone (fe
 
 ### Repeat for each milestone.
 
+## Circuit-breaker: the design might be wrong
+
+The milestone loop assumes the design is sound and your job is to build it. On a hard problem that assumption can fail *mid-build* — and every local instinct here (fix-in-place, boy-scout, defer to followups) will quietly push you to **patch around a broken design** instead of stopping. Watch for the tremors:
+
+- You're adding a **compensating patch** — a mutator / guard / coercion whose only job is to force the design to behave — **especially the second one.** One is a fix; a pile is a smell.
+- The **plan's contract or interface has churned** — you've revised the same seam two or three times.
+- You're **fighting the plan** — each milestone needs more scaffolding than the last to hold together.
+
+These mean *the design is wrong*, not *this milestone is hard*. **STOP — do not keep patching.** Surface what you've learned to the user and go back to the design (re-open brainstorming for the affected seam). Ten accreted patches shipped as "done" is the failure this catches, and the tremors are visible long before the end-of-feature review — which is far too late to unwind a wrong abstraction.
+
 ## Findings: Tier 1 (in-session) and Tier 2 (followups.md)
 
 Findings come in two flavours:
@@ -191,3 +201,4 @@ Required output from any dispatched subagent: a `## Findings` block with `Change
 | "I'll re-run the reviewer until it's perfect" | One pass, fix, move on. |
 | "I'll skip the verification because tests passed locally last time" | Run **verifying-before-done** every time. No exceptions. |
 | "It's pre-existing, my change didn't introduce it" | Boy-scout rule. Pre-existing ≠ out-of-scope. |
+| "I'll just add one more guard to make it behave" | Compensating patches accrete into a broken design. The **2nd** one means STOP — re-open the design (see Circuit-breaker), don't keep patching. |

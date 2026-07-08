@@ -77,6 +77,7 @@ The terminal state is invoking **writing-plans**. Do NOT invoke executing-plans,
 - 2–3 distinct approaches with their trade-offs
 - Lead with your recommendation and the reason for it
 - Conversational, not a comparison matrix
+- **Run the failure-mode pass on any approach that puts an *unreliable component* on a load-bearing seam** — an LLM at a generation/sampling boundary, a heuristic that must hold a global/structural property, anything that can't *guarantee* the invariant it's trusted with. How does it degenerate under real load, and what's the deterministic alternative? If holding it together would need post-hoc patches to force the behaviour, it's the wrong abstraction — move the unreliable part **off** the structural boundary (make structure deterministic; use the model only for bounded content-fill in a known shape). "Free composition fenced by invariants" is the classic trap: the fence becomes ten patches.
 
 ## How to present the design
 
