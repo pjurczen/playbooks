@@ -64,10 +64,20 @@ For each target file:
 
 1. **Read it.** Separate durable from ephemeral (see the bar below).
 2. **Route each durable item** to the destination the map names. If an item has no home, **ask the user** — extend the map, or pick a doc. Never invent a destination; never drop it silently.
-3. **Write** the durable content into the destination doc, following that doc's conventions (ADR format, changelog style, …).
+3. **Write** the durable content into the destination doc, following that doc's conventions (ADR format, changelog style, …). Rewrite any reference to a design/plan file as you write — inline what it points at, or point to the content's new home. The husk is about to be deleted; a link to it is a link to nothing.
 4. **Delete the husk** — only now, after its content has landed.
 
-Then commit (see below).
+Then verify and commit (see below).
+
+## Verify — no dangling references
+
+Before committing, prove nothing still points at the husks:
+
+```bash
+git grep -n "docs/playbooks/" -- ':(exclude)docs/playbooks'
+```
+
+Also grep for each deleted file's basename — references don't always use the full path. Any hit that names a specific design or plan file is a dangling reference: inline the content or repoint the link to its new home, then re-run. Mentions of the workspace convention itself (e.g. CLAUDE.md explaining where plans live) are fine.
 
 ## Scope by entry point
 
@@ -93,4 +103,5 @@ One commit for the whole operation — destination-doc updates **and** husk dele
 | "There's no map, I'll just put it somewhere sensible" | Guessed destinations rot. Bootstrap the map or ask. |
 | "This decision has no obvious home, I'll drop it" | Surface it. Homeless durable knowledge means the map is incomplete. |
 | "The whole design doc is durable — I'll copy it wholesale" | Then you've moved a husk, not consolidated. Extract decisions, not dialogue. |
+| "The destination doc says 'see the design doc for details'" | That file dies in this commit. Inline the details or link the new home. |
 | "Keep/discard, but I'll consolidate anyway" | Nothing is landing. Skip. |
