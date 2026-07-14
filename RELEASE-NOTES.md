@@ -1,5 +1,11 @@
 # Playbooks Release Notes
 
+## v0.6.1 (2026-07-14)
+
+### `consolidating-docs` — no dangling references to deleted husks
+
+Consolidation was leaving links to the very files it deletes: durable content graduated into destination docs still saying "see `docs/playbooks/designs/…`" while that file died in the same commit. The skill now guards this at three points. The consolidation loop's write step requires rewriting any design/plan reference on the spot — inline what it points at or link the content's new home. A new **Verify** gate before the commit makes the check mechanical: since everything under `docs/playbooks/` is ephemeral by design, `git grep "docs/playbooks/" -- ':(exclude)docs/playbooks'` plus a grep for each deleted file's basename must come back clean of specific-file references (mentions of the workspace convention itself are fine) — which also catches pre-existing docs that pointed at a husk before the run. A matching Red Flags row covers the "see the design doc for details" tell.
+
 ## v0.6.0 (2026-07-08)
 
 ### Catch designs that degenerate under load
