@@ -84,8 +84,8 @@ The bar is **clearly applies**, not *might apply if I squint*. If you have to ar
 ## The library
 
 **Process** (how to approach the work):
-- **brainstorming** — turn an idea into a design through clarifying questions and proposed approaches.
-- **writing-plans** — turn an approved design into an intent-shaped implementation plan.
+- **brainstorming** — turn an idea into a design through clarifying questions and proposed approaches: a narrative, one diagram, the contracts.
+- **writing-plans** — turn an approved design into an exact implementation plan that stands on the design instead of restating it.
 - **executing-plans** — work the plan in the main session, milestone by milestone, with self-checkpoints, a refactor pass, and an end-of-feature review.
 - **debugging** — reproduce, state the root cause with evidence, pin it with a red-first regression test, then fix.
 - **finishing-branch** — verify tests, then present a fixed menu (merge / PR / keep / discard).

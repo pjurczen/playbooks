@@ -11,7 +11,7 @@ Implement the plan in the main session, milestone by milestone. Default executio
 
 ## Before you start
 
-1. Read the plan file once. Extract: the goal, the decomposition, the behaviours to verify, the full list of milestones with their done-when criteria.
+1. Read the plan file once. Extract: the goal, the changes and call-site tables, the behaviours to verify, the full list of milestones with their done-when criteria. Read the design it links for the contracts and guarantees.
 2. Re-read it critically. Any milestone unclear? Any missing dependency? Any behaviour you can't see how to verify? Raise it with the user before any code is written.
 3. Confirm the workspace chosen during brainstorming (branch, path, and the recorded `BASE_SHA` from the using-git-worktrees report). Invoke **using-git-worktrees** now only if there is no workspace yet — e.g. the user brought their own plan and skipped the earlier pipeline stages.
 4. Create one TODO entry per milestone for tracking.

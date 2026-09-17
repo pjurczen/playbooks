@@ -93,8 +93,8 @@ Also grep for each deleted file's basename — references don't always use the f
 
 ## Scope by entry point
 
-- **Per-feature (finishing-branch):** the design and plan files for the feature being landed — those added on this branch under `docs/playbooks/designs/` and `plans/`. Identify them with `git diff --name-only <base>..HEAD`, where `<base>` is the branch point finishing-branch establishes in its Step 3. (This works because the workspace is chosen during brainstorming, before the design doc is committed — the feature's design/plan commits are always inside `<base>..HEAD`.)
-- **Sweep (manual):** every file under `docs/playbooks/designs/` and `plans/`. Summarize what you intend to consolidate and where *before* touching anything, then work file by file.
+- **Per-feature (finishing-branch):** the design and plan files for the feature being landed — those added on this branch under `docs/playbooks/designs/` and `plans/`. Identify them with `git diff --name-only <base>..HEAD`, where `<base>` is the branch point finishing-branch establishes in its Step 3. (This works because the workspace is chosen during brainstorming, before the design doc is committed — the feature's design/plan commits are always inside `<base>..HEAD`.) Never `docs/playbooks/initiatives/` — an initiative outlives its slices.
+- **Sweep (manual):** every file under `docs/playbooks/designs/` and `plans/`. Summarize what you intend to consolidate and where *before* touching anything, then work file by file. For `docs/playbooks/initiatives/`: ask whether every slice in the initiative's table has landed. Only then graduate its Shape and Contracts into the architecture doc the map names and delete it; otherwise leave it untouched.
 
 ## Durable vs ephemeral
 
@@ -119,3 +119,4 @@ One commit for the whole operation — destination-doc updates **and** husk dele
 | "The destination doc says 'see the design doc for details'" | That file dies in this commit. Inline the details or link the new home. |
 | "Keep/discard, but I'll consolidate anyway" | Nothing is landing. Skip. |
 | "Each decision in the design doc gets its own ADR" | One per feature is the norm, written at brainstorming. Below the bar → a sentence in the architecture doc. |
+| "The initiative design is old, it must be a husk" | It's a husk only when its last slice has landed. Ask. |
