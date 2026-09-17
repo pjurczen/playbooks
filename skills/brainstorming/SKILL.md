@@ -13,6 +13,10 @@ Turn an idea into a fully formed design through natural dialogue. Ask questions 
 Do NOT invoke writing-plans, write any code, scaffold any project, or take any implementation action until you have presented a design and the user has approved it. This applies to EVERY project regardless of perceived simplicity.
 </HARD-GATE>
 
+<HARD-GATE>
+The design doc carries contracts, not bodies: the public signatures it introduces or changes, with their semantics — never method bodies, private members, fields or boilerplate. It has two readers. A teammate who has never opened the codebase must be able to follow Problem → Approach → Shape. The implementer — possibly a smaller model in another session — must find nothing to guess in Contracts and Guarantees plus the plan. Shape and rules: `design-doc.md` beside this skill.
+</HARD-GATE>
+
 ## Anti-pattern: "this is too simple to need a design"
 
 Every project that enters this skill goes through the full process. A todo list, a single-function utility, a config change — all of them. "Simple" projects are where unexamined assumptions cause the most wasted work. The design can be short (a few sentences for truly simple things), but you MUST present it and get approval.
@@ -23,13 +27,13 @@ Every project that enters this skill goes through the full process. A todo list,
 
 Track these as todos and complete them in order:
 
-1. **Explore project context** — files, recent commits, `docs/followups.md` if it exists (any open followups intersect with this work? fold them in if so), and existing ADRs in the repo's ADR home (per `.claude/documentation.md`) — they constrain the design; reversing one is a supersede, not a quiet contradiction. Not a git repo yet? Offer `git init` (ask first) — the pipeline commits its artifacts.
+1. **Explore project context** — files, recent commits, `docs/followups.md` if it exists (any open followups intersect with this work? fold them in if so), and existing ADRs in the repo's ADR home (per `.claude/documentation.md`) — they constrain the design; reversing one is a supersede, not a quiet contradiction — and `docs/playbooks/initiatives/`: if this work is a slice of one, link it; if every slice in its table has landed, offer to consolidate it. Not a git repo yet? Offer `git init` (ask first) — the pipeline commits its artifacts.
 2. **Ask clarifying questions** — one at a time; focus on purpose, constraints, success criteria
 3. **Propose 2–3 approaches** — with trade-offs and your recommendation
 4. **Present the design in sections** — get user approval after each section
 5. **Choose workspace** — invoke **using-git-worktrees**. This happens *before* anything is committed, so the design doc, the plan, and the implementation all land on the feature branch — that's what lets finishing-branch and consolidating-docs find and clean them up later. It waits until after design approval so abandoned brainstorms leave no orphan branches.
 6. **Record the decision (if any)** — apply **writing-adr**'s bar (constrains future work, hard to reverse, there was a real choice) to the approach the user picked. Clears it → invoke **writing-adr**; the ADR is `proposed` and commits alongside the design doc. Most features don't clear it — no ADR is the normal outcome.
-7. **Write design doc** — save to `docs/playbooks/designs/YYYY-MM-DD-<topic>.md` and commit
+7. **Write design doc** — in the shape `design-doc.md` gives (worked example: `example-design.md`); save to `docs/playbooks/designs/YYYY-MM-DD-<topic>.md` and commit
 8. **Self-review the doc** — placeholders, contradictions, ambiguity, scope (see below)
 9. **Ask the user to review the written doc** — wait for explicit approval
 10. **Transition to writing-plans** — invoke that skill; do not invoke any other implementation skill
@@ -73,7 +77,7 @@ The terminal state is invoking **writing-plans**. Do NOT invoke executing-plans,
 ## How to ask
 
 - Check the project state first (files, recent commits, followups.md)
-- If the request describes multiple independent subsystems ("a platform with chat, file storage, billing, and analytics"), flag this immediately and help the user decompose into sub-projects. Each sub-project gets its own design → plan → implementation cycle. Don't spend questions refining details of a project that needs to be split first.
+- If the request describes multiple independent subsystems ("a platform with chat, file storage, billing, and analytics"), flag this immediately and help the user decompose into sub-projects. Each sub-project gets its own design → plan → implementation cycle. Don't spend questions refining details of a project that needs to be split first. When the slices share a target architecture, write an **initiative design** first (`design-doc.md`, *Initiative designs*) — the shared shape, contracts and slice order — then brainstorm slice 1 as a normal feature whose design links it. Work that fits one cycle gets no initiative; most work doesn't need one.
 - For appropriately-scoped work, ask one question at a time
 - Prefer multiple-choice when possible; open-ended is fine when needed
 - Focus on purpose, constraints, success criteria — not implementation details
@@ -91,7 +95,7 @@ The terminal state is invoking **writing-plans**. Do NOT invoke executing-plans,
 - Once you understand what you're building, present the design in sections
 - Scale each section to its complexity — a few sentences for straightforward parts, up to 200–300 words for nuanced ones
 - After each section, ask "looks right so far?"
-- Cover: **approach chosen and why** (2–4 lines naming the approach and the reason it beat the others; when an ADR exists, one line plus a link — don't restate it), then architecture, components, data flow, error handling, testing approach
+- The sections you present are the sections you write, in order: Problem → Approach (with the alternatives it beat; one line + link when an ADR exists) → Shape (one diagram, the components) → Contracts → Guarantees → Risks → Out of scope. Rules per section in `design-doc.md`.
 - Be ready to back up and clarify if something doesn't make sense
 
 ## Design for isolation and clarity
@@ -115,6 +119,11 @@ Look at the design doc with fresh eyes:
 2. **Internal consistency** — do sections contradict each other? Does the architecture match the feature descriptions?
 3. **Scope check** — is this focused enough for a single implementation plan, or does it need decomposition?
 4. **Ambiguity check** — could any requirement be interpreted two ways? Pick one and make it explicit.
+5. **Body scan** — any fenced block that isn't `mermaid` or a signature-only contract? Cut it to the contract.
+6. **Stranger test** — could a teammate who has never opened the codebase follow Problem → Approach → Shape? A sentence that needs three identifiers to parse gets rewritten at component level.
+7. **Diagram check** — does it answer the question named before it, in ≤ 12 nodes with name-only labels?
+8. **Contracts check** — every type the Shape marks new or changed has its signature in Contracts; Guarantees are numbered.
+9. **Accuracy check** — for anything you're tempted to cut: would cutting it lose accuracy for the implementer? If not, cut. If so, keep.
 
 Fix issues inline. No need to re-review — just fix and move on.
 
@@ -137,3 +146,15 @@ The circuit-breaker in executing-plans sends a wrong seam back here. Work only t
 - **Always 2–3 approaches** — never present a single take as the only option
 - **Incremental approval** — present, approve, advance
 - **Be flexible** — back up and clarify when something doesn't add up
+
+## Red Flags — STOP
+
+| Thought | Reality |
+|---------|---------|
+| "I'll paste the class so the implementer can't get it wrong" | Paste the signature. The body is theirs; in a design it rots. |
+| "Context needs the call chain so readers understand" | Readers need the problem. Call chains are conversation residue. |
+| "The finding corrected an earlier hypothesis, worth recording" | It becomes a scenario in the plan, not a paragraph. |
+| "I'll add a future-optimizations section" | YAGNI. A property → Guarantees; an idea → `docs/followups.md`. |
+| "The slice diverged from the initiative, I'll add a callout" | Edit the initiative; it's a working doc. The ADR is the record. |
+| "Shorter is better, I'll drop the contracts" | Shorter is not the goal. Complete at the right altitude is. |
+| "Every feature needs an initiative doc" | Only work that won't fit one cycle. Most doesn't. |
