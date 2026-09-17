@@ -27,10 +27,10 @@ docs/                          — design rationale and reference notes
 
 ## Conventions for produced artifacts
 
-This is the actual differentiator from superpowers. The artifacts the *user* reads (design docs, plans) must be readable end-to-end in 2–3 minutes:
+This is the actual differentiator from superpowers. The artifacts the *user* reads (design docs, plans) have two readers: a teammate who follows the narrative without the codebase, and an implementer — possibly a smaller model — who must find nothing to guess. Structure and altitude, not length, are the bar:
 
-- Plans are intent-shaped (components, behaviours, milestones, risks) — no pre-written test code, no per-step commit messages.
-- Design docs are sectioned and scaled to the topic's complexity.
+- Design docs have a fixed shape: Problem, Approach (with alternatives), Shape (one mermaid diagram), Contracts, Guarantees, Risks, Out of scope. The narrative layer reads in 2–3 minutes; Contracts carry public signatures with semantics — never bodies.
+- Plans are exact work maps — a changes table by class and method, call-site from → to, scenarios tied to the design's Guarantees, milestones — and never restate the design. No test code, no bodies, no per-step commit messages.
 - Commit messages follow Conventional Commits and describe the *why* of the slice, not a play-by-play of files.
 - ADRs are 2-minute reads at design altitude — no code, no symbols, alternatives named. Written when the decision is made (brainstorming), not when the feature lands.
 

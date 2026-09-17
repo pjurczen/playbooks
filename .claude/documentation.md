@@ -10,7 +10,7 @@ How documentation is maintained in this repo. Consult this before adding, moving
 - `CLAUDE.md` — conventions for agents editing this plugin.
 - `RELEASE-NOTES.md` — user-facing changes per release.
 - `docs/followups.md` — durable, cross-feature backlog (created on first use).
-- `docs/playbooks/designs/`, `docs/playbooks/plans/` — ephemeral working artifacts; consolidated into the docs above and deleted when work lands.
+- `docs/playbooks/designs/`, `docs/playbooks/plans/` — ephemeral working artifacts; consolidated into the docs above and deleted when work lands. `docs/playbooks/initiatives/` — the shared shape for multi-slice work; consolidated only when its last slice lands.
 
 ## Routing — where durable knowledge goes
 
@@ -25,4 +25,4 @@ How documentation is maintained in this repo. Consult this before adding, moving
 - Skill files: YAML frontmatter (`name` matches the directory), senior-dev tone, ~150-line soft target, always a "when to skip" carve-out.
 - `docs/DESIGN.md` is historical; record later decisions as dated addenda rather than editing the original sections.
 - Commits follow Conventional Commits 1.0.0 (see `skills/milestone-commits/SKILL.md`).
-- Artifacts a user reads (README, design docs, plans) must be readable end-to-end in 2–3 minutes.
+- Artifacts a user reads (README, design docs, plans): the narrative layer reads in 2–3 minutes; the precision layer (contracts, plan) is complete enough for a less capable implementer. Structure and altitude, not length.
