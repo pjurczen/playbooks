@@ -35,7 +35,7 @@ Once loaded, the `SessionStart` hook fires on session start / clear / compact an
 
 **Process** (how to approach the work):
 - `brainstorming` — design dialogue → committed design doc: a narrative a teammate can follow, one mermaid diagram, the contracts the implementer must match
-- `writing-plans` — design → exact implementation plan a smaller model can execute; stands on the design, never restates it
+- `writing-plans` — design → exact implementation plan an implementer in another session can execute; stands on the design, never restates it
 - `executing-plans` — main-session milestone loop with self-checkpoints, refactor pass, end-of-feature review
 - `debugging` — root cause with evidence before any fix, pinned by a red-first regression test
 - `finishing-branch` — verify tests, then merge / PR / keep / discard

@@ -27,7 +27,7 @@ docs/                          — design rationale and reference notes
 
 ## Conventions for produced artifacts
 
-This is the actual differentiator from superpowers. The artifacts the *user* reads (design docs, plans) have two readers: a teammate who follows the narrative without the codebase, and an implementer — possibly a smaller model — who must find nothing to guess. Structure and altitude, not length, are the bar:
+This is the actual differentiator from superpowers. The artifacts the *user* reads (design docs, plans) have two readers: a teammate who follows the narrative without the codebase, and an implementer in another session — Opus-class by default — who must find nothing to guess. Structure and altitude, not length, are the bar:
 
 - Design docs have a fixed shape: Problem, Approach (with alternatives), Shape (one mermaid diagram), Contracts, Guarantees, Risks, Out of scope. The narrative layer reads in 2–3 minutes; Contracts carry public signatures with semantics — never bodies.
 - Plans are exact work maps — a changes table by class and method, call-site from → to, scenarios tied to the design's Guarantees, milestones — and never restate the design. No test code, no bodies, no per-step commit messages.
