@@ -76,11 +76,12 @@ def build_report(names: list[str], cache: ReportCache, fresh: bool = False) -> s
 3. When a fresh report is requested, then every source is re-read from disk exactly once and every summary is recomputed.
 4. When a source is re-read, then the summary built from it is recomputed before the report uses it.
 5. When the process restarts within the source TTL, then sources are served from disk without a data read.
-6. Must not change: report output format, CLI flags, and the three existing behavioural tests.
+6. Must not change: report output format, CLI flags, and the behaviour the three existing tests assert — their fixture wiring may be re-pointed at the new cache, their assertions may not.
 
 ## Assumptions
 
 - A single TTL per key class (sources, summaries) is enough; no caller needs per-call TTL.
+- The summary TTL is never longer than the source TTL; guarantee 4 depends on it.
 
 ## Open questions
 

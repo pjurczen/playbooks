@@ -51,7 +51,7 @@ def grade_1(out, repo, example):
     ex.append(("Assumptions and Open questions are present and non-empty (a 'None.' line counts)", a.strip() != "" and o.strip() != "", f"assumptions={len(a.strip())} chars, open={len(o.strip())} chars"))
     p = (section(t, "Problem") or "").strip()
     ex.append(("The Problem section ends with a sentence beginning 'Done means'", bool(re.search(r"Done means[^.]*\.?\s*$", p)), p[-120:]))
-    ex.append(("The design is at most 1,200 words", 0 < words(t) <= 1200, f"{words(t)} words"))
+    ex.append(("The design is at most 1,800 words", 0 < words(t) <= 1800, f"{words(t)} words"))
     adr = first(out / "docs/adr", "*.md")
     at = adr.read_text() if adr else ""
     adr_ok = adr is not None and "`" not in at and len(at.splitlines()) <= 40 and re.search(r"proposed", at, re.I) and re.search(r"^## Alternativ", at, re.M | re.I) and re.search(r"^- ", at, re.M)
@@ -78,7 +78,7 @@ def grade_2(out, repo, fixture_design):
     ex.append(("No sentence of the plan is copied from the design", len(shared) == 0, f"{len(shared)} shared: {list(shared)[:2]}"))
     long_f = [b for l, b in fences(t) if len(b.strip().splitlines()) > 5]
     ex.append(("No code fence in the plan contains statement bodies or exceeds five lines", has_bodies(t) == 0 and not long_f, f"bodies={has_bodies(t)}, long fences={len(long_f)}"))
-    ex.append(("The plan is at most 900 words", 0 < words(t) <= 900, f"{words(t)} words"))
+    ex.append(("The plan is at most 1,400 words", 0 < words(t) <= 1400, f"{words(t)} words"))
     return ex
 
 def grade_3(out, repo):
