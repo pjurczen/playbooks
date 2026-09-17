@@ -13,6 +13,7 @@ You are reviewing a completed feature implementation.
 
 - **Design doc:** `<DESIGN_DOC_PATH>`
 - **Plan:** `<PLAN_PATH>`
+- **ADR (if any):** `<ADR_PATH>` — a `proposed` ADR added on this branch
 - **Feature diff:** the changes between `<BASE_SHA>` and `<HEAD_SHA>` (run `git diff <BASE_SHA>..<HEAD_SHA>` to see it)
 - **In-session Findings block from the implementer:**
 
@@ -32,6 +33,7 @@ Do NOT trust the implementer's narrative. Read the actual code.
 - Does the implementation match the design's architecture and components?
 - Are all behaviours from the design covered?
 - Was anything added that wasn't in the design? (Scope creep.)
+- If the branch adds a `proposed` ADR: is its Decision still true of the code? Name any drift — consolidating-docs reconciles the ADR from your answer.
 
 **Plan alignment**
 - Does each milestone correspond to code/commits that deliver the done-when criteria?

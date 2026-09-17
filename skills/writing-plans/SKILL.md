@@ -27,6 +27,7 @@ Before defining the plan:
 
 1. Does the approved design cover a single coherent feature? If it sprawls across multiple independent subsystems, send it back to brainstorming for decomposition. Each sub-feature gets its own design → plan → implementation cycle.
 2. Read `docs/followups.md` if it exists. Any open followups intersect with this work? If so, fold them in *explicitly* — as their own milestones or as part of existing ones. Don't quietly extend scope.
+3. Entered here without brainstorming (the user brought an approved design)? Apply **writing-adr**'s bar to the design's approach. If it clears and no ADR exists on the branch, invoke **writing-adr** from the design doc before planning — the decision is still fresh here; at landing it won't be.
 
 ## The plan shape
 

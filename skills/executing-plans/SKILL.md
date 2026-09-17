@@ -134,7 +134,7 @@ The milestone loop assumes the design is sound and your job is to build it. On a
 - The **plan's contract or interface has churned** — you've revised the same seam two or three times.
 - You're **fighting the plan** — each milestone needs more scaffolding than the last to hold together.
 
-These mean *the design is wrong*, not *this milestone is hard*. **STOP — do not keep patching.** Surface what you've learned to the user and go back to the design (re-open brainstorming for the affected seam). Ten accreted patches shipped as "done" is the failure this catches, and the tremors are visible long before the end-of-feature review — which is far too late to unwind a wrong abstraction.
+These mean *the design is wrong*, not *this milestone is hard*. **STOP — do not keep patching.** Surface what you've learned to the user and go back to the design (re-open brainstorming for the affected seam; if a `proposed` ADR exists, it is revised there, in place — never a second ADR). Ten accreted patches shipped as "done" is the failure this catches, and the tremors are visible long before the end-of-feature review — which is far too late to unwind a wrong abstraction.
 
 ## Findings: Tier 1 (in-session) and Tier 2 (followups.md)
 

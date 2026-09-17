@@ -52,6 +52,7 @@ digraph invoke_check {
 | About to claim "done" / "fixed" / "passing" / "complete" | **verifying-before-done** |
 | Finishing a feature branch (merge / PR / cleanup) | **finishing-branch** |
 | Cleaning up accumulated design / plan docs into real documentation | **consolidating-docs** |
+| Recording an architectural decision the user names ("ADR this", "write down why we chose X") | **writing-adr** |
 | 2+ genuinely independent investigations runnable in parallel | **using-parallel-agents** |
 
 The creative-work pipeline is **brainstorming → writing-plans → executing-plans**, in that order. Do not skip brainstorming and start writing code. Do not skip writing-plans and start executing.
@@ -89,6 +90,7 @@ The bar is **clearly applies**, not *might apply if I squint*. If you have to ar
 - **debugging** — reproduce, state the root cause with evidence, pin it with a red-first regression test, then fix.
 - **finishing-branch** — verify tests, then present a fixed menu (merge / PR / keep / discard).
 - **consolidating-docs** — graduate durable decisions from design/plan files into the repo's real docs, then delete the husks. Fired by finishing-branch when landing work; also invocable to sweep the backlog.
+- **writing-adr** — one short Nygard-style ADR at design altitude, when a choice clears the significance bar. Fired from brainstorming after design approval; promoted to accepted by consolidating-docs on landing.
 
 **Implementation** (how to do the work):
 - **using-git-worktrees** — pick a workspace mode (default: new worktree on a new feature branch). Fired from brainstorming after design approval, before anything is committed.

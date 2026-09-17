@@ -23,15 +23,16 @@ Every project that enters this skill goes through the full process. A todo list,
 
 Track these as todos and complete them in order:
 
-1. **Explore project context** — files, recent commits, and `docs/followups.md` if it exists (any open followups intersect with this work? fold them in if so). Not a git repo yet? Offer `git init` (ask first) — the pipeline commits its artifacts.
+1. **Explore project context** — files, recent commits, `docs/followups.md` if it exists (any open followups intersect with this work? fold them in if so), and existing ADRs in the repo's ADR home (per `.claude/documentation.md`) — they constrain the design; reversing one is a supersede, not a quiet contradiction. Not a git repo yet? Offer `git init` (ask first) — the pipeline commits its artifacts.
 2. **Ask clarifying questions** — one at a time; focus on purpose, constraints, success criteria
 3. **Propose 2–3 approaches** — with trade-offs and your recommendation
 4. **Present the design in sections** — get user approval after each section
 5. **Choose workspace** — invoke **using-git-worktrees**. This happens *before* anything is committed, so the design doc, the plan, and the implementation all land on the feature branch — that's what lets finishing-branch and consolidating-docs find and clean them up later. It waits until after design approval so abandoned brainstorms leave no orphan branches.
-6. **Write design doc** — save to `docs/playbooks/designs/YYYY-MM-DD-<topic>.md` and commit
-7. **Self-review the doc** — placeholders, contradictions, ambiguity, scope (see below)
-8. **Ask the user to review the written doc** — wait for explicit approval
-9. **Transition to writing-plans** — invoke that skill; do not invoke any other implementation skill
+6. **Record the decision (if any)** — apply **writing-adr**'s bar (constrains future work, hard to reverse, there was a real choice) to the approach the user picked. Clears it → invoke **writing-adr**; the ADR is `proposed` and commits alongside the design doc. Most features don't clear it — no ADR is the normal outcome.
+7. **Write design doc** — save to `docs/playbooks/designs/YYYY-MM-DD-<topic>.md` and commit
+8. **Self-review the doc** — placeholders, contradictions, ambiguity, scope (see below)
+9. **Ask the user to review the written doc** — wait for explicit approval
+10. **Transition to writing-plans** — invoke that skill; do not invoke any other implementation skill
 
 ## Decision flow
 
@@ -43,6 +44,8 @@ digraph brainstorming {
     "Present design sections" [shape=box];
     "User approves design?" [shape=diamond];
     "Choose workspace (using-git-worktrees)" [shape=box];
+    "Clears the ADR bar?" [shape=diamond];
+    "Write ADR (writing-adr)" [shape=box];
     "Write design doc" [shape=box];
     "Self-review doc" [shape=box];
     "User reviews written doc?" [shape=diamond];
@@ -54,7 +57,10 @@ digraph brainstorming {
     "Present design sections" -> "User approves design?";
     "User approves design?" -> "Present design sections" [label="no, revise"];
     "User approves design?" -> "Choose workspace (using-git-worktrees)" [label="yes"];
-    "Choose workspace (using-git-worktrees)" -> "Write design doc";
+    "Choose workspace (using-git-worktrees)" -> "Clears the ADR bar?";
+    "Clears the ADR bar?" -> "Write ADR (writing-adr)" [label="yes"];
+    "Clears the ADR bar?" -> "Write design doc" [label="no (most features)"];
+    "Write ADR (writing-adr)" -> "Write design doc";
     "Write design doc" -> "Self-review doc";
     "Self-review doc" -> "User reviews written doc?";
     "User reviews written doc?" -> "Write design doc" [label="changes requested"];
@@ -85,7 +91,7 @@ The terminal state is invoking **writing-plans**. Do NOT invoke executing-plans,
 - Once you understand what you're building, present the design in sections
 - Scale each section to its complexity — a few sentences for straightforward parts, up to 200–300 words for nuanced ones
 - After each section, ask "looks right so far?"
-- Cover: architecture, components, data flow, error handling, testing approach
+- Cover: **approach chosen and why** (2–4 lines naming the approach and the reason it beat the others; when an ADR exists, one line plus a link — don't restate it), then architecture, components, data flow, error handling, testing approach
 - Be ready to back up and clarify if something doesn't make sense
 
 ## Design for isolation and clarity
@@ -116,9 +122,13 @@ Fix issues inline. No need to re-review — just fix and move on.
 
 After the self-review:
 
-> "Design written and committed to `<path>`. Please review it and let me know if you want any changes before we move to writing-plans."
+> "Design written and committed to `<path>`[, ADR at `<adr-path>`]. Please review it and let me know if you want any changes before we move to writing-plans."
 
-Wait for explicit approval. If the user requests changes, make them and re-run the self-review.
+Wait for explicit approval. If the user requests changes, make them and re-run the self-review. The ADR, if one was written, is reviewed at this same gate — there is no separate confirmation step for it.
+
+## Re-entering from executing-plans
+
+The circuit-breaker in executing-plans sends a wrong seam back here. Work only that seam: don't re-run the workspace choice, and revise the existing `proposed` ADR in place if the decision changed — never a second ADR for the same feature. Update the design doc, re-review it at the gate, and amend the plan to match before execution resumes.
 
 ## Key principles
 
