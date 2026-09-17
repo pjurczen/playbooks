@@ -12,7 +12,7 @@ Implement the plan in the main session, milestone by milestone. Default executio
 ## Before you start
 
 1. Read the plan file once. Extract: the goal, the changes and call-site tables, the behaviours to verify, the full list of milestones with their done-when criteria. Read the design it links for the contracts and guarantees.
-2. Re-read it critically. Any milestone unclear? Any missing dependency? Any behaviour you can't see how to verify? Raise it with the user before any code is written.
+2. Re-read it critically. Any milestone unclear? Any missing dependency? Any behaviour you can't see how to verify? Raise it with the user before any code is written. The plan's *Stop and ask if* list stays binding throughout: when a condition hits mid-milestone, stop and ask — don't pick an interpretation and build on it.
 3. Confirm the workspace chosen during brainstorming (branch, path, and the recorded `BASE_SHA` from the using-git-worktrees report). Invoke **using-git-worktrees** now only if there is no workspace yet — e.g. the user brought their own plan and skipped the earlier pipeline stages.
 4. Create one TODO entry per milestone for tracking.
 
@@ -96,6 +96,7 @@ Re-read the milestone goal from the plan. Look at the diff for *only this milest
 - **Anything surprising worth noting?** Discovered helper, unexpected coupling, sharp edge?
 
 If something's off: fix in place before continuing.
+If the code had to differ from the design's Contracts or Shape: edit the design so it stays true and add one `Deviation:` line under its Approach — the end-of-feature reviewer compares against the design as written.
 If something's a note for later: add it to your in-session `## Findings` block (see "Findings" below).
 
 "Added X but didn't wire it up at the call sites the plan named" is incomplete milestone work, not a finding — fix it now.

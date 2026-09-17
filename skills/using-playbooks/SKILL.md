@@ -64,7 +64,7 @@ The creative-work pipeline is **brainstorming → writing-plans → executing-pl
 Do *not* invoke a skill for:
 - **Clarifying / informational questions** — "what does this function do?", "where is X defined?"
 - **Small read-only exploration** — listing a directory, reading a file, grepping for a symbol
-- **One-off tweaks that don't match any skill** — renaming a local variable, fixing a typo, adjusting a constant
+- **One-off tweaks that don't match any skill** — renaming a local variable, fixing a typo, adjusting a constant, or any change you can describe in one sentence and verify with one command. A design and a plan for that would take longer to review than the change takes to build and try.
 - **Continuing inside a skill that's already running** — sub-skills are referenced by the active skill; you don't need to re-invoke from the top
 
 The bar is **clearly applies**, not *might apply if I squint*. If you have to argue for it, the skill probably doesn't apply — but if you're arguing *against* it, that's a Red Flag (see below).

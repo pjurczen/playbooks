@@ -14,14 +14,14 @@ Do NOT invoke writing-plans, write any code, scaffold any project, or take any i
 </HARD-GATE>
 
 <HARD-GATE>
-The design doc carries contracts, not bodies: the public signatures it introduces or changes, with their semantics — never method bodies, private members, fields or boilerplate. It has two readers. A teammate who has never opened the codebase must be able to follow Problem → Approach → Shape. The implementer — possibly a smaller model in another session — must find nothing to guess in Contracts and Guarantees plus the plan. Shape and rules: `design-doc.md` beside this skill.
+The design doc carries contracts, not bodies: the public signatures it introduces or changes, with their semantics — never method bodies, private members, fields or boilerplate. It has two readers. A teammate who has never opened the codebase must be able to follow Problem → Approach → Shape. The implementer — in another session, with none of this conversation — must find nothing to guess in Contracts and Guarantees plus the plan. Shape and rules: `design-doc.md` beside this skill.
 </HARD-GATE>
 
 ## Anti-pattern: "this is too simple to need a design"
 
 Every project that enters this skill goes through the full process. A todo list, a single-function utility, a config change — all of them. "Simple" projects are where unexamined assumptions cause the most wasted work. The design can be short (a few sentences for truly simple things), but you MUST present it and get approval.
 
-(Truly trivial one-off tweaks — a typo, a renamed local, an adjusted constant — never enter brainstorming at all; that's using-playbooks' skip list. But once you're here, don't skip the design.)
+(Truly trivial changes — a typo, a renamed local, an adjusted constant, anything you can describe in one sentence and verify with one command — never enter brainstorming at all; that's using-playbooks' skip list. But once you're here, don't skip the design.)
 
 ## Checklist
 
@@ -95,7 +95,7 @@ The terminal state is invoking **writing-plans**. Do NOT invoke executing-plans,
 - Once you understand what you're building, present the design in sections
 - Scale each section to its complexity — a few sentences for straightforward parts, up to 200–300 words for nuanced ones
 - After each section, ask "looks right so far?"
-- The sections you present are the sections you write, in order: Problem → Approach (with the alternatives it beat; one line + link when an ADR exists) → Shape (one diagram, the components) → Contracts → Guarantees → Risks → Out of scope. Rules per section in `design-doc.md`.
+- The sections you present are the sections you write, in order: Problem → Approach (with the alternatives it beat; one line + link when an ADR exists) → Shape (one diagram, the components) → Contracts → Guarantees → Assumptions → Open questions → Risks → Out of scope. Rules per section in `design-doc.md`.
 - Be ready to back up and clarify if something doesn't make sense
 
 ## Design for isolation and clarity
@@ -122,8 +122,10 @@ Look at the design doc with fresh eyes:
 5. **Body scan** — any fenced block that isn't `mermaid` or a signature-only contract? Cut it to the contract.
 6. **Stranger test** — could a teammate who has never opened the codebase follow Problem → Approach → Shape? A sentence that needs three identifiers to parse gets rewritten at component level.
 7. **Diagram check** — does it answer the question named before it, in ≤ 12 nodes with name-only labels?
-8. **Contracts check** — every type the Shape marks new or changed has its signature in Contracts; Guarantees are numbered.
-9. **Accuracy check** — for anything you're tempted to cut: would cutting it lose accuracy for the implementer? If not, cut. If so, keep.
+8. **Contracts check** — every type the Shape marks new or changed has its signature in Contracts, failure behaviour included; Guarantees are numbered, falsifiable, and the last one says what must not change.
+9. **Sections check** — Assumptions and Open questions are present, even if "None."; Problem ends with "Done means"; Status is set.
+10. **Cross-cutting check** — does compatibility, migration, rollout or observability apply to this change? If yes, it's a Risk or an Out-of-scope line, not an omission.
+11. **Accuracy check** — for anything you're tempted to cut: would cutting it lose accuracy for the implementer? If not, cut. If so, keep.
 
 Fix issues inline. No need to re-review — just fix and move on.
 
@@ -133,7 +135,7 @@ After the self-review:
 
 > "Design written and committed to `<path>`[, ADR at `<adr-path>`]. Please review it and let me know if you want any changes before we move to writing-plans."
 
-Wait for explicit approval. If the user requests changes, make them and re-run the self-review. The ADR, if one was written, is reviewed at this same gate — there is no separate confirmation step for it.
+Wait for explicit approval. If the user requests changes, make them and re-run the self-review. On approval, set the header Status to `approved`. The ADR, if one was written, is reviewed at this same gate — there is no separate confirmation step for it.
 
 ## Re-entering from executing-plans
 

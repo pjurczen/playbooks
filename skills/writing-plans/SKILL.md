@@ -1,11 +1,11 @@
 ---
 name: writing-plans
-description: Use after brainstorming and before any code, to turn an approved design into an exact, intent-shaped implementation plan a less capable implementer can execute and a team can read.
+description: Use after brainstorming and before any code, to turn an approved design into an exact, intent-shaped implementation plan an implementer in another session can execute and a team can read.
 ---
 
 # Writing Plans
 
-Take an approved design and produce the plan that gets it built: what changes where, in what order, proven by which scenarios. The plan stands on the design and links it — it never restates it. Design = why, shape, contract. Plan = work. Assume the implementer may be a smaller model in another session: name everything they would otherwise have to search for or decide.
+Take an approved design and produce the plan that gets it built: what changes where, in what order, proven by which scenarios. The plan stands on the design and links it — it never restates it. Design = why, shape, contract. Plan = work. Assume the implementer is in another session with none of this conversation: name what they would otherwise have to search for or decide, and nothing more. A plan that restates what the code and the design already say is superpowers' plan, and nobody reads it.
 
 **Announce at start:** "Using writing-plans to create the implementation plan."
 
@@ -15,7 +15,7 @@ Do NOT pre-write the implementation in the plan. No full test code, no method bo
 
 ## The two tests a plan must pass
 
-- **The implementer test** — given only the design, this plan and the repo, could a less capable implementer produce the right code without guessing a name, a signature, an order, or a test? "They'd have to search for it" → name the file or method. "They'd have to decide it" → decide it here, or list it under open questions.
+- **The implementer test** — given only the design, this plan and the repo, could an implementer with none of this conversation produce the right code without guessing a name, a signature, an order, or a test? "They'd have to search for it" → name the file or method. "They'd have to decide it" → decide it here, or list it under open questions.
 - **The overlap test** — is there a sentence here the design already says? Delete it and link. Responsibilities, contracts, the diagram and design risks live in the design.
 
 A plan is as long as the work map needs and no longer. The test is the implementer, not the clock.
@@ -65,16 +65,24 @@ Scenarios cite the design's Guarantee they prove; every G has at least one.
 Edge cases and parity fixtures are listed too.
 
 ## Milestones
-1. <Vertical slice>: <what it delivers>
-   Done when: <the named suites / scenarios that must be green>
-2. …
+| # | Milestone | Delivers | Done when | Biggest risk |
+|---|-----------|----------|-----------|--------------|
+| 1 | <vertical slice> | <observable outcome> | <named suites / scenarios green> | <one clause, or none> |
+
+Each milestone starts with its Behaviours red: the scenario is written and
+fails before the slice is built.
 
 ## Execution risks / open questions
 Only what the design didn't say: ordering, big-bang compile steps, hidden
 callers, decisions needed mid-execution.
+
+Stop and ask if:
+- <a contract in the design doesn't fit the code as found>
+- <a milestone's suite can't go green without touching something outside Changes>
+- <a Guarantee can't be proven by any scenario>
 ````
 
-Milestones are vertical slices with observable progress — small enough to commit cleanly, big enough to be more than a single edit, sized so a self-checkpoint and a refactor pass can both happen. Greenfield project? Milestone 1 includes the minimal test scaffolding (runner plus one passing behavioural test).
+Milestones are vertical slices with observable progress — small enough to commit cleanly, big enough to be more than a single edit, sized so a self-checkpoint and a refactor pass can both happen. The table is the part of the plan a team reads in a meeting; the rest is for the implementer. Greenfield project? Milestone 1 includes the minimal test scaffolding (runner plus one passing behavioural test). The *Stop and ask if* list is binding on the implementer: an unlisted surprise is reported, not resolved by picking an interpretation.
 
 See `example-plan.md` beside this skill; its design is `../brainstorming/example-design.md`. Read them as a pair — together they are complete, and nothing is said twice.
 
@@ -94,9 +102,10 @@ After writing the plan, look at it with fresh eyes:
 1. **Body scan** — any code block that is more than a signature? Remove it or replace it with a table row.
 2. **Implementer test** — walk the design and the plan as the implementer. Every name they need is written; every order is fixed; every test is named.
 3. **Overlap scan** — any sentence the design already says? Delete it.
-4. **Coverage** — every Guarantee in the design has at least one scenario; every unit in Changes is built or changed in some milestone.
+4. **Coverage, both directions** — walk the design's Guarantees list: each has at least one scenario. Walk the scenarios: each names a Guarantee or is marked Edge. Walk Changes: each row is built or changed in some milestone. Start from the design's list, not the plan's, so a missing one shows.
 5. **Milestone independence** — is each milestone a real vertical slice with observable progress, or just "set up scaffolding" that can't be tested on its own?
 6. **Followup integration** — if you folded in any followups from `followups.md`, are they explicit?
+7. **Drift scan** — every component has the same name in both documents.
 
 Fix issues inline.
 
@@ -119,7 +128,8 @@ After user approval, invoke **executing-plans** to begin implementation. Do NOT 
 | "Let me include the test code so the implementer doesn't have to think" | Name the scenario. They write the test. |
 | "I'll summarize the design at the top so the plan stands alone" | It stands on the design. Link it. |
 | "The design's risks belong here too" | Design risks live in the design. Only execution risks here. |
-| "Component-level is enough, they'll find the method" | A smaller implementer won't. Name it. |
+| "Component-level is enough, they'll find the method" | An implementer in another session shouldn't have to search. Name it. |
+| "The implementer might be weak, I'll spell out everything" | That's superpowers' plan. Name what they'd have to search for; the stop-and-ask list covers the rest. |
 | "The plan needs every method body to be unambiguous" | Signatures are in the design's Contracts. Bodies are the implementer's. |
 | "Shorter is better" | Complete is better. Cut only what loses no accuracy. |
 | "I'll write the tests now since the design is fresh" | The implementer writes tests after watching them fail (bdd-testing). |

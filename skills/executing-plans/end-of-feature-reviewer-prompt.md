@@ -31,7 +31,7 @@ Do NOT trust the implementer's narrative. Read the actual code.
 
 **Design alignment**
 - Does the implementation match the design's architecture and components?
-- Does the code hold every Guarantee (G1…Gn) the design states, and match every signature in its Contracts? Name any it doesn't.
+- Does the code hold every Guarantee (G1…Gn) the design states, and match every signature in its Contracts, including any `Deviation:` lines under Approach? Name any it doesn't.
 - Was anything added that wasn't in the design? (Scope creep.)
 - If the branch adds a `proposed` ADR: is its Decision still true of the code? Name any drift — consolidating-docs reconciles the ADR from your answer.
 

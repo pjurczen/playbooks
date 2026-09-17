@@ -49,19 +49,23 @@ Call sites:
 
 ## Milestones
 
-1. **Service beside the collector.** Both operations; unit tests for ordering, parallel batch, single offer, empty batch. Nothing wired.
-   Done when: `ProduktRecalculationServiceTest` green and the reactor compiles.
-2. **Discount path.** `calculateRabattnehmendeAngebote` delegates; `aktualisiereAngebote` deleted; `calculateVersicherungsprodukte` reimplemented.
-   Done when: `rabattnehmende_angebote_neuberechnen` + `neukunde_familienrabatt` green under the full suite — the first time this path runs in parallel, so one scenario proves nothing.
-3. **Copy.** `kopiereAngebote` hands its list to the batch; copy-with-Kundenberater scenario added.
-   Done when: copy features green and copies end the request GD-synchronised.
-4. **Remaining sites.** Personendaten to the batch; Partnerdaten, Beruf, Abschluss inline; `AngebotErstellenService` recalculates after insert; `ProdukteFactory` stops marking.
-   Done when: those Cucumber and unit suites are green.
-5. **Delete the deferral.** Collector, its service and the event processor removed; finalise flushes GD directly. Gate: a grep shows zero production callers of each deleted type before deleting.
-   Done when: `mvn clean verify` green with no references to the removed types.
+| # | Milestone | Delivers | Done when | Biggest risk |
+|---|-----------|----------|-----------|--------------|
+| 1 | Service beside the collector | both operations, unit-tested; nothing wired | `ProduktRecalculationServiceTest` green; reactor compiles | none — additive |
+| 2 | Discount path | `calculateRabattnehmendeAngebote` delegates to the batch; `aktualisiereAngebote` deleted; `calculateVersicherungsprodukte` reimplemented | `rabattnehmende_angebote_neuberechnen` + `neukunde_familienrabatt` green under the full suite | first parallel run of this path — one scenario proves nothing |
+| 3 | Copy | `kopiereAngebote` hands its list to the batch; copy-with-Kundenberater scenario added | copy features green; copies end the request GD-synchronised | none |
+| 4 | Remaining sites | Personendaten to the batch; Partnerdaten, Beruf, Abschluss inline; `AngebotErstellenService` recalculates after insert; `ProdukteFactory` stops marking | those Cucumber and unit suites green | two mechanisms coexist until milestone 5 |
+| 5 | Delete the deferral | collector, its service and the event processor removed; finalise flushes GD directly | `mvn clean verify` green; no references to the removed types | a hidden caller — grep every deleted type first |
+
+Each milestone starts with its Behaviours red.
 
 ## Execution risks / open questions
 
 - Milestones 2–4 leave both mechanisms alive; keep each milestone's scenario set broad enough to exercise the coexistence window.
 - Check `AngebotLesenService` and test-support code for callers of the deleted types before milestone 5 — the design's caller list came from mutation services only.
 - If no scenario asserts the dependents' `letzterBearbeiter` today, add the assertion in milestone 2; otherwise the threaded bearbeiter is untested.
+
+Stop and ask if:
+- a contract in the design doesn't match the code as found — a third `finalisiereAenderung` overload, a different `Bearbeiter` type.
+- milestone 2's scenarios can't go green without changing the product gateway contract (out of scope in the design).
+- any deleted type still has a production caller at milestone 5 that isn't in the call-site table.
