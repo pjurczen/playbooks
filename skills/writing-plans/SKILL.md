@@ -5,34 +5,28 @@ description: Use after brainstorming and before any code, to turn an approved de
 
 # Writing Plans
 
-Take an approved design and produce the plan that gets it built: what changes where, in what order, proven by which scenarios. The plan stands on the design and links it — it never restates it. Design = why, shape, contract. Plan = work. Assume the implementer is in another session with none of this conversation: name what they would otherwise have to search for or decide, and nothing more. A plan that restates what the code and the design already say is superpowers' plan, and nobody reads it.
-
-**Announce at start:** "Using writing-plans to create the implementation plan."
+Take an approved design and produce the plan that gets it built: what changes where, in what order, proven by which scenarios. The plan stands on the design and links it; it never restates it. Design = why, shape, contract. Plan = work. The implementer is in another session with none of this conversation: name what they would otherwise have to search for or decide, and nothing more — a plan that restates the design and the code is a plan nobody reads.
 
 <HARD-GATE>
-Do NOT pre-write the implementation in the plan. No full test code, no method bodies, no complete file contents, no per-step commit messages. The plan says WHAT changes and WHERE, by exact name; HOW the body reads is the implementer's.
+Don't pre-write the implementation: no method bodies, no test code, no complete file contents, no per-step commit messages, no bash recipes. The plan says WHAT changes and WHERE, by exact name; HOW the body reads is the implementer's, and a pre-written body rots before it's read.
 </HARD-GATE>
 
 ## The two tests a plan must pass
 
-- **The implementer test** — given only the design, this plan and the repo, could an implementer with none of this conversation produce the right code without guessing a name, a signature, an order, or a test? "They'd have to search for it" → name the file or method. "They'd have to decide it" → decide it here, or list it under open questions.
-- **The overlap test** — is there a sentence here the design already says? Delete it and link. Responsibilities, contracts, the diagram and design risks live in the design.
+- **Implementer test** — given only the design, this plan and the repo, could an implementer with none of this conversation produce the right code without guessing a name, a signature, an order, or a test? "They'd have to search for it" → name the file or method. "They'd have to decide it" → decide it here, or list it as an open question.
+- **Overlap test** — a sentence the design already says gets deleted and linked. Responsibilities, contracts, the diagram and design risks live in the design.
 
-A plan is as long as the work map needs and no longer. The test is the implementer, not the clock.
+A plan is as long as the work map needs and no longer; the test is the implementer, not the clock.
 
-**Save plans to:** `docs/playbooks/plans/YYYY-MM-DD-<feature>.md` and commit.
+**Save to** `docs/playbooks/plans/YYYY-MM-DD-<feature>.md` and commit.
 
 ## Scope check
 
-Before defining the plan:
-
-1. Does the approved design cover a single coherent feature? If it sprawls across multiple independent subsystems, send it back to brainstorming for decomposition — an initiative design plus slice designs. Each slice gets its own design → plan → implementation cycle.
-2. Read `docs/followups.md` if it exists. Any open followups intersect with this work? If so, fold them in *explicitly* — as their own milestones or as part of existing ones. Don't quietly extend scope.
-3. Entered here without brainstorming (the user brought an approved design)? Apply **writing-adr**'s bar to the design's approach. If it clears and no ADR exists on the branch, invoke **writing-adr** from the design doc before planning — the decision is still fresh here; at landing it won't be.
+1. One coherent feature? If the design sprawls across independent subsystems, send it back to brainstorming for decomposition — an initiative design plus slice designs.
+2. `docs/followups.md`, if it exists — intersecting items are folded in explicitly, as milestones or parts of them, never quietly.
+3. Entered without brainstorming (the user brought a design)? Apply **writing-adr**'s bar to its approach; if it clears and no ADR exists on the branch, invoke **writing-adr** from the design doc before planning — the decision is still fresh here; at landing it won't be.
 
 ## The plan shape
-
-Every plan has these sections, in this order:
 
 ````markdown
 # <feature> — implementation plan
@@ -82,54 +76,22 @@ Stop and ask if:
 - <a Guarantee can't be proven by any scenario>
 ````
 
-Milestones are vertical slices with observable progress — small enough to commit cleanly, big enough to be more than a single edit, sized so a self-checkpoint and a refactor pass can both happen. The table is the part of the plan a team reads in a meeting; the rest is for the implementer. Greenfield project? Milestone 1 includes the minimal test scaffolding (runner plus one passing behavioural test). The *Stop and ask if* list is binding on the implementer: an unlisted surprise is reported, not resolved by picking an interpretation.
+Milestones are vertical slices with observable progress — small enough to commit cleanly, big enough for a self-checkpoint and a refactor pass. The milestone table is what a team reads in a meeting. Greenfield? Milestone 1 includes the minimal test scaffolding. The *Stop and ask if* list is binding: an unlisted surprise is reported, not resolved by picking an interpretation.
 
-See `example-plan.md` beside this skill; its design is `../brainstorming/example-design.md`. Read them as a pair — together they are complete, and nothing is said twice.
-
-## What does NOT belong in the plan
-
-- Pre-written test code (the implementer writes tests using **bdd-testing**; the plan names the scenarios)
-- Method or function bodies
-- Complete file contents
-- Per-step commit messages (crafted at execution time per **milestone-commits**)
-- The design's responsibilities, contracts, diagram or risks — link, don't copy
-- Exact bash commands (the implementer has shell access)
+See `example-plan.md` beside this skill, with its design `../brainstorming/example-design.md` — together they are complete, and nothing is said twice.
 
 ## Self-review
 
-After writing the plan, look at it with fresh eyes:
+1. **Body scan** — any code block that is more than a signature? Replace it with a table row.
+2. **Implementer test** — walk the design and the plan as the implementer: every name written, every order fixed, every test named.
+3. **Overlap scan** — any sentence the design already says? Delete it. Any component named differently in the two documents? Align it.
+4. **Coverage, both directions** — walk the design's Guarantees: each has a scenario. Walk the scenarios: each names a Guarantee or is marked Edge. Walk Changes: each row is built in some milestone. Start from the design's list so a missing one shows.
+5. **Milestone independence** — each a real vertical slice with observable progress, not "set up scaffolding".
 
-1. **Body scan** — any code block that is more than a signature? Remove it or replace it with a table row.
-2. **Implementer test** — walk the design and the plan as the implementer. Every name they need is written; every order is fixed; every test is named.
-3. **Overlap scan** — any sentence the design already says? Delete it.
-4. **Coverage, both directions** — walk the design's Guarantees list: each has at least one scenario. Walk the scenarios: each names a Guarantee or is marked Edge. Walk Changes: each row is built or changed in some milestone. Start from the design's list, not the plan's, so a missing one shows.
-5. **Milestone independence** — is each milestone a real vertical slice with observable progress, or just "set up scaffolding" that can't be tested on its own?
-6. **Followup integration** — if you folded in any followups from `followups.md`, are they explicit?
-7. **Drift scan** — every component has the same name in both documents.
-
-Fix issues inline.
+Fix inline.
 
 ## User review gate
 
-After self-review:
-
 > "Plan written and committed to `<path>`. Please review it and let me know if you want changes before we move to executing-plans."
 
-Wait for explicit approval. If the user requests changes, make them and re-run the self-review.
-
-## Hand off
-
-After user approval, invoke **executing-plans** to begin implementation. Do NOT invoke any other skill from here.
-
-## Red Flags — STOP
-
-| Thought | Reality |
-|---------|---------|
-| "Let me include the test code so the implementer doesn't have to think" | Name the scenario. They write the test. |
-| "I'll summarize the design at the top so the plan stands alone" | It stands on the design. Link it. |
-| "The design's risks belong here too" | Design risks live in the design. Only execution risks here. |
-| "Component-level is enough, they'll find the method" | An implementer in another session shouldn't have to search. Name it. |
-| "The implementer might be weak, I'll spell out everything" | That's superpowers' plan. Name what they'd have to search for; the stop-and-ask list covers the rest. |
-| "The plan needs every method body to be unambiguous" | Signatures are in the design's Contracts. Bodies are the implementer's. |
-| "Shorter is better" | Complete is better. Cut only what loses no accuracy. |
-| "I'll write the tests now since the design is fresh" | The implementer writes tests after watching them fail (bdd-testing). |
+Wait for explicit approval; on changes, apply them and re-run the self-review. Then invoke **executing-plans** — the only skill you invoke from here.

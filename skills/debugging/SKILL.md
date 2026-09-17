@@ -7,8 +7,6 @@ description: Use when fixing a bug or investigating a failure, to find the root 
 
 Root cause before fix. For any bug bigger than a typo: reproduce it, state the root-cause hypothesis and the evidence for it, and only then change code.
 
-**Announce at start:** "Using debugging to find the root cause."
-
 ## When to skip
 
 - **Typo-class fixes** — misspelled identifier, wrong constant, an off-by-one visible in the diff. Just fix it; still run **verifying-before-done**.
@@ -35,7 +33,5 @@ If the confirmed root cause is a design problem (wrong boundary, missing abstrac
 |---------|---------|
 | "I'll just try changing this and see" | Guess-and-check is not debugging. State the hypothesis first. |
 | "It's probably X, let me fix that" | "Probably" is a hypothesis without evidence. Confirm it. |
-| "The error is obviously in this file" | Read the full error and trace the path. Obvious is often wrong. |
 | "The error went away, so it's fixed" | Gone ≠ root-caused. Can you say *why* it happened? |
-| "No time for a regression test" | The bug already cost more than the test will. |
 | "Third fix attempt — this one should work" | Two failed fixes means you don't understand the cause. Back to evidence. |

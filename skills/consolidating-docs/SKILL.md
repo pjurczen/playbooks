@@ -5,11 +5,7 @@ description: Use when landing a feature (merge or PR) or sweeping the backlog, t
 
 # Consolidating Docs
 
-Design docs and plans are working artifacts. The durable decisions inside them belong in the repo's real documentation; the husks should not pile up in `docs/playbooks/`. This skill extracts what's durable, routes it into the docs your `.claude/documentation.md` map names, and deletes the spent files. They're already committed — git remembers them.
-
-This is not about `docs/followups.md` — that's a separate, durable backlog that stays put.
-
-**Announce at start:** "Using consolidating-docs to consolidate and clean up design/plan files."
+Design docs and plans are working artifacts: the durable decisions inside them belong in the repo's real documentation, and the husks should not pile up in `docs/playbooks/`. This skill routes what's durable into the docs your `.claude/documentation.md` map names and deletes the spent files — git remembers them. `docs/followups.md` is a durable backlog and stays put.
 
 ## When this runs — and when to skip
 
@@ -26,9 +22,7 @@ Never delete a design or plan file until its durable content has been written to
 
 ## The map: `.claude/documentation.md`
 
-The map tells you where durable knowledge belongs. Read it first. If it's missing, run **Bootstrap** below — do not guess destinations.
-
-Expected shape:
+Read it first; it says where durable knowledge belongs. Missing? Run **Bootstrap** below — never guess destinations. Expected shape:
 
 ```markdown
 # Documentation map
@@ -49,8 +43,6 @@ How documentation is maintained in this repo.
 ## Conventions
 - ADRs are immutable once accepted (status line excepted); supersede rather than edit.
 ```
-
-This file is general-purpose — any doc-touching task can read it, not just this skill.
 
 ## Bootstrap — when the map is absent
 
@@ -89,11 +81,11 @@ Before committing, prove nothing still points at the husks:
 git grep -n "docs/playbooks/" -- ':(exclude)docs/playbooks'
 ```
 
-Also grep for each deleted file's basename — references don't always use the full path. Any hit that names a specific design or plan file is a dangling reference: inline the content or repoint the link to its new home, then re-run. Mentions of the workspace convention itself (e.g. CLAUDE.md explaining where plans live) are fine.
+Also grep each deleted file's basename. Any hit naming a specific design or plan file is a dangling reference — inline the content or repoint the link, then re-run. Mentions of the workspace convention itself (CLAUDE.md explaining where plans live) are fine.
 
 ## Scope by entry point
 
-- **Per-feature (finishing-branch):** the design and plan files for the feature being landed — those added on this branch under `docs/playbooks/designs/` and `plans/`. Identify them with `git diff --name-only <base>..HEAD`, where `<base>` is the branch point finishing-branch establishes in its Step 3. (This works because the workspace is chosen during brainstorming, before the design doc is committed — the feature's design/plan commits are always inside `<base>..HEAD`.) Never `docs/playbooks/initiatives/` — an initiative outlives its slices.
+- **Per-feature (finishing-branch):** the design and plan files for the feature being landed — those added on this branch under `docs/playbooks/designs/` and `plans/`. Identify them with `git diff --name-only <base>..HEAD`, `<base>` being the branch point finishing-branch establishes in its Step 3 — the workspace is chosen during brainstorming, so the feature's design/plan commits are always inside that range. Never `docs/playbooks/initiatives/` — an initiative outlives its slices.
 - **Sweep (manual):** every file under `docs/playbooks/designs/` and `plans/`. Summarize what you intend to consolidate and where *before* touching anything, then work file by file. For `docs/playbooks/initiatives/`: ask whether every slice in the initiative's table has landed. Only then graduate its Shape and Contracts into the architecture doc the map names and delete it; otherwise leave it untouched.
 
 ## Durable vs ephemeral
@@ -116,7 +108,3 @@ One commit for the whole operation — destination-doc updates **and** husk dele
 | "There's no map, I'll just put it somewhere sensible" | Guessed destinations rot. Bootstrap the map or ask. |
 | "This decision has no obvious home, I'll drop it" | Surface it. Homeless durable knowledge means the map is incomplete. |
 | "The whole design doc is durable — I'll copy it wholesale" | Then you've moved a husk, not consolidated. Extract decisions, not dialogue. |
-| "The destination doc says 'see the design doc for details'" | That file dies in this commit. Inline the details or link the new home. |
-| "Keep/discard, but I'll consolidate anyway" | Nothing is landing. Skip. |
-| "Each decision in the design doc gets its own ADR" | One per feature is the norm, written at brainstorming. Below the bar → a sentence in the architecture doc. |
-| "The initiative design is old, it must be a husk" | It's a husk only when its last slice has landed. Ask. |

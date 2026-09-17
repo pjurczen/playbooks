@@ -13,23 +13,6 @@ When you have multiple unrelated failures or independent investigations, doing t
 
 ## When to use
 
-```dot
-digraph when_to_use {
-    "Multiple failures or investigations?" [shape=diamond];
-    "Independent (no shared state)?" [shape=diamond];
-    "Single agent investigates all" [shape=box];
-    "Can they run concurrently?" [shape=diamond];
-    "Sequential agents" [shape=box];
-    "Parallel dispatch" [shape=box];
-
-    "Multiple failures or investigations?" -> "Independent (no shared state)?" [label="yes"];
-    "Independent (no shared state)?" -> "Single agent investigates all" [label="no - related"];
-    "Independent (no shared state)?" -> "Can they run concurrently?" [label="yes"];
-    "Can they run concurrently?" -> "Parallel dispatch" [label="yes"];
-    "Can they run concurrently?" -> "Sequential agents" [label="no - shared state"];
-}
-```
-
 **Use when:**
 - 2+ test files failing with different root causes
 - Multiple subsystems broken independently
@@ -87,15 +70,15 @@ Return: a `## Findings` block with Changes / Gotchas / Open questions.
 
 ### 3. Dispatch in parallel
 
-Send all subagent dispatches in a single response (multiple tool calls in one message) so they run concurrently. Sequential dispatches defeat the point.
+Send all subagent dispatches in a single response (multiple tool calls in one message) so they run concurrently. Sequential dispatches defeat the point. Never dispatch two agents that touch the same files — they will conflict — and never dispatch before you know what's broken; exploration is sequential.
 
 ### 4. Review and integrate
 
 When subagents return:
-- Read each Findings block
+- Read each Findings block and record it in the parent session before moving on — without this, what was learned is lost
 - Check for conflicts (did they edit the same code?)
-- Run the full test suite
-- Integrate the changes; record their findings in the parent session
+- Run the full test suite yourself; a subagent's own green run and its success report are not enough
+- Integrate the changes
 
 ## Required output: the Findings block
 
@@ -115,12 +98,3 @@ The parent stores these inline before the next step. This is what keeps context 
 | No context — "fix the race condition" | Paste error messages, test names, relevant snippet |
 | No constraints — agent restructures everything | "Do NOT change production code" / "Fix tests only" |
 | Vague output — "fix it" | "Return a Findings block with Changes / Gotchas / Open questions" |
-
-## Red Flags
-
-**Never:**
-- Dispatch parallel subagents that touch the same files (they will conflict)
-- Dispatch parallel subagents when you don't yet know what's broken (exploration is sequential)
-- Trust a subagent's report without checking the diff and running the tests
-- Skip the integration step — running each subagent's tests in isolation is not enough
-- Forget to record the Findings blocks in the parent session before moving on

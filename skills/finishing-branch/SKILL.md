@@ -7,8 +7,6 @@ description: Use when implementation is complete and tests pass, to integrate th
 
 Verify tests → detect environment → present options → consolidate docs (when landing) → execute choice → clean up.
 
-**Announce at start:** "Using finishing-branch to complete this work."
-
 ## Process
 
 ### Step 1: Verify tests

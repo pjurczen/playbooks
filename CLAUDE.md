@@ -19,11 +19,17 @@ docs/                          — design rationale and reference notes
 
 ## Conventions for skill files
 
-- **YAML frontmatter required:** `name` (kebab-case, matches directory) and `description` (one sentence on when to use).
-- **Tone:** senior dev to senior dev. State the rule and the reason; trust the reader to apply judgment.
-- **Strong framing is OK** (`<EXTREMELY-IMPORTANT>`, Red Flags tables, `dot` flowcharts) where it drives compliance — but always paired with an explicit "when to skip" carve-out.
-- **Soft length target ~150 lines.** A skill that runs longer should justify itself (operationally dense, like `finishing-branch`); otherwise split or trim.
-- **Cross-skill references:** when one skill expects another to follow it, name the next skill explicitly (`Invoke writing-plans`).
+Skill files are prompts. Instruction count degrades adherence and early instructions win, so every line has to earn its place. The rules:
+
+- **YAML frontmatter required:** `name` (kebab-case, matches directory) and `description` in the shape "Use [trigger], to [goal]" — what and when, never a summary of the steps.
+- **Budget in words, not lines** (`wc -w`, tables included): ≤ 1,000 per SKILL.md; ≤ 1,500 for runbooks (`finishing-branch`, `executing-plans`, `consolidating-docs`); ≤ 500 for `using-playbooks`, which is loaded every session.
+- **One gate per skill, first, with its reason, in normal register.** Everything else is a rule with a reason; caps live only inside that gate.
+- **One rule, one owner.** A rule lives in the skill or companion that owns it; other skills point to it and never restate it.
+- **Red Flags tables only where discipline is the point** (`using-playbooks`, `brainstorming`, `executing-plans`, `verifying-before-done`, `debugging`, `consolidating-docs`), ≤ 4 rows, each naming an excuse the body doesn't already refute — not a body rule with a quotation mark in front.
+- **No per-skill "Announce at start"** — the bootstrap says to announce once. **`dot` graphs only for a real loop or non-obvious branch**; linear flows are numbered lists.
+- **"When to skip" is a standard section** in every directly-invocable skill; pipeline-only skills say "fired by X".
+- **Companions carry a read-when** ("read `design-doc.md` before step 7"). **Positive framing, reasons over emphasis, no brand names.**
+- **Tone:** senior dev to senior dev. State the rule and the reason; trust the reader.
 
 ## Conventions for produced artifacts
 
@@ -38,19 +44,17 @@ Skill files themselves can be richer where compliance demands it — but the art
 
 ## Testing changes
 
-There is no automated test suite. Verification is empirical:
+Verification is empirical, and a skill change does not ship on judgment alone.
 
-1. **Sanity-check the JSON.** After editing `plugin.json` or `hooks.json`:
+1. **Sanity-check the JSON and the hook** after editing them:
    ```bash
    python3 -c "import json; json.load(open('.claude-plugin/plugin.json'))"
    python3 -c "import json; json.load(open('hooks/hooks.json'))"
+   bash -n hooks/session-start && CLAUDE_PLUGIN_ROOT=$(pwd) hooks/session-start | python3 -m json.tool
    ```
-2. **Sanity-check the bash hook.** After editing `hooks/session-start`:
-   ```bash
-   bash -n hooks/session-start
-   CLAUDE_PLUGIN_ROOT=$(pwd) hooks/session-start | python3 -m json.tool
-   ```
-3. **Dogfood.** Load the plugin in a fresh Claude Code session and run a small real task. The acceptance smoke test: ask "let's make a small react todo list" and verify `brainstorming` triggers without prompting.
+2. **Word budgets and structure:** `wc -w skills/*/SKILL.md` against the budgets above; one gate per skill; Red Flags only on the six discipline skills.
+3. **Run the evals.** `evals/evals.json` holds the prompts and expectations; `evals/fixtures/` the fixture repos; `evals/run-setup.sh <eval-id> <run-dir>` prepares a run; `evals/grade.py` grades the mechanical expectations into the skill-creator viewer format. Runs live outside the repo in `../playbooks-workspace/iteration-N/eval-*/<config>/run-1/`, one subagent per run **on Opus** (the model that runs these skills), with a snapshot of the previous skills as the baseline. Aggregate with the skill-creator's `aggregate_benchmark.py` and review in its viewer. A change ships when its delta is non-negative on pass rate and tokens.
+4. **Dogfood.** Load the plugin in a fresh session and run a small real task; "let's make a small react todo list" must trigger `brainstorming` unprompted, and a one-sentence rename must not.
 
 ## Commits
 

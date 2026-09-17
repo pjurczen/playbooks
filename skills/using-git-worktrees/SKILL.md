@@ -7,8 +7,6 @@ description: Use when a design is approved and before any artifact is committed,
 
 Choose where the work will land before anything is committed. Normally fired from **brainstorming** right after design approval — so the design doc, plan, and implementation all end up on the feature branch. Default is a new worktree on a new feature branch — it keeps your current checkout untouched and lets multiple features run in parallel.
 
-**Announce at start:** "Using using-git-worktrees to choose a workspace mode."
-
 ## Step 0: Already isolated?
 
 ```bash
@@ -111,12 +109,6 @@ Tests:          <N passed, 0 failed>
 Ready to work on <feature-name>.
 ```
 
-## Red Flags
+## Two things that go wrong
 
-| Thought | Reality |
-|---------|---------|
-| "I'll just run `git worktree add` — the harness probably won't mind" | Native tool first. Phantom state the harness can't see is the #1 failure mode. |
-| "Step 0 is overkill, I'll skip it" | Skipping creates nested worktrees inside existing ones. Always run it. |
-| "The directory's probably ignored, no need to check" | Always `git check-ignore` for project-local paths. |
-| "Tests fail in the baseline but I can tell which are pre-existing" | Stop. Confirm with the user before continuing. |
-| "Working on main is fine — just this once" | Two confirmations from Step 1, no exceptions. |
+Native tool first: a `git worktree add` next to a harness that manages worktrees creates phantom state the harness can't see, and that is the most common failure here. And a failing baseline is never "probably pre-existing" — stop and confirm with the user before continuing.

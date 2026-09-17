@@ -18,15 +18,6 @@ Commit at meaningful slices, not at TDD steps. A milestone from the plan is one 
 
 If you find yourself making 5 micro-commits per milestone (failing test → implementation → refactor → fix → cleanup), squash them. The durable history should be readable.
 
-## When to commit
-
-| Commit | Don't commit |
-|--------|--------------|
-| At the end of a milestone (test + impl + refactor together) | After writing a failing test (no implementation yet) |
-| At the end of an end-of-feature review-fix pass | After every individual file edit |
-| Before a risky refactor — commit the *completed sub-slice* as its own milestone first (see "When milestones are too big"); never a WIP snapshot | After every TDD step (red, green, refactor each as own commit) |
-| When switching milestones — same rule: the finished sub-slice, not a half-done state | "Just to checkpoint" without a meaningful slice |
-
 ## Commit message shape
 
 We follow [Conventional Commits 1.0.0](https://www.conventionalcommits.org/en/v1.0.0/):
@@ -68,14 +59,7 @@ We follow [Conventional Commits 1.0.0](https://www.conventionalcommits.org/en/v1
 
 **Scope (optional but encouraged):** the feature name as a short kebab-case slug — typically the topic from the design / plan filename (e.g. `feat(blacklist):`, `feat(agent-capture):`). Skip scope for cross-cutting work (architecture docs, repo-wide config, tooling) where any feature name would mislead.
 
-**Breaking changes:** add `!` after the type/scope AND mention it in the body or as a `BREAKING CHANGE:` footer.
-
-```
-feat(session-rotation)!: rotate session cookies on every request
-
-BREAKING CHANGE: clients caching session cookies across requests will
-break and need to refresh per request. Migration guide: docs/session-rotation-migration.md.
-```
+**Breaking changes:** add `!` after the type/scope and a `BREAKING CHANGE:` footer explaining the migration.
 
 ## Examples
 
@@ -141,14 +125,3 @@ Sometimes a milestone turns out larger than expected mid-execution. If a single 
 - Commit the natural sub-slices as their own milestones (each with a clear "intermediate but observable" outcome)
 
 Don't force everything into one giant commit just to avoid touching the plan. Don't fragment into micro-commits to avoid touching the plan either.
-
-## Red Flags — STOP
-
-- About to make a "WIP" / "checkpoint" / "save progress" commit
-- Commit message has no type prefix (Conventional Commits violation)
-- Commit message describes files instead of behaviour ("update login.py …")
-- 5+ commits coming from a single plan milestone
-- About to reference a ticket number / PR number / "as discussed" in the message body
-- Tempted to commit the test on its own before the implementation lands
-- Using `chore:` or `refactor:` to disguise actual feature/fix work
-- Breaking change without `!` in the subject and a `BREAKING CHANGE:` footer

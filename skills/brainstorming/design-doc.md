@@ -67,7 +67,7 @@ One line each: the question, who answers it, and the milestone by which it must 
 
 ### Risks — narrative
 
-What could go wrong with the approach itself. Execution risks — ordering, hidden callers, big-bang compile steps — belong to the plan.
+What could go wrong with the approach itself. Ask whether compatibility, migration, rollout or observability applies to this change; if so, it is a risk or an out-of-scope line, never an omission. Execution risks — ordering, hidden callers, big-bang compile steps — belong to the plan.
 
 ### Out of scope
 

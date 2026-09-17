@@ -18,22 +18,7 @@ Tests describe what the system does for a caller, not what the code is made of. 
 
 ## When to test
 
-```dot
-digraph when_to_test {
-    "About to add code" [shape=box];
-    "Does it have interesting behaviour?" [shape=diamond];
-    "Skip — type system covers it" [shape=box];
-    "Write behavioural test first" [shape=box];
-    "Watch it fail (RED)" [shape=box];
-    "Implement (GREEN)" [shape=box];
-
-    "About to add code" -> "Does it have interesting behaviour?";
-    "Does it have interesting behaviour?" -> "Skip — type system covers it" [label="no"];
-    "Does it have interesting behaviour?" -> "Write behavioural test first" [label="yes"];
-    "Write behavioural test first" -> "Watch it fail (RED)";
-    "Watch it fail (RED)" -> "Implement (GREEN)";
-}
-```
+If the code has interesting behaviour, write the behavioural test first, watch it fail, then implement. If it doesn't, the type system covers it — skip.
 
 **Has interesting behaviour:**
 - Functions that make decisions (validation, routing, dispatching)
@@ -99,36 +84,13 @@ Mock at IO boundaries (network, filesystem, time, randomness). Do NOT mock inter
 
 If you find yourself mocking everything, the design is too coupled. The test is telling you to refactor.
 
-## Anti-patterns
+## Anti-patterns — and what to do instead
 
-| Pattern | Why it's bad |
-|---------|--------------|
-| `test_enum_has_values()` | Restates the implementation in a second form. The type system catches this. |
-| `assert isinstance(result, MyDataclass)` | The type system catches this. Test the value, not the type. |
-| `assert hasattr(obj, "method_name")` | Use the linter. |
-| Adding `destroy()` / `reset()` to production class for test cleanup | Put cleanup in test utilities. |
-| Mock that asserts the mock was called, not the resulting behaviour | You're testing the mock framework. |
-| Test setup > test logic | Design too coupled. Refactor or use real collaborators. |
-
-## Red Flags — STOP
-
-- Writing test code without watching it fail first
-- Writing tests after the implementation is "done"
-- Tests pass immediately on first run when testing *new* behaviour (for deliberate characterization tests, see above — verify by mutate-and-restore)
-- Test asserts existence of structure rather than result of behaviour
-- Cannot describe what behaviour the test would catch failing
-- Mock setup is more than half the test
-- Test would still pass if you swapped real implementation for a stub
-
-## When stuck
-
-| Problem | Solution |
-|---------|----------|
-| Can't figure out what to test | Write the wished-for API as a test. Pick a behaviour you'd want to verify if the code shipped. |
-| Test would need a huge mock setup | Design too coupled. Use real collaborators or simplify the interface. |
-| Test only restates the implementation | The thing has no interesting behaviour. Skip it. |
-| Test would assert "it has these fields" | Skip. The type system does this. |
-
-## The bottom line
-
-Test the behaviour the code implements for callers. Skip everything else.
+| Pattern | Instead |
+|---------|---------|
+| `test_enum_has_values()`, `assert isinstance(...)`, `assert hasattr(...)` | Skip — the type system and linter already check this. Test the value the code produces. |
+| Adding `destroy()` / `reset()` to a production class for test cleanup | Put cleanup in test utilities. |
+| Asserting the mock was called rather than what the function produced | Assert the observable outcome; otherwise you're testing the mock framework. |
+| Test setup longer than the test | The design is too coupled — use real collaborators or simplify the interface. |
+| Test passes on first run for *new* behaviour | You're testing existing behaviour — rewrite it (characterization tests: mutate-and-restore). |
+| Can't say what behaviour the test would catch failing | The thing has no interesting behaviour. Skip it — or write the wished-for API as the test. |
