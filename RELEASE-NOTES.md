@@ -1,5 +1,15 @@
 # Playbooks Release Notes
 
+## v0.8.0 (2026-09-17)
+
+### Lean skills, measured
+
+An audit against published skill-writing guidance — Anthropic's skill best practices and its prompting guide for the current model family, superpowers' own `writing-skills`, the instruction-count research — found the library dense by the measure that matters, words and rule count, with single rules restated across a gate, a checklist item, a Red Flags row and a companion, and an always-loaded bootstrap of 1,118 words. Nothing had ever been run against a test prompt.
+
+The lean pass cuts 15,200 words to 11,200 without removing a rule: one gate per skill, stated first with its reason, in normal register; each rule owned by one skill or companion and pointed to from elsewhere; Red Flags tables only on the six discipline skills, at most four rows each, every row an excuse rather than a restated rule; no per-skill announce lines; no linear flows drawn as digraphs; `verifying-before-done` rewritten around one gate; the bootstrap down to 465 words with its library index gone, since the Skill tool already lists every description. CLAUDE.md records the conventions, with budgets in words rather than lines.
+
+The release ships with an eval harness (`evals/`) and its first results. Four evals — design a feature, plan from a design, record an ADR under a German per-domain map with a bloated ADR already in the directory, and a trivial rename that must not trigger the pipeline — ran on Opus in three configurations: the trimmed skills, the pre-trim skills, and no skills. Trimmed and pre-trim both pass 30 of 32 checks; the trimmed set uses 4.5% fewer tokens; the raw model passes 15 of 32 and reproduces the original failure modes exactly — a 93-line ADR with 80 backticks marked accepted before any code, a 159-line design with no diagram and no guarantees, a plan with no changes table. The two skilled misses were word caps set too tight for tables and are widened. Results are in `evals/results/`; a change to a skill now ships only with a non-negative delta.
+
 ## v0.7.0 (2026-09-17)
 
 ### ADRs captured at decision time — new `writing-adr` skill

@@ -2,7 +2,7 @@
 
 A lean, opinionated library of workflow skills for Claude Code.
 
-Playbooks gives Claude a small set of process skills — for designing features, planning, executing in milestones, debugging, testing, and finishing branches — that auto-load at the start of every session. The library is intentionally small: thirteen skills, roughly 1,900 lines of markdown total. Less to read, less ceremony, more trust in the model.
+Playbooks gives Claude a small set of process skills — for designing features, planning, executing in milestones, debugging, testing, and finishing branches — that auto-load at the start of every session. The library is intentionally small: thirteen skills, about 11,000 words of markdown in total, and every change to a skill is measured against evals before it ships. Less to read, less ceremony, more trust in the model.
 
 ## Why not just use [superpowers](https://github.com/obra/superpowers)?
 
@@ -72,6 +72,10 @@ Each stage produces a small, readable artifact:
 When a feature lands, `consolidating-docs` promotes the feature's ADR from `proposed` to `accepted`, graduates the remaining durable decisions from its design and plan into the repo's real documentation — guided by `.claude/documentation.md`, a map of where docs live — and removes the husks.
 
 For trivial questions, read-only exploration, and one-off changes, the agent skips the pipeline and just answers.
+
+## Evals
+
+`evals/` holds four evals — design a feature, plan from a design, record an ADR under a repo-specific map, and a trivial change that must not trigger the pipeline — run on Opus against a snapshot of the previous skills and against no skills at all. Results live in `evals/results/`; CLAUDE.md describes the loop.
 
 ## Design
 
