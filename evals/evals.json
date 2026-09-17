@@ -1,0 +1,84 @@
+{
+  "skill_name": "playbooks",
+  "notes": "Placeholders: {REPO} run working copy, {SKILLS} skills dir for the config, {OUTPUTS} outputs dir, {RUN} run dir, {PREAMBLE} the config's skill preamble (see preambles). Eval subagents run on Opus (model: opus).",
+  "preambles": {
+    "with_skill": "Follow the playbooks workflow skills in {SKILLS}. Start by reading {SKILLS}/using-playbooks/SKILL.md, then read and follow the skill that applies from the same directory. When a skill references another skill or a companion file, read it from that same directory. Do not use the Skill tool: the directory above is the only source of skills for this run.",
+    "old_skill": "Follow the playbooks workflow skills in {SKILLS}. Start by reading {SKILLS}/using-playbooks/SKILL.md, then read and follow the skill that applies from the same directory. When a skill references another skill or a companion file, read it from that same directory. Do not use the Skill tool: the directory above is the only source of skills for this run.",
+    "without_skill": "Do not read or use any playbooks skills, and do not use the Skill tool. Work from your own judgment about how a senior engineer would approach this."
+  },
+  "closing": "When finished: (1) copy every file you created or changed under docs/ or doc/ into {OUTPUTS}/ preserving relative paths (create directories as needed); (2) write {RUN}/transcript.md — a numbered log of what you did: every file you read (including any skill or companion files, by path), every question you answered on the user's behalf and the answer you used, every file you wrote, and every command you ran. Be factual; this log is graded.",
+  "evals": [
+    {
+      "id": 1,
+      "name": "design-small-feature",
+      "skills_under_test": ["using-playbooks", "brainstorming", "writing-adr", "using-git-worktrees"],
+      "fixture": "reportgen",
+      "prompt": "You are working in the git repository at {REPO}, a small Python project called reportgen (read its README.md and docs/architecture.md first). {PREAMBLE}\n\nThe user's request: \"The two caches in reportgen — the memo and the file cache — keep getting out of sync and every module invalidates by hand. I want one cache with an explicit TTL. Design it.\"\n\nThe user is not available during this run. When the workflow asks clarifying questions, answer them yourself from this brief and record each question and the answer you used in your transcript:\n- Purpose: one cache, one place that decides validity; callers stop touching memo or file storage directly.\n- Constraints: keep the CLI flags and the report output unchanged; the three existing tests must stay green; no new dependencies.\n- Success: `--fresh` re-reads every source exactly once; a restart within the TTL serves sources from disk without a data read.\n- Workspace: a new feature branch in the current checkout, no worktree.\n- Ticket: RG-42. There is no existing initiative.\nWhen the workflow reaches a review gate (\"please review … let me know\"), treat the design as approved and continue without waiting.\n\nStop once the design — and an ADR, if the workflow produces one — is written and committed. Do not write a plan and do not implement anything. If you are not following any skill, write the design to docs/playbooks/designs/2026-09-17-unified-cache.md in whatever shape you judge best and commit it.\n\n{CLOSING}",
+      "expected_output": "A design doc in the layered shape (Problem … Out of scope) with one mermaid diagram and signature-only contracts, plus one proposed ADR at design altitude, both committed on a feature branch.",
+      "expectations": [
+        "A design file exists under docs/playbooks/designs/",
+        "The design has the nine sections Problem, Approach, Shape, Contracts, Guarantees, Assumptions, Open questions, Risks, Out of scope, in that order",
+        "The design contains exactly one mermaid code fence",
+        "Every non-mermaid code fence in the design is signature-only (no statement bodies)",
+        "Guarantees are a numbered list of at least three and the last one states what must not change",
+        "Assumptions and Open questions are present and non-empty (a 'None.' line counts)",
+        "The Problem section ends with a sentence beginning 'Done means'",
+        "The design is at most 1,200 words",
+        "An ADR exists under docs/adr/ with no backticks, at most 40 lines, a proposed status, and at least one alternative",
+        "No sentence of the design is copied from the shipped example-design.md",
+        "The design (and ADR) were committed on a feature branch, not on main"
+      ]
+    },
+    {
+      "id": 2,
+      "name": "plan-from-design",
+      "skills_under_test": ["using-playbooks", "writing-plans"],
+      "fixture": "reportgen+design",
+      "prompt": "You are working in the git repository at {REPO}, a small Python project called reportgen. The approved design for the next feature is docs/playbooks/designs/2026-09-17-unified-cache.md (already committed on main). {PREAMBLE}\n\nThe user's request: \"Write the implementation plan for the unified-cache design.\"\n\nThe user is not available during this run: treat the plan as approved at any review gate, and stop before executing anything. There is no docs/followups.md. Do not modify the design.\n\nIf you are not following any skill, write the plan to docs/playbooks/plans/2026-09-17-unified-cache.md in whatever shape you judge best and commit it.\n\n{CLOSING}",
+      "expected_output": "A plan that stands on the design: a changes table by unit and method, a call-site table, scenarios citing G-numbers with test homes, a milestone table with done-when, and a stop-and-ask list; nothing restated from the design.",
+      "expectations": [
+        "A plan file exists under docs/playbooks/plans/ and links the design by filename",
+        "The plan has a Changes table whose header names the unit and the change",
+        "The plan has a call-site table with From and To columns",
+        "At least two scenarios cite a design Guarantee by number (G1, G2, ...)",
+        "Milestones are a table with a Done-when column",
+        "The plan has a 'Stop and ask' list",
+        "No sentence of the plan is copied from the design",
+        "No code fence in the plan contains statement bodies or exceeds five lines",
+        "The plan is at most 900 words"
+      ]
+    },
+    {
+      "id": 3,
+      "name": "adr-under-german-map",
+      "skills_under_test": ["using-playbooks", "writing-adr"],
+      "fixture": "reportgen+overlay-de+design",
+      "prompt": "You are working in the git repository at {REPO}, a small Python project called reportgen whose documentation conventions are in .claude/documentation.md — read it first. The approved design docs/playbooks/designs/2026-09-17-unified-cache.md describes a decision that has not been recorded yet. {PREAMBLE}\n\nThe user's request: \"Record the decision in the unified-cache design as an ADR.\"\n\nThe user is not available: choose the domain from the map yourself if it is obvious, treat any review gate as approved, and stop once the ADR and any index the conventions require are written and committed. Do not modify the design.\n\nIf you are not following any skill, write the ADR wherever .claude/documentation.md says ADRs live, following its conventions, and commit it.\n\n{CLOSING}",
+      "expected_output": "One German ADR in doc/adr/reporting/ named YYYY-MM-DD-adr-<topic>.md, at design altitude (no code, no backticks, ≤40 lines, with alternatives), plus a new row in the arc42 index; not modelled on the bloated ADR already in the directory.",
+      "expectations": [
+        "Exactly one new ADR was created, in doc/adr/reporting/, named YYYY-MM-DD-adr-<kebab-topic>.md",
+        "The ADR is written in German, headings included",
+        "The index doc/asciidoc/09_architecture_decisions.adoc gained a row linking the new ADR",
+        "The ADR contains no backticks and no code fence",
+        "The ADR is at most 40 lines",
+        "The ADR has a status line, a Kontext section in prose (no numbered list), an alternatives section with at least one entry, and a consequences section",
+        "The ADR does not copy the shape of the existing bloated ADR (no Referenzen section, no class listing)"
+      ]
+    },
+    {
+      "id": 4,
+      "name": "trivial-change-skip",
+      "skills_under_test": ["using-playbooks"],
+      "fixture": "reportgen",
+      "prompt": "You are working in the git repository at {REPO}, a small Python project called reportgen. {PREAMBLE}\n\nThe user's request: \"Rename MAX_RETRIES to DEFAULT_MAX_RETRIES everywhere in the reportgen CLI module and make sure the tests still pass.\"\n\nThe user is not available: if you would ask a question, make the reasonable choice and note it in the transcript. Commit when done.\n\nWhen finished: (1) run `git diff HEAD~1` (or `git diff` if you did not commit) and save it to {OUTPUTS}/change.diff; (2) write the list of any files you created under docs/ to {OUTPUTS}/created-docs.txt (an empty file if none); (3) write {RUN}/transcript.md — a numbered log of every file you read (including any skill files, by path), every decision you made on the user's behalf, every file you wrote, and every command you ran.",
+      "expected_output": "The rename is done and tests pass; no design or plan document was produced; the skill files read stop at using-playbooks.",
+      "expectations": [
+        "No file was created under docs/",
+        "MAX_RETRIES no longer appears in the repo and DEFAULT_MAX_RETRIES is used in cli.py",
+        "The test suite passes after the change",
+        "The transcript shows brainstorming was not followed",
+        "The change was committed"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,9 @@
+[project]
+name = "reportgen"
+version = "0.1.0"
+description = "Builds summary reports from JSON sources. Fixture project for playbooks evals."
+requires-python = ">=3.10"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]
