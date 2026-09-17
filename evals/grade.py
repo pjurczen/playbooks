@@ -104,7 +104,7 @@ def grade_3(out, repo):
 def grade_4(out, repo):
     ex = []
     created = (out / "created-docs.txt").read_text().strip() if (out / "created-docs.txt").exists() else "MISSING"
-    docs_now = [str(p) for p in (repo / "docs").rglob("*") if p.is_file() and "playbooks" in str(p)] if (repo / "docs").exists() else []
+    docs_now = [str(p.relative_to(repo)) for p in (repo / "docs").rglob("*") if p.is_file() and "playbooks" in str(p.relative_to(repo))] if (repo / "docs").exists() else []
     ex.append(("No file was created under docs/", created == "" and not docs_now, f"created-docs.txt='{created[:80]}', docs/playbooks files={docs_now}"))
     src = "".join(p.read_text() for p in (repo / "reportgen").glob("*.py"))
     ex.append(("MAX_RETRIES no longer appears in the repo and DEFAULT_MAX_RETRIES is used in cli.py", "DEFAULT_MAX_RETRIES" in (repo / "reportgen/cli.py").read_text() and not re.search(r"(?<!DEFAULT_)MAX_RETRIES", src), ""))
