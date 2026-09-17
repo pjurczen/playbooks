@@ -127,11 +127,7 @@ def main():
     exps = [{"text": t, "passed": bool(p), "evidence": str(e)[:300]} for t, p, e in ex]
     passed = sum(1 for e in exps if e["passed"])
     result = {"expectations": exps, "summary": {"passed": passed, "failed": len(exps) - passed, "total": len(exps), "pass_rate": round(passed / len(exps), 2) if exps else 0}}
-    timing = run / "timing.json"
-    if timing.exists():
-        tj = json.loads(timing.read_text())
-        result["timing"] = {"executor_duration_seconds": tj.get("total_duration_seconds"), "total_duration_seconds": tj.get("total_duration_seconds")}
-        result["tokens"] = tj.get("total_tokens")
+    # time and tokens are read by the aggregator from the sibling timing.json; emitting them here would shadow it
     (run / "grading.json").write_text(json.dumps(result, indent=2))
     print(f"eval {a.eval}: {passed}/{len(exps)} passed -> {run / 'grading.json'}")
 
