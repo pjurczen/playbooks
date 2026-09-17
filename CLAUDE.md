@@ -32,6 +32,7 @@ This is the actual differentiator from superpowers. The artifacts the *user* rea
 - Plans are intent-shaped (components, behaviours, milestones, risks) — no pre-written test code, no per-step commit messages.
 - Design docs are sectioned and scaled to the topic's complexity.
 - Commit messages follow Conventional Commits and describe the *why* of the slice, not a play-by-play of files.
+- ADRs are 2-minute reads at design altitude — no code, no symbols, alternatives named. Written when the decision is made (brainstorming), not when the feature lands.
 
 Skill files themselves can be richer where compliance demands it — but the artifacts the user reads are the bloat target.
 

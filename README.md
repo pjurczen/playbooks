@@ -2,7 +2,7 @@
 
 A lean, opinionated library of workflow skills for Claude Code.
 
-Playbooks gives Claude a small set of process skills — for designing features, planning, executing in milestones, debugging, testing, and finishing branches — that auto-load at the start of every session. The library is intentionally small: twelve skills, roughly 1,600 lines of markdown total. Less to read, less ceremony, more trust in the model.
+Playbooks gives Claude a small set of process skills — for designing features, planning, executing in milestones, debugging, testing, and finishing branches — that auto-load at the start of every session. The library is intentionally small: thirteen skills, roughly 1,900 lines of markdown total. Less to read, less ceremony, more trust in the model.
 
 ## Why not just use [superpowers](https://github.com/obra/superpowers)?
 
@@ -40,6 +40,7 @@ Once loaded, the `SessionStart` hook fires on session start / clear / compact an
 - `debugging` — root cause with evidence before any fix, pinned by a red-first regression test
 - `finishing-branch` — verify tests, then merge / PR / keep / discard
 - `consolidating-docs` — on landing, graduate durable decisions into real docs and delete the design/plan husks
+- `writing-adr` — one short ADR at design altitude when a decision clears the significance bar; written at brainstorming, promoted on landing
 
 **Implementation** (how to do the work):
 - `using-git-worktrees` — pick a workspace mode before anything is committed (default: new worktree on a new branch)
@@ -64,9 +65,10 @@ brainstorming → writing-plans → executing-plans → finishing-branch
 Each stage produces a small, readable artifact:
 - `docs/playbooks/designs/<date>-<topic>.md` — the design
 - `docs/playbooks/plans/<date>-<feature>.md` — the implementation plan
+- `<adr home>/<date>-<slug>.md` — the decision, if the feature made one (most don't)
 - `docs/followups.md` — durable notes from past work
 
-When a feature lands, `consolidating-docs` graduates the durable decisions from its design and plan into the repo's real documentation — guided by `.claude/documentation.md`, a map of where docs live — and removes the husks.
+When a feature lands, `consolidating-docs` promotes the feature's ADR from `proposed` to `accepted`, graduates the remaining durable decisions from its design and plan into the repo's real documentation — guided by `.claude/documentation.md`, a map of where docs live — and removes the husks.
 
 For trivial questions, read-only exploration, and one-off changes, the agent skips the pipeline and just answers.
 

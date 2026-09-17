@@ -1,5 +1,15 @@
 # Playbooks Release Notes
 
+## v0.7.0 (2026-09-17)
+
+### ADRs captured at decision time — new `writing-adr` skill
+
+ADRs were being written by `consolidating-docs` at landing time, and they came out as implementation summaries with a "Decision" heading: sixty lines of class names, annotations and method signatures, a findings list instead of context, no alternatives, and one for every decision in every feature. The cause was timing plus a missing owner. The decision happens in `brainstorming` — the user picks one of 2–3 approaches — but nothing recorded it until weeks later, when the agent's context was the diff and the review; rules against class names lose to that gravity. Meanwhile the example map in `consolidating-docs` ("a decision + its rationale → a new ADR") had no significance bar, and no skill defined what an ADR looks like.
+
+A new **`writing-adr`** skill owns ADR text. It carries a conjunctive bar (constrains work beyond this feature, hard to reverse, there was a real choice — all three or no ADR; most features produce none), a lean Nygard shape (Context in prose, a one-to-three-sentence Decision, one-line Alternatives, honest Consequences, under ~40 lines), mechanical altitude rules (no code, no backticks, no symbols or file paths), and a `proposed → accepted → superseded` lifecycle in which the status line is the one mutable field. Location, filename pattern, language (headings included) and any index all come from `.claude/documentation.md`, never from the skill; the bootstrap default is date-prefixed names, which can't collide across in-flight branches. A companion `example.md` shows a real decision rewritten at the right altitude, so agents calibrate on it rather than on a repo's existing ADRs.
+
+The pipeline now captures at the decision point. `brainstorming` reads existing ADRs during context exploration, applies the bar after design approval and workspace choice, and writes a `proposed` ADR next to the design doc — reviewed at the same gate, no extra confirmation; the design doc gains a short required "approach chosen and why" section. `writing-plans` applies the bar on mid-pipeline entry (the user brought a design). `executing-plans`' circuit-breaker revises the proposed ADR in place rather than writing a second. The end-of-feature reviewer checks whether the Decision is still true of the code. `consolidating-docs` handles ADRs once per feature *before* its per-item loop — reconcile drift, flip to `accepted`, update the index if the map names one, fall back to `writing-adr` from the design doc only when brainstorming was skipped — and its durable-vs-ephemeral bar gains an altitude rule: symbols and signatures are ephemeral, and decisions below the bar get a sentence in the architecture doc, not an ADR.
+
 ## v0.6.1 (2026-07-14)
 
 ### `consolidating-docs` — no dangling references to deleted husks
