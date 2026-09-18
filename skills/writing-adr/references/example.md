@@ -1,6 +1,6 @@
-# Example ADR — a real decision at the right altitude
+# Example ADR
 
-A decision from an insurance-offer system, rewritten from a 60-line ADR full of class names, annotations and a five-item findings list into the shape `writing-adr` produces. Match this altitude — not the altitude of whatever ADRs your repo already has.
+A real decision at the altitude `writing-adr` asks for. Match this altitude — not the altitude of whatever ADRs your repo already has.
 
 ---
 
@@ -27,14 +27,3 @@ We replace both mechanisms with one explicit, stateless domain service. It recal
 - Batch boundaries are visible at the call site instead of hidden in request state.
 - Discount fan-out is one-directional: mutating a discount-giving offer recalculates its dependents, never the reverse. New callers must respect this.
 - Health-declaration sync stays synchronous; the lazy variant from the earlier ADR remains unimplemented.
-
----
-
-## What got cut from the original, and why
-
-- **A five-item findings list** became two sentences of context. Findings are review output; an ADR needs the forces that motivated the decision.
-- **Annotations, method signatures, class names** are gone. The code and git have them; they rot on the first rename. The title now names the decision, not the class.
-- **A "cleanup, behaviour unchanged" paragraph** is gone. Unchanged behaviour is not a decision; it's a commit-message note.
-- **"Removed: A, B, C, D, E"** became what got easier or harder. A list of deleted classes is a diff summary.
-- **A References section** collapsed: the one live constraint moved into Consequences; the rest was context already covered. Cross-links stay only for supersedes / depends-on.
-- **Kept on purpose:** the one-directional fan-out invariant — the most durable line in the original — promoted from a finding to a consequence that constrains future callers.

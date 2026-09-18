@@ -1,6 +1,6 @@
-# Example design — a real change at the right altitude
+# Example design
 
-A real design rewritten. The original ran 200 lines: two mechanism walk-throughs traced method by method, a five-item findings list, a 60-line class body. This is the same decision in the shape `design-doc.md` gives: a narrative a teammate can follow without the codebase, then the contracts the implementer must match. Its plan is `../../writing-plans/references/example-plan.md`; together the two are complete, and nothing is said twice.
+A real design in the shape `design-doc.md` gives: a narrative a teammate can follow without the codebase, then the contracts the implementer must match. Its plan is `../../writing-plans/references/example-plan.md`; together the two are complete, and nothing is said twice.
 
 ---
 
