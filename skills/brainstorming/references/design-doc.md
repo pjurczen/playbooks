@@ -93,4 +93,4 @@ Each slice's design links it (`Initiative:` in the header) and covers only its d
 
 It is a working doc. When a slice diverges, **edit** the initiative so it stays true — never add a "the implementation diverges" callout. consolidating-docs leaves it alone until every slice in its table has landed.
 
-See `example-design.md` beside this file for a real design at the right altitude, and `../writing-plans/example-plan.md` for its plan.
+See `example-design.md` beside this file for a real design at the right altitude, and `../../writing-plans/references/example-plan.md` for its plan.

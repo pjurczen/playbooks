@@ -94,7 +94,7 @@ One-line description. File: src/path/file.py:line. Discovered while: feature-nam
 
 After the last milestone commits, run a single review pass before `finishing-branch`:
 
-1. Dispatch ONE reviewer subagent with the companion prompt `end-of-feature-reviewer-prompt.md` beside this skill, giving it the design, the plan, the feature diff (`BASE_SHA..HEAD`, from the using-git-worktrees report) and the `## Findings` block.
+1. Dispatch ONE reviewer subagent with the companion prompt `references/end-of-feature-reviewer-prompt.md`, giving it the design, the plan, the feature diff (`BASE_SHA..HEAD`, from the using-git-worktrees report) and the `## Findings` block.
 2. It returns Strengths / Issues (Critical / Important / Minor / Followup) / Assessment. Fix Critical, Important and Minor; only Followup-tier items go to `followups.md`.
 3. Commit the fixes as one "review fixes" milestone (same loop). One pass, fix, move on — wanting a re-review means a milestone was wrong; don't re-loop.
 

@@ -78,7 +78,7 @@ Stop and ask if:
 
 Milestones are vertical slices with observable progress — small enough to commit cleanly, big enough for a self-checkpoint and a refactor pass. The milestone table is what a team reads in a meeting. Greenfield? Milestone 1 includes the minimal test scaffolding. The *Stop and ask if* list is binding: an unlisted surprise is reported, not resolved by picking an interpretation.
 
-See `example-plan.md` beside this skill, with its design `../brainstorming/example-design.md` — together they are complete, and nothing is said twice.
+See `references/example-plan.md`, with its design `../brainstorming/references/example-design.md` — together they are complete, and nothing is said twice.
 
 ## Self-review
 

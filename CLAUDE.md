@@ -13,7 +13,7 @@ A Claude Code plugin: a `SessionStart` hook that injects `using-playbooks/SKILL.
 hooks/hooks.json               — registers the SessionStart hook
 hooks/session-start            — bash script: loads using-playbooks, escapes for JSON, emits hookSpecificOutput.additionalContext
 skills/<name>/SKILL.md         — one skill per directory
-skills/<name>/<companion>.md   — optional companion files (e.g. reviewer prompts)
+skills/<name>/references/*.md  — documents a step tells the model to read: shapes, worked examples, reviewer prompts
 docs/                          — design rationale and reference notes
 ```
 
@@ -28,7 +28,7 @@ Skill files are prompts. Instruction count degrades adherence and early instruct
 - **Red Flags tables only where discipline is the point** (`using-playbooks`, `brainstorming`, `executing-plans`, `verifying-before-done`, `debugging`, `consolidating-docs`), ≤ 4 rows, each naming an excuse the body doesn't already refute — not a body rule with a quotation mark in front.
 - **No per-skill "Announce at start"** — the bootstrap says to announce once. **`dot` graphs only for a real loop or non-obvious branch**; linear flows are numbered lists.
 - **"When to skip" is a standard section** in every directly-invocable skill; pipeline-only skills say "fired by X".
-- **Companions carry a read-when** ("read `design-doc.md` before step 7"). **Positive framing, reasons over emphasis, no brand names.**
+- **Companions carry a read-when** ("read `references/design-doc.md` before step 7"). **Positive framing, reasons over emphasis, no brand names.**
 - **Tone:** senior dev to senior dev. State the rule and the reason; trust the reader.
 
 ## Conventions for produced artifacts

@@ -65,7 +65,7 @@ we decided <this> over <that> and <the other>, to achieve <quality>, accepting <
 - Three to six honest bullets: what gets easier, what gets harder, what future work must respect.
 ```
 
-Whole thing under ~40 lines — a two-minute read. See `example.md` beside this skill for a real decision at the right altitude.
+Whole thing under ~40 lines — a two-minute read. See `references/example.md` for a real decision at the right altitude.
 
 ## Altitude — mechanical rules
 

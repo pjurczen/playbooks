@@ -29,13 +29,13 @@ Track these as todos and complete them in order:
 4. **Present the design in sections** — the doc's sections, in order (step 7); ask "looks right so far?" after each.
 5. **Choose workspace** — invoke **using-git-worktrees**: after approval, so abandoned brainstorms leave no orphan branches; before any commit, so design, plan and implementation all land on the feature branch where finishing-branch and consolidating-docs can find them.
 6. **Record the decision (if any)** — apply **writing-adr**'s bar to the approach the user picked. Clears it → invoke **writing-adr**; the ADR is `proposed` and commits with the design doc. Most features don't clear it.
-7. **Write the design doc** — read `design-doc.md` beside this skill first; it owns the shape (Problem → Approach → Shape → Contracts → Guarantees → Assumptions → Open questions → Risks → Out of scope), the altitude rule, the diagram rules and initiative designs. Worked example: `example-design.md`. Save to `docs/playbooks/designs/YYYY-MM-DD-<topic>.md` and commit.
+7. **Write the design doc** — read `references/design-doc.md` first; it owns the shape (Problem → Approach → Shape → Contracts → Guarantees → Assumptions → Open questions → Risks → Out of scope), the altitude rule, the diagram rules and initiative designs. Worked example: `references/example-design.md`. Save to `docs/playbooks/designs/YYYY-MM-DD-<topic>.md` and commit.
 8. **Self-review** (below), then **ask the user to review** and wait for explicit approval.
 9. **Invoke writing-plans** — the only skill you invoke from here.
 
 ## Decomposition
 
-A request that spans several independent subsystems ("a platform with chat, storage, billing and analytics") is split before any question is spent refining it: each sub-project gets its own design → plan → implementation cycle. When the slices share a target architecture, an **initiative design** comes first (`design-doc.md`, *Initiative designs*) and each slice links it. Work that fits one cycle needs no initiative.
+A request that spans several independent subsystems ("a platform with chat, storage, billing and analytics") is split before any question is spent refining it: each sub-project gets its own design → plan → implementation cycle. When the slices share a target architecture, an **initiative design** comes first (`references/design-doc.md`, *Initiative designs*) and each slice links it. Work that fits one cycle needs no initiative.
 
 ## Failure-mode pass
 
@@ -51,7 +51,7 @@ Units with one purpose each and well-defined interfaces, testable independently;
 2. **Ambiguity** — a requirement readable two ways gets one reading, stated.
 3. **Scope** — one implementation plan's worth, or does it need decomposition?
 4. **Stranger test** — could a teammate who has never opened the codebase follow Problem → Approach → Shape? A sentence that needs three identifiers to parse is rewritten at component level.
-5. **Walk `design-doc.md`'s per-section rules** as a checklist: altitude, diagram, contracts with failure behaviour, numbered falsifiable guarantees ending in what must not change, Assumptions and Open questions present, Status set.
+5. **Walk `references/design-doc.md`'s per-section rules** as a checklist: altitude, diagram, contracts with failure behaviour, numbered falsifiable guarantees ending in what must not change, Assumptions and Open questions present, Status set.
 6. **Accuracy** — for anything you're tempted to cut: would cutting it lose accuracy for the implementer? If not, cut; if so, keep.
 
 Fix inline; no second review.
