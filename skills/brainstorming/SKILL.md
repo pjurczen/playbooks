@@ -23,15 +23,13 @@ brainstorming; using-playbooks' skip list handles it. Once you're here, don't sk
 Track them as todos; present each stage's output as you reach it and ask "looks right so far?" — a wrong diagnosis is
 cheap before approaches are proposed and expensive after.
 
-**1. Problem — what are we actually trying to solve?** The request is usually phrased as a solution ("add a cache", "
-unify the calculation"). Recover the need behind it: who hurts, what happens if nothing is done, what "done" looks like
+**1. Problem — what are we actually trying to solve?** The request is usually phrased as a solution ("add a cache"). Recover the need behind it: who hurts, what happens if nothing is done, what "done" looks like
 as something observable. The clarifying questions belong here — one at a time, multiple-choice when it fits, about
 purpose, constraints and success, not implementation. If the ask and the need differ, the design is about the need.
 *Output:* Problem, ending in "Done means".
 
 **2. Diagnosis — what causes it?** Ground the problem in what exists, driven by the problem rather than by a category:
-the code paths, data and callers that produce the pain; `docs/followups.md` (earlier attempts); existing ADRs per
-`.claude/documentation.md` (they constrain the fix; reversing one is a supersede); `docs/playbooks/initiatives/` (a
+the code paths, data and callers that produce the pain; `docs/followups.md` (earlier attempts); existing ADRs per `.claude/documentation.md` (they constrain the fix; reversing one is a supersede); the rules in `.claude/gates.md`; `docs/playbooks/initiatives/` (a
 slice of one? — `references/initiative-design.md`). No git repo yet? Offer `git init`, asking first. *Output:* the
 cause, in structural terms a reader can check — Diagnosis.
 
@@ -43,13 +41,11 @@ the approach instantiates a rule the team is adopting or is itself a system-leve
 test to that. *Output:* Approach with the alternatives it beat, and Decisions.
 
 **4. Shape — what does it look like, exactly?** The components; the views a reader needs (`references/design-views.md`;
-the kinds table in `references/design-doc-shape.md` maps the chosen approach to views and contracts); the contracts the
-implementer must match; the mechanism only where it is the decision; the guarantees as falsifiable properties. Units
-with one purpose and clean interfaces — leaking internals mean a wrong boundary; in an existing codebase follow its
-patterns, leave unrelated refactoring alone. *Output:* Design, Contracts, Guarantees.
+the kinds table in `references/design-doc-shape.md` maps the chosen approach to views and contracts); the contracts the implementer must match, including the structural rules the gates check; the mechanism only where it is the decision; the guarantees as falsifiable properties. Units
+with one purpose and clean interfaces — leaking internals mean a wrong boundary; follow the codebase's patterns, leave unrelated refactoring alone. *Output:* Design, Contracts, Guarantees.
 
 **5. Check — does it solve the problem?** Hold the design against stage 1: does it remove the diagnosed cause; do the
-guarantees cover "done means"; what was assumed without asking; what stays open, for whom, by when; what could go wrong
+guarantees cover "done means"; what was assumed without asking; what stays open; what could go wrong
 with the approach itself; what is deliberately out. *Output:* Assumptions, Open questions, Risks, Out of scope.
 
 ## Mechanics around the stages

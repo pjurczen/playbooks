@@ -74,6 +74,8 @@ configuration keys and flags; screens, states and the events between them. Annot
 transaction) stay; bodies, private members, fields and boilerplate go. A changed existing thing: its declaration plus
 one line saying what changes. A repeating pattern is shown once.
 
+**Structural rules** — three to five, derived from the Design view, that the gates can check: which components may depend on which; who owns which responsibility; length or complexity limits where they differ from `.claude/gates.md`. Milestone one of the plan wires any rule the map doesn't enforce yet.
+
 ```java
 // a contract: what the implementer must match, what a reviewer can check
 @Transactional

@@ -116,6 +116,12 @@ public ETag finalisiereAenderung(Angebot angebot);
 public void calculateRabattnehmendeAngebote(Angebot rabattgebendesAngebot, Bearbeiter bearbeiter);
 ```
 
+**Structural rules**
+
+- Only ProduktRecalculationService calls the product gateway for recalculation; callers never do.
+- The mutation service does not depend on the recalculation service; the dependency runs the other way.
+- The batch's three phases (split, compute, finalise) are separate functions under the map's limits.
+
 ## Guarantees
 
 1. When any caller needs a product recalculation, then it goes through ProduktRecalculationService; no request-scoped

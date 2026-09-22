@@ -108,6 +108,12 @@ tenant configuration (per tenant, defaults service-wide):
   rateLimit.burst               default 100
 ```
 
+**Structural rules**
+
+- The rate limiter has no dependency on the HTTP layer or the render handler; the controller depends on it, not the reverse.
+- Tenant configuration is read through the existing config unit; the limiter holds no parsing.
+- Bucket arithmetic lives in one function under the map's limits; the controller's deny path is a separate function.
+
 ## Guarantees
 
 1. When a tenant has spent its burst and sends another request within the refill time, then it receives 429 with a

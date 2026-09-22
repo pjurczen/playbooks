@@ -109,6 +109,12 @@ public interface RoutingTable {
 }
 ```
 
+**Structural rules**
+
+- Emitters and workers depend on the queue interface, never on each other or on the scheduler.
+- The routing table is read through its interface only; no module reads the configuration key directly.
+- The nightly scheduler gains no new dependency in any slice; it only loses them.
+
 ## Guarantees
 
 1. When a type is migrated, then every change to a report of that type produces a render within the queue's delivery
