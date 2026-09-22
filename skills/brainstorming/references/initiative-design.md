@@ -10,7 +10,7 @@ Signals at brainstorming: the request spans several subsystems; the chosen appro
 
 The same sections as a feature design (`design-doc-shape.md`), with these differences:
 
-- **Problem** at system level, up to three paragraphs, ending with what done means for the whole initiative: the end state reached and the legacy that is gone.
+- **Problem** and **Diagnosis** at system level, up to three paragraphs each; Problem ends with what done means for the whole initiative: the end state reached and the legacy that is gone.
 - **Design** holds two things a feature design never has. The **target architecture**: the after-picture, as a context or structure view of the end state. The **coexistence mechanism**: how work is routed between old and new while slices land, what stays byte-identical, what state is duplicated and how it stays consistent, and how the split disappears at the end. Coexistence is where the risk lives, and a slice design cannot own it.
 - **Contracts** are the shared ones, what every slice builds against. A slice's own contracts stay in its design.
 - **Guarantees** hold at every intermediate state, not only at the end. One of them says which slice orders the coexistence mechanism supports — the roadmap may only choose among those.

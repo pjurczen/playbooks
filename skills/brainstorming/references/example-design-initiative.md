@@ -10,7 +10,11 @@ Status: approved · Ticket: RS-140 · ADR: `<date>-adr-render-on-change-not-on-s
 
 ## Problem
 
-Every report is rendered by a nightly job that walks all report definitions and renders each one synchronously, whether or not anything changed. The run takes four hours and grows with the catalogue; a failure halfway leaves the second half stale until the next night; and a report changed at 9 a.m. is not visible until the next morning. Support requests to "re-run the night" are the most common ticket in the service. Done means a report is re-rendered within minutes of a change to its definition or its sources, the nightly job is gone, and a failed render affects only that report.
+A report changed at 9 a.m. is not visible until the next morning, a failure halfway through the night leaves half the catalogue stale, and "re-run the night" is the most common support ticket in the service. Done means a report is re-rendered within minutes of a change to its definition or its sources, the nightly job is gone, and a failed render affects only that report.
+
+## Diagnosis
+
+Rendering is coupled to a schedule rather than to change: a nightly job walks every report definition and renders each synchronously whether or not anything changed, so latency is the schedule's period, cost grows with the catalogue, and one failure is everyone's failure because the run is a single sequence. Nothing in the system knows when a report's inputs changed; that knowledge exists only in the definition service and the source adapters, and they never say so.
 
 ## Approach
 

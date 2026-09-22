@@ -4,7 +4,11 @@ Status: approved · Ticket: RG-42
 
 ## Problem
 
-Every source read in reportgen goes through two caches that know nothing about each other: an in-process memo keyed by free-form strings and an on-disk file cache. Each caller keeps them in sync by hand. The sources loader writes both and drops the summary memo whenever it loads; the report builder empties both by reaching into each module when the user asks for a fresh run; the summary module memoizes under a key the loader also knows about. Nothing states how long a cached value is valid, so a stale summary can survive a fresh source and a fresh run can throw away rows that were seconds old. Done means one cache, one place that decides validity, and every existing test green.
+Reportgen serves stale summaries after fresh source reads, and a fresh run throws away rows that were seconds old; nobody can say how long a cached value is valid, because nothing decides it. Done means one cache, one place that decides validity, and every existing test green.
+
+## Diagnosis
+
+Every source read goes through two caches that know nothing about each other: an in-process memo keyed by free-form strings and an on-disk file cache. Each caller keeps them in sync by hand — the sources loader writes both and drops the summary memo whenever it loads; the report builder empties both by reaching into each module on a fresh run; the summary module memoizes under a key the loader also knows about. No store carries a time-to-live, so validity is decided by whichever caller last touched the keys.
 
 ## Approach
 

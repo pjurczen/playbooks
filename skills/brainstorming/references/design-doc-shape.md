@@ -1,22 +1,6 @@
 # The design doc — kinds of work, sections, altitude
 
-A design has two readers. A teammate who has never opened the codebase reads the narrative — Problem, Approach, Decisions, Design — in a few minutes. The implementer — a person or a model in another session, with none of the brainstorming conversation — works from the precision layer, Contracts and Guarantees, plus the plan. Each layer stays pure: no rationale inside Contracts, no declarations inside Approach. Length is whatever completeness needs; padding is what serves neither.
-
-## Kinds of work
-
-Name the kind first; it decides what to explore, what to ask, which views to draw, and what a contract is. Add a row when a kind is missing.
-
-| Kind | Explore | Ask about | Views (`design-views.md`) | Contracts are | Typical guarantees |
-|---|---|---|---|---|---|
-| Feature in an existing codebase | the surrounding code, its patterns, the callers | purpose, success criteria, what must not change | structure; behaviour when a flow changes | signatures, endpoints | parity for untouched behaviour |
-| Greenfield system or service | nothing in-repo; the users and the neighbouring systems | who it's for, constraints, non-goals | context first, then structure | the external surface: API, CLI, config | the properties the surface promises |
-| Replacement or refactor | both old mechanisms and every caller | which behaviour is preserved | structure, before → after | the changed declarations | invariants preserved, parity |
-| Integration with an external system | its API, failure modes, limits | retries, idempotency, timeouts, credentials | behaviour, with the failure paths | messages, endpoints | delivery semantics, timeout bounds |
-| Data-model change | schema, migrations, every reader and writer | backfill, compatibility, volume | data; rollout | schema, migration steps | no data loss; old readers keep working |
-| User-facing flow | existing screens and states | empty, error and edge states; roles | state, process | screens, states, events | every state reachable and exitable |
-| Infrastructure or deployment | current topology, runbooks | rollout, rollback, blast radius | context; rollout | resources, configuration | a rollback path; the downtime claim |
-| Cross-cutting policy | every place it applies | exceptions, migrating existing code | structure | the rule as an interface | applies everywhere, and how it's enforced |
-| Initiative (`initiative-design.md`) | all of the above at system level | end state, coexistence, order | context, structure, rollout | the shared contracts | hold at every intermediate state |
+The design doc is the trace of brainstorming's five stages: Problem and Diagnosis are stages one and two, Approach and Decisions stage three, Design, Contracts and Guarantees stage four, the rest stage five. A design has two readers. A teammate who has never opened the codebase reads the narrative — Problem, Diagnosis, Approach, Decisions, Design — in a few minutes. The implementer — a person or a model in another session, with none of the brainstorming conversation — works from the precision layer, Contracts and Guarantees, plus the plan. Each layer stays pure: no rationale inside Contracts, no declarations inside Approach. Length is whatever completeness needs; padding is what serves neither.
 
 ## Sections
 
@@ -24,7 +8,11 @@ The shape is the example for your kind (`example-design-<kind>.md`). Header: Sta
 
 ### Problem — narrative
 
-One paragraph (an initiative may take three): what hurts, for whom, why now; for greenfield work, who it's for and the constraints. No lists, no call chains, no findings. End with a sentence starting "Done means" — the observable outcome. A hypothesis exploration disproved becomes a scenario in the plan, not a paragraph.
+One paragraph (an initiative may take three): what hurts, for whom, why now; for greenfield work, who it's for and the constraints. The need, not the requested solution. No lists, no call chains, no findings. End with a sentence starting "Done means" — the observable outcome.
+
+### Diagnosis — narrative
+
+One paragraph: the cause of the problem in structural terms a reader can check — which mechanisms, data or boundaries produce the pain, and what constrains the fix. Name components, not methods; no call chains, no numbered findings. This is the sentence everything after it hangs on, and the one a reviewer should be able to disagree with. A hypothesis exploration disproved becomes a scenario in the plan, not a paragraph here.
 
 ### Approach — narrative
 
@@ -37,6 +25,20 @@ The decisions this design makes, one line each: the decision, the alternative re
 ### Design — narrative
 
 The views a reader needs to understand the problem and the solution — usually one to three, each opening with the question it answers; `design-views.md` says which view answers which question. Then one bullet per component: name, new / changed / removed, responsibility. Components and responsibilities, not call sites; the plan enumerates those.
+
+The kind of work falls out of the chosen approach, and it says which views to draw and what a contract is here. Add a row when a kind is missing.
+
+| Kind | Views | Contracts are | Typical guarantees |
+|---|---|---|---|
+| Feature in an existing codebase | structure; behaviour when a flow changes | signatures, endpoints | parity for untouched behaviour |
+| Greenfield system or service | context first, then structure | the external surface: API, CLI, config | the properties the surface promises |
+| Replacement or refactor | structure, before → after | the changed declarations | invariants preserved, parity |
+| Integration with an external system | behaviour, with the failure paths | messages, endpoints | delivery semantics, timeout bounds |
+| Data-model change | data; rollout | schema, migration steps | no data loss; old readers keep working |
+| User-facing flow | state, process | screens, states, events | every state reachable and exitable |
+| Infrastructure or deployment | context; rollout | resources, configuration | a rollback path; the downtime claim |
+| Cross-cutting policy | structure | the rule as an interface | applies everywhere, and how it's enforced |
+| Initiative (`initiative-design.md`) | context, structure, rollout | the shared contracts | hold at every intermediate state |
 
 **The mechanism, when it is the decision.** Most designs need no code: the contracts fix the surface and a competent implementer fills the body. But when an algorithm's complexity, a concurrency scheme, a state machine or a data structure *is* the solution — when an implementer given only the contracts would plausibly build something materially different — the design carries it here: pseudo-code or a minimal sketch, as long as it needs to be to remove that ambiguity and no longer, with the property it buys stated as a guarantee. Never code that is merely the obvious way to implement a decision made elsewhere; that is what rots in a design.
 

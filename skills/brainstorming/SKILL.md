@@ -5,7 +5,7 @@ description: Use before any non-trivial creative work (features, components, beh
 
 # Brainstorming
 
-Turn an idea into a design through dialogue: ask questions one at a time, propose two or three approaches, settle on one with the user, write it down, hand off to planning.
+Turn a request into a design by reasoning in five stages — problem, diagnosis, decision, shape, check — each producing one thing the next depends on. The design doc is the trace of that reasoning, not a form. Dialogue throughout: one question at a time, and approval before anything is built on.
 
 <HARD-GATE>
 Present a design and get the user's approval before invoking a planning skill or writing any code — for every project, a todo list included. "Simple" is where unexamined assumptions cost the most; the design can be a few sentences when the work is small, but the approval is what matters.
@@ -15,41 +15,42 @@ Present a design and get the user's approval before invoking a planning skill or
 
 A change you can describe in one sentence and verify with one command — a rename, a typo, a constant — never enters brainstorming; using-playbooks' skip list handles it. Once you're here, don't skip the design.
 
-## Checklist
+## The five stages
 
-Track these as todos and complete them in order:
+Track them as todos; present each stage's output as you reach it and ask "looks right so far?" — a wrong diagnosis is cheap before approaches are proposed and expensive after.
 
-1. **Name the kind of work** — from the table in `references/design-doc-shape.md`: a feature in an existing codebase, greenfield, a replacement, an integration, a data change, a user-facing flow, an infrastructure change, a cross-cutting policy, an initiative. It decides what to explore, what to ask, which views to draw and what the contracts are.
-2. **Explore project context** — as the kind demands: the surrounding code; `docs/followups.md` (intersecting items get folded in); existing ADRs per `.claude/documentation.md` (they constrain the design; reversing one is a supersede); `docs/playbooks/initiatives/` (a slice of one is designed in slice mode, per `references/initiative-design.md`). Not a git repo yet? Offer `git init` (ask first).
-3. **Ask clarifying questions** — one at a time; purpose, constraints, success criteria, not implementation details. Multiple-choice when it fits.
-4. **Propose 2–3 approaches** — lead with your recommendation and why; conversational, not a comparison matrix. Run the failure-mode pass below on each.
-5. **Present the design in sections** — the doc's sections in order; ask "looks right so far?" after each.
-6. **Choose workspace** — invoke **using-git-worktrees**: after approval, so abandoned brainstorms leave no orphan branches; before any commit, so every artifact lands on the feature branch where finishing-branch and consolidating-docs find it.
-7. **Record the decision (if any)** — does the chosen approach instantiate a rule the team is adopting, or is it itself a system-level choice? Apply **writing-adr**'s test to *that*; it holds → invoke **writing-adr**, and the `proposed` ADR commits with the design. Most features: neither.
-8. **Write the design doc** — read `references/design-doc-shape.md` (sections and rules), `references/design-views.md` (the views you draw) and `references/example-design-<kind>.md` for your kind. Save to `docs/playbooks/designs/YYYY-MM-DD-<topic>.md` and commit.
-9. **Self-review** (below), then **ask the user to review** and wait for explicit approval.
-10. **Hand off** — **writing-plans** for a feature or slice, **writing-roadmap** for an initiative; nothing else.
+**1. Problem — what are we actually trying to solve?** The request is usually phrased as a solution ("add a cache", "unify the calculation"). Recover the need behind it: who hurts, what happens if nothing is done, what "done" looks like as something observable. The clarifying questions belong here — one at a time, multiple-choice when it fits, about purpose, constraints and success, not implementation. If the ask and the need differ, the design is about the need. *Output:* Problem, ending in "Done means".
+
+**2. Diagnosis — what causes it?** Ground the problem in what exists, driven by the problem rather than by a category: the code paths, data and callers that produce the pain; `docs/followups.md` (earlier attempts); existing ADRs per `.claude/documentation.md` (they constrain the fix; reversing one is a supersede); `docs/playbooks/initiatives/` (a slice of one? — `references/initiative-design.md`). No git repo yet? Offer `git init`, asking first. *Output:* the cause, in structural terms a reader can check — Diagnosis.
+
+**3. Decision — what are the moves, and which one?** Each approach is a different answer to the diagnosis; propose two or three, lead with your recommendation and why, and run the failure-mode pass below on each. The kind of work falls out of the chosen approach: it adds within the existing structure, replaces something, integrates, changes the data or a flow — or cannot land at once and needs old and new to coexist, which makes it an **initiative** (below). Ask whether the approach instantiates a rule the team is adopting or is itself a system-level choice, and apply **writing-adr**'s test to that. *Output:* Approach with the alternatives it beat, and Decisions.
+
+**4. Shape — what does it look like, exactly?** The components; the views a reader needs (`references/design-views.md`; the kinds table in `references/design-doc-shape.md` maps the chosen approach to views and contracts); the contracts the implementer must match; the mechanism only where it is the decision; the guarantees as falsifiable properties. Units with one purpose and clean interfaces — leaking internals mean a wrong boundary; in an existing codebase follow its patterns, leave unrelated refactoring alone. *Output:* Design, Contracts, Guarantees.
+
+**5. Check — does it solve the problem?** Hold the design against stage 1: does it remove the diagnosed cause; do the guarantees cover "done means"; what was assumed without asking; what stays open, for whom, by when; what could go wrong with the approach itself; what is deliberately out. *Output:* Assumptions, Open questions, Risks, Out of scope.
+
+## Mechanics around the stages
+
+- **Workspace** — once the decision is approved and before any commit, invoke **using-git-worktrees**, so every artifact lands on the feature branch.
+- **ADR** — when stage 3 says so, invoke **writing-adr**; the `proposed` ADR commits with the design.
+- **Write** — sections and rules in `references/design-doc-shape.md`; read `references/example-design-<kind>.md` for the chosen kind. Save to `docs/playbooks/designs/YYYY-MM-DD-<topic>.md` and commit.
+- **Self-review**, then the **review gate**, then the **hand-off**: **writing-plans** for a feature or slice, **writing-roadmap** for an initiative. Nothing else.
 
 ## Initiatives
 
-Work that won't fit one design → plan → execute cycle — several subsystems, old and new coexisting while it lands, a third ADR-worthy decision appearing — is an initiative. Say so and switch: the document becomes an initiative design per `references/initiative-design.md` (target architecture, coexistence mechanism, shared contracts, decisions; no slices), committed to the base branch as docs only, and the hand-off is **writing-roadmap**. Slice mode and the lifecycle are in that reference.
+When stage 3's approach needs old and new to coexist while it lands, the document becomes an initiative design per `references/initiative-design.md` (target architecture, coexistence mechanism, shared contracts, decisions; no slices), committed to the base branch as docs only; the hand-off is **writing-roadmap**. Slice mode and lifecycle: that reference.
 
 ## Failure-mode pass
 
 For any approach that puts an unreliable component on a load-bearing seam — an LLM at a generation boundary, a heuristic trusted to hold a structural invariant — ask how it degenerates under real load and what the deterministic alternative is. If holding it together needs post-hoc patches, the abstraction is wrong: make the structure deterministic and use the model only for bounded content-fill in a known shape.
 
-## Design for isolation
-
-Units with one purpose and well-defined interfaces, testable independently; internals leaking through an interface mean the boundary is wrong. In an existing codebase follow its patterns, fold in the improvements this work needs, leave unrelated refactoring alone.
-
 ## Self-review
 
-1. **Placeholders and contradictions** — no TBDs; sections agree with each other.
-2. **Ambiguity** — a requirement readable two ways gets one reading, stated.
-3. **Scope** — one plan's worth, or an initiative?
-4. **Stranger test** — could a teammate who has never opened the codebase follow Problem → Approach → Design? A sentence that needs three identifiers to parse is rewritten at component level.
-5. **Walk the per-section rules** in `references/design-doc-shape.md`: each view answers its named question; a snippet only where the mechanism is the decision; Decisions, Assumptions, Open questions present; guarantees numbered and falsifiable; Status set.
-6. **Accuracy** — before cutting anything: would it lose accuracy for the implementer? If not, cut.
+1. **The chain holds** — the diagnosis explains the problem; the approach answers the diagnosis; the guarantees cover "done means".
+2. **Placeholders, contradictions, ambiguity** — no TBDs; sections agree; a requirement readable two ways gets one reading, stated.
+3. **Stranger test** — could a teammate who has never opened the codebase follow Problem → Diagnosis → Approach → Design? A sentence needing three identifiers to parse is rewritten at component level.
+4. **Walk the per-section rules** in `references/design-doc-shape.md`: each view answers its named question; a snippet only where the mechanism is the decision; Decisions, Assumptions, Open questions present; guarantees numbered and falsifiable; Status set.
+5. **Accuracy** — before cutting anything: would it lose accuracy for the implementer? If not, cut.
 
 Fix inline; no second review.
 
@@ -61,13 +62,13 @@ Wait for explicit approval; on changes, apply them and re-run the self-review. O
 
 ## Re-entering from executing-plans
 
-The circuit-breaker sends a wrong seam back here. Work only that seam: keep the workspace; revise the `proposed` ADR in place if the decision changed — never a second one. For a slice the seam may be the initiative's: edit its design with a deviation line, and the roadmap if the order changes. Re-review at the gate; amend the plan to match.
+The circuit-breaker sends a wrong seam back here — usually a wrong diagnosis, or a decision that didn't survive contact. Work only that seam: keep the workspace; revise the `proposed` ADR in place if the decision changed — never a second one. For a slice the seam may be the initiative's: edit its design with a deviation line, and the roadmap if the order changes. Re-review at the gate; amend the plan to match.
 
 ## Red Flags — STOP
 
 | Thought | Reality |
 |---------|---------|
+| "The request says what to build, I'll design that" | The request is a solution. Find the need first; the design is about the need. |
 | "I'll paste the class so the implementer can't get it wrong" | Paste the contract; a body only when the mechanism is the decision. |
-| "Context needs the call chain so readers understand" | Readers need the problem. Call chains are conversation residue. |
+| "Context needs the call chain so readers understand" | Readers need the problem and the diagnosis. Call chains are conversation residue. |
 | "I'll add a future-optimizations section" | YAGNI. A property → Guarantees; an idea → `docs/followups.md`. |
-| "Shorter is better, I'll drop the contracts" | Shorter is not the goal. Complete at the right altitude is. |

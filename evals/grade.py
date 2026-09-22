@@ -7,7 +7,7 @@ Qualitative expectations are left to the grader subagent; this script only recor
 import argparse, json, re, subprocess, sys
 from pathlib import Path
 
-SECTIONS = ["Problem", "Approach", "Decisions", "Design", "Contracts", "Guarantees", "Assumptions", "Open questions", "Risks", "Out of scope"]
+SECTIONS = ["Problem", "Diagnosis", "Approach", "Decisions", "Design", "Contracts", "Guarantees", "Assumptions", "Open questions", "Risks", "Out of scope"]
 STATEMENT = re.compile(r"^\s+(return\b|if\b|for\b|while\b|with\b|try:|except\b|raise\b|self\.\w+\s*=|\w+\s*=\s*[^=]|print\()")
 FENCE = re.compile(r"```(\w*)\n(.*?)```", re.S)
 
@@ -42,7 +42,7 @@ def grade_1(out, repo, example):
     t = d.read_text() if d else ""
     heads = [h for h in re.findall(r"^## (.+?)\s*$", t, re.M)]
     order = [h for h in heads if h in SECTIONS]
-    ex.append(("The design has the ten sections Problem, Approach, Decisions, Design, Contracts, Guarantees, Assumptions, Open questions, Risks, Out of scope, in that order", order == SECTIONS, f"headings: {heads}"))
+    ex.append(("The design has the eleven sections Problem, Diagnosis, Approach, Decisions, Design, Contracts, Guarantees, Assumptions, Open questions, Risks, Out of scope, in that order", order == SECTIONS, f"headings: {heads}"))
     mm = sum(1 for l, _ in fences(t) if l == "mermaid")
     ex.append(("The design contains one to three mermaid views", 1 <= mm <= 3, f"{mm} mermaid fences"))
     b = has_bodies(t, allow_in="Design")

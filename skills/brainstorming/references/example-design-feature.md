@@ -10,7 +10,11 @@ Status: approved · Ticket: RS-118
 
 ## Problem
 
-One tenant's nightly export bursts several thousand render requests into the report API within a minute, and every other tenant's requests queue behind them until the burst drains. The service has no notion of fairness: requests are handled in arrival order by a fixed worker pool, so a single client can consume the whole pool. Support has handled this by phone twice this quarter. Done means a tenant that exceeds its allowed rate is told so immediately with a retry hint, and no tenant under its rate waits on another tenant's burst.
+One tenant's nightly export bursts several thousand render requests into the report API within a minute, and every other tenant's requests wait until the burst drains. Support has handled this by phone twice this quarter. Done means a tenant that exceeds its allowed rate is told so immediately with a retry hint, and no tenant under its rate waits on another tenant's burst.
+
+## Diagnosis
+
+The service has no notion of a tenant before work starts: requests are accepted in arrival order into a fixed worker pool, so the first client to arrive in volume owns the pool until its requests drain, and nothing between the edge and the pool can say no. Fairness cannot be added inside the pool without a scheduler; it has to be decided before a request is accepted, per tenant, with a bound on bursts as well as on sustained rate.
 
 ## Approach
 

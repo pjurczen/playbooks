@@ -10,7 +10,11 @@ Status: approved · Ticket: <id> · ADR: `<date>-adr-business-process-state-outs
 
 ## Problem
 
-When an offer changes, its products must be recalculated; when the discount-giving offer of a family changes, every discount-receiving offer must be recalculated too. Today that happens through two overlapping mechanisms. One defers: callers mark offers dirty in a request-scoped collector and the set is recalculated when the request ends. The other is immediate and sequential: finalising a discount-giving offer loops over its dependents and recalculates and flushes each on its own. The deferral almost never batches — only two flows ever mark more than one offer — the main command path bypasses it entirely, and the sequential loop cannot be parallelised because each iteration flushes inside the request. Two mechanisms for one job, neither doing what its name promises. Done means every caller reaches recalculation through one service, the collector and the sequential loop are gone, and every existing scenario is green.
+When an offer changes, its products must be recalculated; when the discount-giving offer of a family changes, every discount-receiving offer must be recalculated too. Recalculation is slow where it should be batched, hidden where callers need to reason about it, and cannot be parallelised where it must be — and every new caller adds another way to get it wrong. Done means every caller reaches recalculation through one service, the collector and the sequential loop are gone, and every existing scenario is green.
+
+## Diagnosis
+
+Two overlapping mechanisms do one job. One defers: callers mark offers dirty in a request-scoped collector and the set is recalculated when the request ends. The other is immediate and sequential: finalising a discount-giving offer loops over its dependents and recalculates and flushes each on its own. The deferral almost never batches — only two flows ever mark more than one offer — the main command path bypasses it entirely, and the sequential loop cannot be parallelised because each iteration flushes inside the request. Neither mechanism does what its name promises, and the request lifecycle, not the caller, decides when work happens.
 
 ## Approach
 
