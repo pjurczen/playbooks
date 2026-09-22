@@ -46,9 +46,7 @@ Do NOT trust the implementer's narrative. Read the actual code.
 
 **Code quality**
 
-- Is each unit's responsibility clear and bounded? (Single Responsibility Principle.)
-- Are functions reasonably sized, with descriptive names that explain what they do?
-- Any obvious duplication that should be DRY'd, or premature abstraction that should be unwound?
+- Structure: run the gates from `.claude/gates.md` on the feature diff and report violations by location. Do not judge structure beyond that — the per-milestone structure critic did.
 - Any dead code, commented-out blocks, or `TODO` / `FIXME` comments left behind?
 - Are tests behavioural (assert what the code does for callers), not structural (assert that classes / fields / methods
   exist)?

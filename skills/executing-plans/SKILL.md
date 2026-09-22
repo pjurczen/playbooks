@@ -5,8 +5,7 @@ description: Use after writing-plans, with an approved plan in hand, to implemen
 
 # Executing Plans
 
-Implement the plan in the main session, milestone by milestone. Default execution mode is the main session and main
-model — not subagents. Subagents are for genuinely parallel or context-heavy subtasks (see **using-parallel-agents**).
+Implement the plan in the main session, milestone by milestone; subagents only where this skill names one.
 
 ## Before you start
 
@@ -15,9 +14,7 @@ model — not subagents. Subagents are for genuinely parallel or context-heavy s
 2. Re-read it critically. Any milestone unclear? Any missing dependency? Any behaviour you can't see how to verify?
    Raise it with the user before any code is written. The plan's *Stop and ask if* list stays binding throughout: when a
    condition hits mid-milestone, stop and ask — don't pick an interpretation and build on it.
-3. Confirm the workspace chosen during brainstorming (branch, path, and the recorded `BASE_SHA` from the
-   using-git-worktrees report). Invoke **using-git-worktrees** now only if there is no workspace yet — e.g. the user
-   brought their own plan and skipped the earlier pipeline stages.
+3. Confirm the workspace chosen during brainstorming (branch, path, `BASE_SHA` from the using-git-worktrees report). Invoke **using-git-worktrees** only if there is none yet — the user brought their own plan.
 4. One TODO per milestone.
 
 ## Resuming a partially executed plan
@@ -29,9 +26,7 @@ the commit messages, note it's partial, and continue.
 
 ## Clean code defaults
 
-"Smallest thing that passes" means smallest *that respects* single responsibility, small functions, descriptive names,
-no dead or commented-out code, and no premature abstraction (three near-identical pieces → extract; two → leave). These
-shape the GREEN step; the refactor pass is where you enforce them deliberately.
+"Smallest thing that passes" means smallest *that respects* the structure critic's checklist (`references/structure-critic-prompt.md`): one responsibility, one level of abstraction per function, no dead code, no premature abstraction. The critic checks it after green; the refactor pass enforces it.
 
 ## The milestone loop
 
@@ -45,8 +40,7 @@ add. Behaviour-level, not structural.
 
 ### Step 2 — Watch them fail
 
-Run the test. Confirm it fails for the right reason — the behaviour isn't implemented yet, not because of a typo or a
-missing import. If the test passes immediately, you're testing existing behaviour — fix the test.
+Run it. It must fail because the behaviour is missing, not from a typo or an import. A test that passes immediately tests existing behaviour — fix it.
 
 ### Step 3 — Implement smallest thing (GREEN)
 
@@ -54,63 +48,56 @@ Write the smallest code that makes the test pass. No premature abstraction. No "
 
 ### Step 4 — Run tests + nearby smoke
 
-Run the milestone tests + a quick smoke of nearby behaviour. All must pass.
+Run the milestone tests, a quick smoke of nearby behaviour, and the gates from `.claude/gates.md` on the touched files. All green — tests and structure.
 
 ### Step 5 — Self-checkpoint
 
-Re-read the milestone goal from the plan. Look at the diff for *only this milestone*. Answer:
+Re-read the milestone goal. Look at the diff for *only this milestone*. Answer:
 
 - **Did I meet the goal?** Each done-when criterion?
 - **Did I leave anything broken?** Any test elsewhere this change might have affected?
 - **Anything surprising worth noting?** Discovered helper, unexpected coupling, sharp edge?
 
 If something's off: fix in place before continuing.
-If the code had to differ from the design's Contracts or Shape: edit the design so it stays true and add one
-`Deviation:` line under its Approach — the end-of-feature reviewer compares against the design as written.
+If the code had to differ from the design's Contracts or Design: edit the design so it stays true and add one `Deviation:` line under its Approach — the end-of-feature reviewer compares against the design as written.
 If something's a note for later: add it to your in-session `## Findings` block (see "Findings" below).
 
 "Added X but didn't wire it up at the call sites the plan named" is incomplete milestone work, not a finding — fix it
 now.
 
-### Step 6 — Refactor pass
+### Step 6 — Structure critic
 
-Boy scout rule: leave the code you touched — same file, the functions above and below, the helpers you called, immediate
+Dispatch ONE fresh subagent with `references/structure-critic-prompt.md`: this milestone's diff, the design's Contracts with their structural rules, the gate output. It returns at most six findings by location with the move, or "none"; a "design issue" goes to the circuit-breaker. The model that wrote the long method doesn't see it in the same context; a fresh one with a checklist does.
+
+### Step 7 — Refactor pass
+
+Apply the critic's findings first, then the boy scout rule: leave the code you touched — same file, the functions above and below, the helpers you called, immediate
 callers, and anything your change made worse or exposed — better than you found it. The scope is what you touched; the
-effort is whatever that scope needs, not a time-box. Allowed: rename, extract a helper, collapse duplication, remove
-dead code, simplify a conditional, restructure within the touched unit — split the long function you had to modify, move
-a responsibility to the unit that owns it. Not allowed: cleaning code you didn't touch, and changing a contract other
+effort is whatever that scope needs, not a time-box. Allowed: rename, extract, collapse duplication, remove dead code, simplify a conditional, split the long function you had to modify, move a responsibility to the unit that owns it. Not allowed: cleaning code you didn't touch, and changing a contract other
 code depends on — that is a stop-and-ask, never a quiet refactor and never a followup. A bug in touched code is fixed
 here, with a scenario, and named in the commit; a bug elsewhere is a finding. Tests stay green throughout. "Looked,
 nothing worth doing" is a valid answer; "too big for now" is not — if you touched it, it's yours.
 
-### Step 7 — Run tests again
+### Step 8 — Run tests and gates again
 
-Verify the refactor didn't break anything. Use **verifying-before-done** before claiming the milestone is complete.
+Tests and gates again; the refactor changed nothing observable and introduced no violation. Use **verifying-before-done** before claiming the milestone is complete.
 
-### Step 8 — One milestone commit
+### Step 9 — One milestone commit
 
-Invoke **milestone-commits**, then write one commit for the entire milestone (feature + refactor). The plan's milestone
-titles and identifiers are reasoning scaffolding for *you* — they do not belong in the commit subject. Describe the
-outcome with a Conventional Commits type.
+Invoke **milestone-commits**: one commit for the whole milestone, feature and refactor. Milestone titles are scaffolding for you, not commit subjects; describe the outcome.
 
 ### Repeat for each milestone.
 
 ## Circuit-breaker: the design might be wrong
 
-The milestone loop assumes the design is sound and your job is to build it. On a hard problem that assumption can fail
-*mid-build* — and every local instinct here (fix-in-place, boy-scout, defer to followups) will quietly push you to *
-*patch around a broken design** instead of stopping. Watch for the tremors:
+The milestone loop assumes the design is sound and your job is to build it. On a hard problem that assumption can fail *mid-build* — and every local instinct here (fix-in-place, boy-scout, defer to followups) will quietly push you to **patch around a broken design** instead of stopping. Watch for the tremors:
 
 - You're adding a **compensating patch** — a mutator / guard / coercion whose only job is to force the design to
   behave — **especially the second one.** One is a fix; a pile is a smell.
 - The **plan's contract or interface has churned** — you've revised the same seam two or three times.
 - You're **fighting the plan** — each milestone needs more scaffolding than the last to hold together.
 
-These mean *the design is wrong*, not *this milestone is hard*. **STOP — do not keep patching.** Surface what you've
-learned to the user and go back to the design (re-open brainstorming for the affected seam — for a slice, possibly the
-initiative's seam; a `proposed` ADR is revised there, in place, never duplicated). Ten accreted patches shipped as "
-done" is the failure this catches, and the tremors are visible long before the end-of-feature review — which is far too
-late to unwind a wrong abstraction.
+These mean *the design is wrong*, not *this milestone is hard*. **STOP — do not keep patching.** Surface what you've learned and re-open brainstorming for the affected seam (for a slice, possibly the initiative's; a `proposed` ADR is revised there, in place). The tremors show long before the end-of-feature review, which is too late to unwind a wrong abstraction.
 
 ## Findings: Tier 1 (in-session) and Tier 2 (followups.md)
 
@@ -155,9 +142,7 @@ Invoke **finishing-branch** to complete the work.
 
 ## Subagents during execution
 
-Default: don't. Dispatch one only for 2+ genuinely independent investigations (**using-parallel-agents**, which also
-defines the `## Findings` block every subagent returns) or a context-heavy subtask whose findings, not its noise, you
-need. Store the findings inline before the next milestone.
+Standing dispatches: the structure critic per milestone (Step 6) and the end-of-feature reviewer. Beyond those, default: don't — only for 2+ genuinely independent investigations (**using-parallel-agents**, which also defines the `## Findings` block every subagent returns) or a context-heavy subtask whose findings, not its noise, you need. Store findings inline before the next milestone.
 
 ## Red Flags — STOP
 

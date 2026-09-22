@@ -30,6 +30,7 @@ This applies before committing, pushing, opening a PR, closing a milestone, and 
 | Regression test works | Red-green cycle verified             | Test passes once               |
 | Subagent completed    | VCS diff shows the changes           | Subagent reports "success"     |
 | Requirements met      | Line-by-line checklist               | Tests passing                  |
+| Structure holds       | Gate output from `.claude/gates.md`  | Tests passing                  |
 
 ## Two patterns
 
