@@ -28,8 +28,8 @@ Track these as todos and complete them in order:
 3. **Propose 2–3 approaches** — lead with your recommendation and why; conversational, not a comparison matrix. Run the failure-mode pass below on each.
 4. **Present the design in sections** — the doc's sections, in order (step 7); ask "looks right so far?" after each.
 5. **Choose workspace** — invoke **using-git-worktrees**: after approval, so abandoned brainstorms leave no orphan branches; before any commit, so design, plan and implementation all land on the feature branch where finishing-branch and consolidating-docs can find them.
-6. **Record the decision (if any)** — apply **writing-adr**'s bar to the approach the user picked. Clears it → invoke **writing-adr**; the ADR is `proposed` and commits with the design doc. Most features don't clear it.
-7. **Write the design doc** — read `references/design-doc.md` first; it owns the shape (Problem → Approach → Shape → Contracts → Guarantees → Assumptions → Open questions → Risks → Out of scope), the altitude rule, the diagram rules and initiative designs. Worked example: `references/example-design.md`. Save to `docs/playbooks/designs/YYYY-MM-DD-<topic>.md` and commit.
+6. **Record the decision (if any)** — ask whether the approach the user picked instantiates a rule the team is adopting, or is itself a system-level choice; apply **writing-adr**'s test to *that*. It holds → invoke **writing-adr**; the ADR is `proposed` and commits with the design doc. Most features: neither, and no ADR.
+7. **Write the design doc** — read `references/design-doc.md` first; it owns the section rules, the altitude rule, the diagram rules and initiative designs. The shape is `references/example-design.md`. Save to `docs/playbooks/designs/YYYY-MM-DD-<topic>.md` and commit.
 8. **Self-review** (below), then **ask the user to review** and wait for explicit approval.
 9. **Invoke writing-plans** — the only skill you invoke from here.
 

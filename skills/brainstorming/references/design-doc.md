@@ -4,21 +4,7 @@ Companion to `brainstorming`. A design has two readers. A teammate who has never
 
 ## Shape
 
-```markdown
-# <The change as a noun phrase>
-
-Status: draft | approved · Ticket: <id> · ADR: <link> · Initiative: <link>   ← links only if they exist
-
-## Problem          ─┐
-## Approach          │ narrative layer
-## Shape            ─┘
-## Contracts        ─┐ precision layer
-## Guarantees       ─┘
-## Assumptions
-## Open questions
-## Risks
-## Out of scope
-```
+The shape is `example-design.md` — read it first. Header: Status (`draft` | `approved`), then Ticket, ADR and Initiative links where they exist. Sections in order: Problem, Approach, Shape — the narrative layer; Contracts, Guarantees — the precision layer; Assumptions, Open questions, Risks, Out of scope. What each must hold:
 
 ### Problem — narrative
 
@@ -93,4 +79,4 @@ Each slice's design links it (`Initiative:` in the header) and covers only its d
 
 It is a working doc. When a slice diverges, **edit** the initiative so it stays true — never add a "the implementation diverges" callout. consolidating-docs leaves it alone until every slice in its table has landed.
 
-See `example-design.md` beside this file for a real design at the right altitude, and `../../writing-plans/references/example-plan.md` for its plan.
+The example's plan is `../../writing-plans/references/example-plan.md`; read the two as a pair.

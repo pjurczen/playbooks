@@ -28,57 +28,14 @@ A plan is as long as the work map needs and no longer; the test is the implement
 
 ## The plan shape
 
-````markdown
-# <feature> — implementation plan
+The shape is `references/example-plan.md` — read it, and its design `../brainstorming/references/example-design.md`, before writing; together they are complete, and nothing is said twice. Its sections, and what each must hold:
 
-Design: <link> · ADR: <link if any>
-
-## Goal
-One sentence describing what this builds.
-
-## Changes
-| Unit | Change | What, exactly |
-|------|--------|---------------|
-| ClassOrFile | new / changed / deleted | methods added, removed, re-pointed — by name |
-
-Call sites, when existing callers move:
-
-| Site | From | To |
-|------|------|----|
-| Class.method | what it calls today | what it calls after |
-
-Add a Depends-on column when it drives milestone order. Greenfield: the new
-units, their files, and the milestone that builds each. Never restate
-responsibilities or contracts — the design's Shape and Contracts own them.
-
-## Behaviours to verify
-- G2 · <TestClass or feature file> — Given X, when Y, then Z
-- Edge · <TestClass> — Given …, when …, then …
-
-Scenarios cite the design's Guarantee they prove; every G has at least one.
-Edge cases and parity fixtures are listed too.
-
-## Milestones
-| # | Milestone | Delivers | Done when | Biggest risk |
-|---|-----------|----------|-----------|--------------|
-| 1 | <vertical slice> | <observable outcome> | <named suites / scenarios green> | <one clause, or none> |
-
-Each milestone starts with its Behaviours red: the scenario is written and
-fails before the slice is built.
-
-## Execution risks / open questions
-Only what the design didn't say: ordering, big-bang compile steps, hidden
-callers, decisions needed mid-execution.
-
-Stop and ask if:
-- <a contract in the design doesn't fit the code as found>
-- <a milestone's suite can't go green without touching something outside Changes>
-- <a Guarantee can't be proven by any scenario>
-````
-
-Milestones are vertical slices with observable progress — small enough to commit cleanly, big enough for a self-checkpoint and a refactor pass. The milestone table is what a team reads in a meeting. Greenfield? Milestone 1 includes the minimal test scaffolding. The *Stop and ask if* list is binding: an unlisted surprise is reported, not resolved by picking an interpretation.
-
-See `references/example-plan.md`, with its design `../brainstorming/references/example-design.md` — together they are complete, and nothing is said twice.
+- **Header** — links the design and the ADR, if any.
+- **Goal** — one sentence.
+- **Changes** — always a table by unit: new / changed / deleted, and what exactly, by method name. A call-site table (site · from · to) when existing callers move; a Depends-on column when it drives milestone order. Greenfield: the new units, their files, and the milestone that builds each. Never restates responsibilities or contracts — the design's Shape and Contracts own them.
+- **Behaviours to verify** — given/when/then scenarios, each naming its test home and the design Guarantee it proves, or marked Edge. Every Guarantee has at least one.
+- **Milestones** — a table: milestone, what it delivers, done when (the named suites or scenarios green), biggest risk. Vertical slices with observable progress — small enough to commit cleanly, big enough for a self-checkpoint and a refactor pass; the table is what a team reads in a meeting. Greenfield: milestone 1 includes the minimal test scaffolding. Each milestone starts with its Behaviours red.
+- **Execution risks / open questions** — only what the design didn't say: ordering, big-bang compile steps, hidden callers, decisions needed mid-execution. Ends with a *Stop and ask if* list, binding on the implementer: an unlisted surprise is reported, not resolved by picking an interpretation.
 
 ## Self-review
 
