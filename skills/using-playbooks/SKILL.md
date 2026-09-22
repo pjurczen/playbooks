@@ -9,9 +9,8 @@ If you were dispatched as a subagent for a specific task, skip this skill — yo
 
 # Using Playbooks
 
-**When a skill clearly applies to the work in front of you, invoke it with the `Skill` tool before you answer or act.**
-Skills shape *how* the work is done, so running one afterwards is too late. The skip list below is the whole carve-out;
-don't extend it by analogy.
+**When a skill clearly applies to the work in front of you, invoke it with the `Skill` tool before you answer or act.** Skills shape *how* the work is done, so
+running one afterwards is too late. The skip list below is the whole carve-out; don't extend it by analogy.
 
 User instructions (CLAUDE.md, AGENTS.md, the message) override a skill; a skill overrides default behaviour.
 
@@ -31,8 +30,8 @@ User instructions (CLAUDE.md, AGENTS.md, the message) override a skill; a skill 
 | Setting up linters, complexity limits or architecture tests                | **setting-up-gates**                                              |
 | Continuing an initiative that has a roadmap                                | **brainstorming** (next slice)                                    |
 
-The pipeline runs in order — no code before a design, no execution before a plan; an initiative runs brainstorming →
-writing-roadmap, then the pipeline per slice. Work the user has already approved enters where it stands: a design at **writing-plans**, a plan at **executing-plans**.
+The pipeline runs in order — no code before a design, no execution before a plan; an initiative runs brainstorming → writing-roadmap, then the pipeline per
+slice. Work the user has already approved enters where it stands: a design at **writing-plans**, a plan at **executing-plans**.
 
 ## When to skip
 
@@ -54,5 +53,5 @@ The bar is *clearly applies*, not *might apply*.
 | "I'll do the work first, then invoke the skill" | Skills shape the work. After is too late.                    |
 | "This is technically a small change"            | Small isn't trivial. A behaviour change needs brainstorming. |
 
-To invoke: the `Skill` tool with the skill's name, announce *"Using [skill] to [purpose]"*, follow the loaded content;
-don't `Read` SKILL.md files. When you add or move documentation, consult `.claude/documentation.md` if it exists.
+To invoke: the `Skill` tool with the skill's name, announce *"Using [skill] to [purpose]"*, follow the loaded content; don't `Read` SKILL.md files. When you add
+or move documentation, consult `.claude/documentation.md` if it exists.

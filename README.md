@@ -2,11 +2,14 @@
 
 A lean, opinionated library of workflow skills for Claude Code.
 
-Playbooks gives Claude a small set of process skills — for designing features, planning, executing in milestones, debugging, testing, and finishing branches — that auto-load at the start of every session. The library is intentionally small: fifteen skills, about 13,000 words of markdown in total, and every change to a skill is measured against evals before it ships. Less to read, less ceremony, more trust in the model.
+Playbooks gives Claude a small set of process skills — for designing features, planning, executing in milestones, debugging, testing, and finishing branches —
+that auto-load at the start of every session. The library is intentionally small: fifteen skills, about 13,000 words of markdown in total, and every change to a
+skill is measured against evals before it ships. Less to read, less ceremony, more trust in the model.
 
 ## Why not just use [superpowers](https://github.com/obra/superpowers)?
 
-Playbooks started as a fork of superpowers and ended up as a different design. The mechanism is the same — `SessionStart` hook + a folder of opinionated markdown — but the philosophy diverges in a few specific ways:
+Playbooks started as a fork of superpowers and ended up as a different design. The mechanism is the same — `SessionStart` hook + a folder of opinionated
+markdown — but the philosophy diverges in a few specific ways:
 
 | Topic | Superpowers | Playbooks |
 |-------|-------------|-----------|
@@ -18,7 +21,8 @@ Playbooks started as a fork of superpowers and ended up as a different design. T
 | Refactor | Implicit in TDD's third step | Explicit boy-scout pass per milestone, with scope and time-box guardrails. |
 | Multi-harness | Ships configurations for Codex, Cursor, Gemini, Copilot CLI | Claude Code only. |
 
-If superpowers' rigour fits your work, use superpowers — it has a track record. Playbooks is the version I wanted for myself: faster to follow, less to read, more deference to Claude's judgment.
+If superpowers' rigour fits your work, use superpowers — it has a track record. Playbooks is the version I wanted for myself: faster to follow, less to read,
+more deference to Claude's judgment.
 
 ## Install
 
@@ -29,15 +33,18 @@ As a Claude Code plugin (assuming a local checkout):
 # or symlink playbooks/ into your plugins directory.
 ```
 
-Once loaded, the `SessionStart` hook fires on session start / clear / compact and injects the `using-playbooks` skill into context. Other skills are loaded on demand via the `Skill` tool.
+Once loaded, the `SessionStart` hook fires on session start / clear / compact and injects the `using-playbooks` skill into context. Other skills are loaded on
+demand via the `Skill` tool.
 
 ## What's inside
 
 **Process** (how to approach the work):
-- `brainstorming` — design dialogue → committed design doc: a narrative a teammate can follow, the views the reader needs, the contracts the implementer must match; kinds of work from a feature to an initiative
+- `brainstorming` — design dialogue → committed design doc: a narrative a teammate can follow, the views the reader needs, the contracts the implementer must
+  match; kinds of work from a feature to an initiative
 - `writing-plans` — design → exact implementation plan an implementer in another session can execute; stands on the design, never restates it
 - `writing-roadmap` — initiative design → a roadmap of independently landable slices, their order and exit criterion
-- `executing-plans` — main-session milestone loop: tests and gates green, a fresh-context structure critic, a refactor pass, one commit per milestone, an end-of-feature review
+- `executing-plans` — main-session milestone loop: tests and gates green, a fresh-context structure critic, a refactor pass, one commit per milestone, an
+  end-of-feature review
 - `debugging` — root cause with evidence before any fix, pinned by a red-first regression test
 - `finishing-branch` — verify tests, then merge / PR / keep / discard
 - `consolidating-docs` — on landing, graduate durable decisions into real docs and delete the design/plan husks
@@ -68,16 +75,19 @@ Each stage produces a small, readable artifact:
 - `docs/playbooks/designs/<date>-<topic>.md` — the design
 - `docs/playbooks/plans/<date>-<feature>.md` — the implementation plan
 - `<adr home>/<date>-<slug>.md` — the decision, if the feature made one (most don't)
-- `docs/playbooks/initiatives/<date>-<topic>.md` and its roadmap — target architecture, coexistence mechanism and slices when work spans several landings (optional)
+- `docs/playbooks/initiatives/<date>-<topic>.md` and its roadmap — target architecture, coexistence mechanism and slices when work spans several landings
+  (optional)
 - `docs/followups.md` — durable notes from past work
 
-When a feature lands, `consolidating-docs` promotes the feature's ADR from `proposed` to `accepted`, graduates the remaining durable decisions from its design and plan into the repo's real documentation — guided by `.claude/documentation.md`, a map of where docs live — and removes the husks.
+When a feature lands, `consolidating-docs` promotes the feature's ADR from `proposed` to `accepted`, graduates the remaining durable decisions from its design
+and plan into the repo's real documentation — guided by `.claude/documentation.md`, a map of where docs live — and removes the husks.
 
 For trivial questions, read-only exploration, and one-off changes, the agent skips the pipeline and just answers.
 
 ## Evals
 
-`evals/` holds four evals — design a feature, plan from a design, record an ADR under a repo-specific map, and a trivial change that must not trigger the pipeline — run on Opus against a snapshot of the previous skills and against no skills at all. Results live in `evals/results/`; CLAUDE.md describes the loop.
+`evals/` holds four evals — design a feature, plan from a design, record an ADR under a repo-specific map, and a trivial change that must not trigger the
+pipeline — run on Opus against a snapshot of the previous skills and against no skills at all. Results live in `evals/results/`; CLAUDE.md describes the loop.
 
 ## Design
 

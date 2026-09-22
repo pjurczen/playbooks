@@ -1,9 +1,7 @@
 # End-of-feature reviewer prompt
 
-Used by `executing-plans` to dispatch a single review subagent before
-`finishing-branch`. The orchestrator fills in the placeholders and dispatches
-via the harness's agent-dispatch tool (`Task` / `Agent`, depending on version)
-with a general-purpose subagent.
+Used by `executing-plans` to dispatch a single review subagent before `finishing-branch`. The orchestrator fills in the placeholders and dispatches via the
+harness's agent-dispatch tool (`Task` / `Agent`, depending on version) with a general-purpose subagent.
 
 ---
 
@@ -23,8 +21,7 @@ You are reviewing a completed feature implementation.
 
 ## Your task
 
-Review the feature against the design and the plan. You are a senior peer reviewer — flag what matters, ignore taste
-differences.
+Review the feature against the design and the plan. You are a senior peer reviewer — flag what matters, ignore taste differences.
 
 Do NOT trust the implementer's narrative. Read the actual code.
 
@@ -33,11 +30,10 @@ Do NOT trust the implementer's narrative. Read the actual code.
 **Design alignment**
 
 - Does the implementation match the design's architecture and components?
-- Does the code hold every Guarantee (G1…Gn) the design states, and match every signature in its Contracts, including
-  any `Deviation:` lines under Approach? Name any it doesn't.
+- Does the code hold every Guarantee (G1…Gn) the design states, and match every signature in its Contracts, including any `Deviation:` lines under Approach?
+  Name any it doesn't.
 - Was anything added that wasn't in the design? (Scope creep.)
-- If the branch adds a `proposed` ADR: is its Decision still true of the code? Name any drift — consolidating-docs
-  reconciles the ADR from your answer.
+- If the branch adds a `proposed` ADR: is its Decision still true of the code? Name any drift — consolidating-docs reconciles the ADR from your answer.
 
 **Plan alignment**
 
@@ -46,10 +42,10 @@ Do NOT trust the implementer's narrative. Read the actual code.
 
 **Code quality**
 
-- Structure: run the gates from `.claude/gates.md` on the feature diff and report violations by location. Do not judge structure beyond that — the per-milestone structure critic did.
+- Structure: run the gates from `.claude/gates.md` on the feature diff and report violations by location. Do not judge structure beyond that — the per-milestone
+  structure critic did.
 - Any dead code, commented-out blocks, or `TODO` / `FIXME` comments left behind?
-- Are tests behavioural (assert what the code does for callers), not structural (assert that classes / fields / methods
-  exist)?
+- Are tests behavioural (assert what the code does for callers), not structural (assert that classes / fields / methods exist)?
 - Any obvious bugs, race conditions, missing error handling at real boundaries?
 - Any pre-existing problems this change made worse?
 
@@ -81,8 +77,7 @@ Return:
 
 - `<file:line>` — <description>
 
-**Minor** (in-scope cleanup — fix in the review-fix milestone, including pre-existing issues in code touched by this
-feature):
+**Minor** (in-scope cleanup — fix in the review-fix milestone, including pre-existing issues in code touched by this feature):
 
 - `<file:line>` — <description>
 
@@ -94,5 +89,4 @@ feature):
 
 One paragraph: ready to merge / needs fixes / needs rework.
 
-Be specific. "Looks good" is not a review. If there are zero issues, say zero issues — but only after actually reading
-the code.
+Be specific. "Looks good" is not a review. If there are zero issues, say zero issues — but only after actually reading the code.

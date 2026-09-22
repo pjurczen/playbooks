@@ -1,8 +1,7 @@
 # Example design — a replacement in an existing codebase
 
-Two overlapping mechanisms become one explicit service. A narrative a teammate can follow without the codebase, then the
-contracts the implementer must match. Its plan is `../../writing-plans/references/example-plan-replacement.md`; together
-the two are complete, and nothing is said twice.
+Two overlapping mechanisms become one explicit service. A narrative a teammate can follow without the codebase, then the contracts the implementer must match.
+Its plan is `../../writing-plans/references/example-plan-replacement.md`; together the two are complete, and nothing is said twice.
 
 ---
 
@@ -12,44 +11,37 @@ Status: approved · Ticket: <id> · ADR: `<date>-adr-business-process-state-outs
 
 ## Problem
 
-When an offer changes, its products must be recalculated; when the discount-giving offer of a family changes, every
-discount-receiving offer must be recalculated too. Recalculation is slow where it should be batched, hidden where
-callers need to reason about it, and cannot be parallelised where it must be — and every new caller adds another way to
-get it wrong. Done means every caller reaches recalculation through one service, the collector and the sequential loop
+When an offer changes, its products must be recalculated; when the discount-giving offer of a family changes, every discount-receiving offer must be
+recalculated too. Recalculation is slow where it should be batched, hidden where callers need to reason about it, and cannot be parallelised where it must be —
+and every new caller adds another way to get it wrong. Done means every caller reaches recalculation through one service, the collector and the sequential loop
 are gone, and every existing scenario is green.
 
 ## Diagnosis
 
-Two overlapping mechanisms do one job. One defers: callers mark offers dirty in a request-scoped collector and the set
-is recalculated when the request ends. The other is immediate and sequential: finalising a discount-giving offer loops
-over its dependents and recalculates and flushes each on its own. The deferral almost never batches — only two flows
-ever mark more than one offer — the main command path bypasses it entirely, and the sequential loop cannot be
-parallelised because each iteration flushes inside the request. Neither mechanism does what its name promises, and the
-request lifecycle, not the caller, decides when work happens.
+Two overlapping mechanisms do one job. One defers: callers mark offers dirty in a request-scoped collector and the set is recalculated when the request ends.
+The other is immediate and sequential: finalising a discount-giving offer loops over its dependents and recalculates and flushes each on its own. The deferral
+almost never batches — only two flows ever mark more than one offer — the main command path bypasses it entirely, and the sequential loop cannot be parallelised
+because each iteration flushes inside the request. Neither mechanism does what its name promises, and the request lifecycle, not the caller, decides when work
+happens.
 
 ## Approach
 
-Replace both with one explicit, stateless domain service, ProduktRecalculationService, offering two operations:
-recalculate one already-loaded offer in memory, or recalculate an explicit list of offers as a batch. The batch orders
-discount-giving offers before discount-receiving ones — they are its input — and reuses the proven three-phase pattern:
-read all, compute in memory on worker threads, reconcile and finalise on the main thread. Batch callers name their
-offers instead of draining hidden request state. This design instantiates the rule recorded in the ADR above.
+Replace both with one explicit, stateless domain service, ProduktRecalculationService, offering two operations: recalculate one already-loaded offer in memory,
+or recalculate an explicit list of offers as a batch. The batch orders discount-giving offers before discount-receiving ones — they are its input — and reuses
+the proven three-phase pattern: read all, compute in memory on worker threads, reconcile and finalise on the main thread. Batch callers name their offers
+instead of draining hidden request state. This design instantiates the rule recorded in the ADR above.
 
-- Keep the deferral and route the discount loop through it — rejected. Its batching never materialises, since only two
-  flows ever mark more than one offer, and it keeps the flush point hidden in request state. It would only become right
-  if most callers genuinely batched, which none do.
-- Fix the sequential loop's parallelism in place — rejected. The per-item flush inside the loop is exactly what causes
-  the transaction clash, so parallelising it needs the in-memory / finalise split anyway; at that point it is the new
-  service under another name.
+- Keep the deferral and route the discount loop through it — rejected. Its batching never materialises, since only two flows ever mark more than one offer, and
+  it keeps the flush point hidden in request state. It would only become right if most callers genuinely batched, which none do.
+- Fix the sequential loop's parallelism in place — rejected. The per-item flush inside the loop is exactly what causes the transaction clash, so parallelising
+  it needs the in-memory / finalise split anyway; at that point it is the new service under another name.
 
 ## Decisions
 
-- The batch operation takes an explicit list of offer numbers, not a query by family — rejected the query because
-  callers already hold the list and a query would hide a second read path.
-- Discount-giving offers are recalculated first inside the batch, not by the caller — rejected caller ordering because
-  every caller would repeat it.
-- The health-declaration flush stays synchronous at finalise — the lazy variant is an earlier, unimplemented ADR and out
-  of scope here.
+- The batch operation takes an explicit list of offer numbers, not a query by family — rejected the query because callers already hold the list and a query
+  would hide a second read path.
+- Discount-giving offers are recalculated first inside the batch, not by the caller — rejected caller ordering because every caller would repeat it.
+- The health-declaration flush stays synchronous at finalise — the lazy variant is an earlier, unimplemented ADR and out of scope here.
 
 ## Design
 
@@ -75,14 +67,12 @@ flowchart LR
   end
 ```
 
-- **ProduktRecalculationService** (new) — the only entry point for product recalculation. Single offer: calls the
-  gateway on the loaded instance and reconciles side effects; no reload. Batch: marks each offer's health declaration
-  dirty, splits discount-giving from discount-receiving, recalculates the giving ones first, then runs the three-phase
-  parallel pass over the rest; every recalculated offer is finalised through the mutation service.
-- **AngebotMutationService** (changed) — finalise flushes health declarations directly. The event processor that hid the
-  recalculation drain and the flush behind one call is removed.
-- **RollenService** (changed) — on a discount-giving finalise it computes the dependent list and hands it to the batch.
-  Its own loop is gone.
+- **ProduktRecalculationService** (new) — the only entry point for product recalculation. Single offer: calls the gateway on the loaded instance and reconciles
+  side effects; no reload. Batch: marks each offer's health declaration dirty, splits discount-giving from discount-receiving, recalculates the giving ones
+  first, then runs the three-phase parallel pass over the rest; every recalculated offer is finalised through the mutation service.
+- **AngebotMutationService** (changed) — finalise flushes health declarations directly. The event processor that hid the recalculation drain and the flush
+  behind one call is removed.
+- **RollenService** (changed) — on a discount-giving finalise it computes the dependent list and hands it to the batch. Its own loop is gone.
 - **Callers** (changed) — hand the service one loaded offer or an explicit list. Nobody marks anything dirty any more.
 - **Removed** — the request-scoped collector and its service, the event processor, the sequential loop.
 
@@ -124,33 +114,25 @@ public void calculateRabattnehmendeAngebote(Angebot rabattgebendesAngebot, Bearb
 
 ## Guarantees
 
-1. When any caller needs a product recalculation, then it goes through ProduktRecalculationService; no request-scoped
-   state participates.
+1. When any caller needs a product recalculation, then it goes through ProduktRecalculationService; no request-scoped state participates.
 2. When a batch holds discount-giving and discount-receiving offers, then the giving ones are recalculated first.
-3. When a discount-receiving offer is mutated, then its discount-giving offer is not recalculated; only the reverse fans
-   out.
-4. When a batch recalculates an offer, then that offer is finalised and its health declaration synchronised exactly as
-   today — the copy flow included.
-5. When a batch computes, then computation runs in memory on worker threads and persistence and finalisation happen on
-   the main thread only.
+3. When a discount-receiving offer is mutated, then its discount-giving offer is not recalculated; only the reverse fans out.
+4. When a batch recalculates an offer, then that offer is finalised and its health declaration synchronised exactly as today — the copy flow included.
+5. When a batch computes, then computation runs in memory on worker threads and persistence and finalisation happen on the main thread only.
 6. When the family-discount, copy, person-data and partner-data scenarios run, then premiums and roles equal today's.
-7. Must not change: health-declaration dirty marking, the customer-advisor gate and the synchronous external call at
-   finalise.
+7. Must not change: health-declaration dirty marking, the customer-advisor gate and the synchronous external call at finalise.
 
 ## Assumptions
 
-- Every caller that today marks a single offer dirty holds the loaded offer at that point, so the single-offer operation
-  needs no lookup.
+- Every caller that today marks a single offer dirty holds the loaded offer at that point, so the single-offer operation needs no lookup.
 
 ## Open questions
 
-- Should a batch skip an unknown offer number or fail as a whole? Contracts say fail-whole; the domain owner confirms by
-  milestone 1.
+- Should a batch skip an unknown offer number or fail as a whole? Contracts say fail-whole; the domain owner confirms by milestone 1.
 
 ## Risks
 
-- The discount path has never run in parallel in production. The three-phase split is what makes it safe in theory; the
-  suite has to prove it.
+- The discount path has never run in parallel in production. The three-phase split is what makes it safe in theory; the suite has to prove it.
 - Callers must now know when they hold a batch; nothing quietly merges marks any more.
 
 ## Out of scope

@@ -5,10 +5,9 @@ description: Use before claiming work is complete, fixed, or passing, and before
 
 # Verifying Before Done
 
-**Before you claim any status — done, fixed, passing, complete, or any paraphrase — name the command that proves it, run
-it fresh, read the whole output, and only then make the claim, with the evidence.** A claim without fresh evidence is
-the failure this skill exists to stop: the user reads it as verification, and the moment it's wrong everything
-downstream is built on it.
+**Before you claim any status — done, fixed, passing, complete, or any paraphrase — name the command that proves it, run it fresh, read the whole output, and
+only then make the claim, with the evidence.** A claim without fresh evidence is the failure this skill exists to stop: the user reads it as verification, and
+the moment it's wrong everything downstream is built on it.
 
 ## The gate
 
@@ -35,8 +34,7 @@ This applies before committing, pushing, opening a PR, closing a milestone, and 
 ## Two patterns
 
 - **Tests:** run the command → see `34/34 pass` → "All tests pass". Not: "should pass now".
-- **Regression test:** write → run (pass) → revert the fix → run (**must fail**) → restore → run (pass). Not: "I've
-  written a regression test".
+- **Regression test:** write → run (pass) → revert the fix → run (**must fail**) → restore → run (pass). Not: "I've written a regression test".
 
 ## Rationalizations
 

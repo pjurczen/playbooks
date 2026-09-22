@@ -2,7 +2,9 @@
 
 Contents: Java · Kotlin · Python · TypeScript/JavaScript · Go · C# · Rust · Sonar
 
-For each stack: dependency direction, length and complexity, duplication. One tool per property, the minimal config, the command. Prefer what the repo already has; add only what covers a property nothing covers yet. Tools install through the repo's dev-dependency group; jscpd needs Node and is the fallback where a stack has no native duplication check.
+For each stack: dependency direction, length and complexity, duplication. One tool per property, the minimal config, the command. Prefer what the repo already
+has; add only what covers a property nothing covers yet. Tools install through the repo's dev-dependency group; jscpd needs Node and is the fallback where a
+stack has no native duplication check.
 
 ## Java (Maven or Gradle)
 
@@ -62,4 +64,5 @@ For each stack: dependency direction, length and complexity, duplication. One to
 
 ## Sonar
 
-SonarQube or SonarCloud covers all three properties but needs a server or an account. Use it only when the repo already runs it: record its command and the quality gate it enforces in the map. Never propose it as a first gate.
+SonarQube or SonarCloud covers all three properties but needs a server or an account. Use it only when the repo already runs it: record its command and the
+quality gate it enforces in the map. Never propose it as a first gate.

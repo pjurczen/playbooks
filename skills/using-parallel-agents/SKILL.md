@@ -5,11 +5,11 @@ description: Use when 2+ independent tasks can run without shared state or seque
 
 # Using Parallel Agents
 
-Subagents are specialized workers with isolated context. By precisely crafting their instructions, you keep them focused
-and preserve your own context for coordination work.
+Subagents are specialized workers with isolated context. By precisely crafting their instructions, you keep them focused and preserve your own context for
+coordination work.
 
-When you have multiple unrelated failures or independent investigations, doing them sequentially wastes time. One
-subagent per problem domain. Concurrent dispatch.
+When you have multiple unrelated failures or independent investigations, doing them sequentially wastes time. One subagent per problem domain. Concurrent
+dispatch.
 
 **Core principle:** One agent per independent problem. Parallel where possible.
 
@@ -33,8 +33,7 @@ subagent per problem domain. Concurrent dispatch.
 
 ### 1. Identify independent domains
 
-Group the failures or tasks by what's broken or what needs to be done. Each domain must be understandable without the
-others:
+Group the failures or tasks by what's broken or what needs to be done. Each domain must be understandable without the others:
 
 - File A tests: tool approval flow
 - File B tests: batch completion behaviour
@@ -79,9 +78,8 @@ Return: a `## Findings` block with Changes / Gotchas / Open questions.
 
 ### 3. Dispatch in parallel
 
-Send all subagent dispatches in a single response (multiple tool calls in one message) so they run concurrently.
-Sequential dispatches defeat the point. Never dispatch two agents that touch the same files — they will conflict — and
-never dispatch before you know what's broken; exploration is sequential.
+Send all subagent dispatches in a single response (multiple tool calls in one message) so they run concurrently. Sequential dispatches defeat the point. Never
+dispatch two agents that touch the same files — they will conflict — and never dispatch before you know what's broken; exploration is sequential.
 
 ### 4. Review and integrate
 
@@ -100,8 +98,8 @@ Every subagent must return:
 - **Gotchas** — things future work should know (existing utilities discovered, naming conventions, sharp edges)
 - **Open questions** — anything they couldn't resolve
 
-The parent stores these inline before the next step. This is what keeps context flowing across subagent boundaries —
-without it, every subagent dispatch loses what was learned.
+The parent stores these inline before the next step. This is what keeps context flowing across subagent boundaries — without it, every subagent dispatch loses
+what was learned.
 
 ## Common mistakes
 

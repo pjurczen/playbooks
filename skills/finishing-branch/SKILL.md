@@ -25,13 +25,12 @@ Cannot proceed with merge / PR until tests pass.
 
 Stop. Do not proceed to Step 2.
 
-If the project has **no test suite at all**, state that explicitly and continue — a missing suite is not a failing
-suite.
+If the project has **no test suite at all**, state that explicitly and continue — a missing suite is not a failing suite.
 
 ### Step 2: Detect environment — capture state NOW, from inside the workspace
 
-Run these once, from the workspace you implemented in, and keep the values. Step 6 consumes them *after* you've `cd`'d
-away — re-running the detection from the main checkout always concludes "no worktree".
+Run these once, from the workspace you implemented in, and keep the values. Step 6 consumes them *after* you've `cd`'d away — re-running the detection from the
+main checkout always concludes "no worktree".
 
 ```bash
 GIT_DIR=$(cd "$(git rev-parse --git-dir)" 2>/dev/null && pwd -P)
@@ -56,15 +55,13 @@ You need the base branch *name* (later commands check it out) and the branch poi
 BASE_BRANCH=$(git symbolic-ref --short refs/remotes/origin/HEAD 2>/dev/null | sed 's|^origin/||')
 ```
 
-If that's unset, look for a local `main` / `master`; if still ambiguous, ask: "This branch split from main — is that
-correct?" Then:
+If that's unset, look for a local `main` / `master`; if still ambiguous, ask: "This branch split from main — is that correct?" Then:
 
 ```bash
 BASE_POINT=$(git merge-base HEAD "$BASE_BRANCH")
 ```
 
-In current-branch mode `merge-base` is just `HEAD` — use the `BASE_SHA` recorded in the using-git-worktrees report as
-the branch point instead.
+In current-branch mode `merge-base` is just `HEAD` — use the `BASE_SHA` recorded in the using-git-worktrees report as the branch point instead.
 
 ### Step 4: Present options
 
@@ -108,9 +105,9 @@ Which option?
 
 ### Step 5: Execute choice
 
-**Consolidation gate:** before executing any landing option (1, 2, D1, B1 — anything that integrates the work), invoke **consolidating-docs** to graduate durable decisions from this feature's design/plan files into the repo's docs and
-delete the husks. It commits that as one change, so the doc updates land with the feature. For keep and discard
-options (3, 4, D2, D3, B2), skip consolidation — nothing is landing.
+**Consolidation gate:** before executing any landing option (1, 2, D1, B1 — anything that integrates the work), invoke **consolidating-docs** to graduate
+durable decisions from this feature's design/plan files into the repo's docs and delete the husks. It commits that as one change, so the doc updates land with
+the feature. For keep and discard options (3, 4, D2, D3, B2), skip consolidation — nothing is landing.
 
 #### Option 1: Merge locally
 
@@ -187,8 +184,8 @@ Report: "Keeping work at <HEAD SHA>. Workspace preserved." Nothing else to do.
 
 #### Option D3: Discard (detached)
 
-Confirm with the typed word "discard" (list the commits, as Option 4). There is no branch to delete and the workspace is
-externally managed — report the HEAD SHA so the commits stay recoverable, and leave everything in place.
+Confirm with the typed word "discard" (list the commits, as Option 4). There is no branch to delete and the workspace is externally managed — report the HEAD
+SHA so the commits stay recoverable, and leave everything in place.
 
 #### Option B1: Keep work already on base
 
@@ -206,19 +203,17 @@ git revert --no-edit <BASE_SHA>..HEAD
 
 ### Step 6: Cleanup workspace
 
-**Only runs for Options 1 and 4.** Options 2 and 3 preserve the worktree; detached and on-base modes never clean up. Use
-the values captured in Step 2 — do not re-detect from the main checkout.
+**Only runs for Options 1 and 4.** Options 2 and 3 preserve the worktree; detached and on-base modes never clean up. Use the values captured in Step 2 — do not
+re-detect from the main checkout.
 
 - **If `GIT_DIR == GIT_COMMON`:** normal repo, no worktree to clean up. Done.
-- **If `WORKTREE_PATH` is under `.worktrees/`, `worktrees/`, or `~/.config/playbooks/worktrees/`:** playbooks created
-  this worktree — we own cleanup.
+- **If `WORKTREE_PATH` is under `.worktrees/`, `worktrees/`, or `~/.config/playbooks/worktrees/`:** playbooks created this worktree — we own cleanup.
   ```bash
   cd "$MAIN_ROOT"
   git worktree remove "$WORKTREE_PATH"
   git worktree prune
   ```
-- **Otherwise:** the harness owns this workspace. Do NOT remove it. Use the harness's exit tool if available; otherwise
-  leave it.
+- **Otherwise:** the harness owns this workspace. Do NOT remove it. Use the harness's exit tool if available; otherwise leave it.
 
 ## Quick reference
 

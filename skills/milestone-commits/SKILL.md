@@ -5,8 +5,8 @@ description: Use when committing implementation work, to produce readable histor
 
 # Milestone Commits
 
-One commit per meaningful slice. Message describes the *why* of the slice. The implementation, the tests, and the
-milestone's refactor pass all go in the same commit.
+One commit per meaningful slice. Message describes the *why* of the slice. The implementation, the tests, and the milestone's refactor pass all go in the same
+commit.
 
 ## Core rule
 
@@ -17,8 +17,8 @@ Commit at meaningful slices, not at TDD steps. A milestone from the plan is one 
 - The refactor pass (boy scout cleanup of the area you touched)
 - Any incidental fixes the milestone forced
 
-If you find yourself making 5 micro-commits per milestone (failing test → implementation → refactor → fix → cleanup),
-squash them. The durable history should be readable.
+If you find yourself making 5 micro-commits per milestone (failing test → implementation → refactor → fix → cleanup), squash them. The durable history should be
+readable.
 
 ## Commit message shape
 
@@ -36,16 +36,14 @@ We follow [Conventional Commits 1.0.0](https://www.conventionalcommits.org/en/v1
 
 - Starts with a type (see below), optional scope, then the outcome description
 - Description is imperative mood: "add cookie rotation", not "added" / "adds"
-- Describes the *outcome*, not the changeset: `feat(auth): reject malformed login requests with 400`, not
-  `chore: update login.py and validator.py`
+- Describes the *outcome*, not the changeset: `feat(auth): reject malformed login requests with 400`, not `chore: update login.py and validator.py`
 - ~50–72 characters total. Tight.
 
 **Body (when needed):**
 
 - The why. The motivation. The user-visible difference.
 - NOT a play-by-play of every file touched. The diff is the play-by-play.
-- NOT references to "the current task" / "as discussed" / "for issue #123". Those rot — they belong in the PR
-  description, not in durable history.
+- NOT references to "the current task" / "as discussed" / "for issue #123". Those rot — they belong in the PR description, not in durable history.
 
 ## Commit types
 
@@ -61,13 +59,11 @@ We follow [Conventional Commits 1.0.0](https://www.conventionalcommits.org/en/v1
 | `build`    | Build system or dependency changes                                                       |
 | `ci`       | CI configuration changes                                                                 |
 
-**For a milestone commit, pick the type that matches the primary outcome of the slice.** A milestone that adds a feature
-is `feat`, even though it includes a test and a small refactor pass. Don't fragment a milestone across multiple types —
-that's micro-commit thinking.
+**For a milestone commit, pick the type that matches the primary outcome of the slice.** A milestone that adds a feature is `feat`, even though it includes a
+test and a small refactor pass. Don't fragment a milestone across multiple types — that's micro-commit thinking.
 
-**Scope (optional but encouraged):** the feature name as a short kebab-case slug — typically the topic from the design /
-plan filename (e.g. `feat(blacklist):`, `feat(agent-capture):`). Skip scope for cross-cutting work (architecture docs,
-repo-wide config, tooling) where any feature name would mislead.
+**Scope (optional but encouraged):** the feature name as a short kebab-case slug — typically the topic from the design / plan filename (e.g. `feat(blacklist):`,
+`feat(agent-capture):`). Skip scope for cross-cutting work (architecture docs, repo-wide config, tooling) where any feature name would mislead.
 
 **Breaking changes:** add `!` after the type/scope and a `BREAKING CHANGE:` footer explaining the migration.
 
@@ -135,11 +131,10 @@ validate_email function. Updated tests/auth_test.py to test it.
 
 ## When milestones are too big
 
-Sometimes a milestone turns out larger than expected mid-execution. If a single milestone is producing a >300-line diff
-that touches >5 files, that's a signal to either:
+Sometimes a milestone turns out larger than expected mid-execution. If a single milestone is producing a >300-line diff that touches >5 files, that's a signal
+to either:
 
 - Pause and revise the plan to split the milestone, or
 - Commit the natural sub-slices as their own milestones (each with a clear "intermediate but observable" outcome)
 
-Don't force everything into one giant commit just to avoid touching the plan. Don't fragment into micro-commits to avoid
-touching the plan either.
+Don't force everything into one giant commit just to avoid touching the plan. Don't fragment into micro-commits to avoid touching the plan either.

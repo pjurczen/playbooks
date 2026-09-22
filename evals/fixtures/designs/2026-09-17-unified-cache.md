@@ -4,18 +4,26 @@ Status: approved · Ticket: RG-42
 
 ## Problem
 
-Reportgen serves stale summaries after fresh source reads, and a fresh run throws away rows that were seconds old; nobody can say how long a cached value is valid, because nothing decides it. Done means one cache, one place that decides validity, and every existing test green.
+Reportgen serves stale summaries after fresh source reads, and a fresh run throws away rows that were seconds old; nobody can say how long a cached value is
+valid, because nothing decides it. Done means one cache, one place that decides validity, and every existing test green.
 
 ## Diagnosis
 
-Every source read goes through two caches that know nothing about each other: an in-process memo keyed by free-form strings and an on-disk file cache. Each caller keeps them in sync by hand — the sources loader writes both and drops the summary memo whenever it loads; the report builder empties both by reaching into each module on a fresh run; the summary module memoizes under a key the loader also knows about. No store carries a time-to-live, so validity is decided by whichever caller last touched the keys.
+Every source read goes through two caches that know nothing about each other: an in-process memo keyed by free-form strings and an on-disk file cache. Each
+caller keeps them in sync by hand — the sources loader writes both and drops the summary memo whenever it loads; the report builder empties both by reaching
+into each module on a fresh run; the summary module memoizes under a key the loader also knows about. No store carries a time-to-live, so validity is decided by
+whichever caller last touched the keys.
 
 ## Approach
 
-Put one ReportCache in front of every read. It keeps memory in front of disk internally, takes a time-to-live per entry, and offers a single invalidation entry point by key prefix. The loader, the summariser and the report builder receive the cache as a collaborator and stop touching memo or file storage directly; a fresh run invalidates by prefix instead of purging two stores.
+Put one ReportCache in front of every read. It keeps memory in front of disk internally, takes a time-to-live per entry, and offers a single invalidation entry
+point by key prefix. The loader, the summariser and the report builder receive the cache as a collaborator and stop touching memo or file storage directly; a
+fresh run invalidates by prefix instead of purging two stores.
 
-- Keep both caches and document the sync rules — rejected. The rules already exist as comments and are already broken in three places; documentation does not stop the fourth caller from adding a fourth rule. It would only become right if the two stores had genuinely different lifecycles, which they do not.
-- One store only, in memory, persisted at exit — rejected. It loses the cross-run reuse the file cache exists for, and persisting a memo on exit is the same two-store problem moved to shutdown.
+- Keep both caches and document the sync rules — rejected. The rules already exist as comments and are already broken in three places; documentation does not
+  stop the fourth caller from adding a fourth rule. It would only become right if the two stores had genuinely different lifecycles, which they do not.
+- One store only, in memory, persisted at exit — rejected. It loses the cross-run reuse the file cache exists for, and persisting a memo on exit is the same
+  two-store problem moved to shutdown.
 
 ## Decisions
 
@@ -86,7 +94,8 @@ def build_report(names: list[str], cache: ReportCache, fresh: bool = False) -> s
 3. When a fresh report is requested, then every source is re-read from disk exactly once and every summary is recomputed.
 4. When a source is re-read, then the summary built from it is recomputed before the report uses it.
 5. When the process restarts within the source TTL, then sources are served from disk without a data read.
-6. Must not change: report output format, CLI flags, and the behaviour the three existing tests assert — their fixture wiring may be re-pointed at the new cache, their assertions may not.
+6. Must not change: report output format, CLI flags, and the behaviour the three existing tests assert — their fixture wiring may be re-pointed at the new
+   cache, their assertions may not.
 
 ## Assumptions
 

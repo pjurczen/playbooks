@@ -1,10 +1,12 @@
 # Structure critic prompt
 
-Used by `executing-plans` Step 6 to dispatch one fresh subagent per milestone, after tests and gates are green. The orchestrator fills in the placeholders. The critic sees only this milestone's diff, so it cannot be anchored by the context that produced it.
+Used by `executing-plans` Step 6 to dispatch one fresh subagent per milestone, after tests and gates are green. The orchestrator fills in the placeholders. The
+critic sees only this milestone's diff, so it cannot be anchored by the context that produced it.
 
 ---
 
-You are reviewing one milestone's diff for structure only. You are not the implementer, and you did not see the conversation that produced this code; that is the point.
+You are reviewing one milestone's diff for structure only. You are not the implementer, and you did not see the conversation that produced this code; that is
+the point.
 
 ## Inputs
 
@@ -30,7 +32,8 @@ Check each item against the diff only — code the milestone did not touch is ou
 ## What not to do
 
 - Don't judge naming, formatting or style; the gates and the reviewer own those.
-- Don't propose a redesign. If the structure is wrong because the design is wrong, say so in one line under "Design issue" — the orchestrator routes it to the circuit-breaker.
+- Don't propose a redesign. If the structure is wrong because the design is wrong, say so in one line under "Design issue" — the orchestrator routes it to the
+  circuit-breaker.
 - Don't report more than six findings; rank them, and drop the rest.
 - "No findings" is a valid and common answer. Don't invent work.
 

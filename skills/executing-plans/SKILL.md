@@ -9,34 +9,34 @@ Implement the plan in the main session, milestone by milestone; subagents only w
 
 ## Before you start
 
-1. Read the plan file once. Extract: the goal, the changes and call-site tables, the behaviours to verify, the full list
-   of milestones with their done-when criteria. Read the design it links for the contracts and guarantees.
-2. Re-read it critically. Any milestone unclear? Any missing dependency? Any behaviour you can't see how to verify?
-   Raise it with the user before any code is written. The plan's *Stop and ask if* list stays binding throughout: when a
-   condition hits mid-milestone, stop and ask — don't pick an interpretation and build on it.
-3. Confirm the workspace chosen during brainstorming (branch, path, `BASE_SHA` from the using-git-worktrees report). Invoke **using-git-worktrees** only if there is none yet — the user brought their own plan.
+1. Read the plan file once. Extract: the goal, the changes and call-site tables, the behaviours to verify, the full list of milestones with their done-when
+   criteria. Read the design it links for the contracts and guarantees.
+2. Re-read it critically. Any milestone unclear? Any missing dependency? Any behaviour you can't see how to verify? Raise it with the user before any code is
+   written. The plan's *Stop and ask if* list stays binding throughout: when a condition hits mid-milestone, stop and ask — don't pick an interpretation and
+   build on it.
+3. Confirm the workspace chosen during brainstorming (branch, path, `BASE_SHA` from the using-git-worktrees report). Invoke **using-git-worktrees** only if
+   there is none yet — the user brought their own plan.
 4. One TODO per milestone.
 
 ## Resuming a partially executed plan
 
-If the session was cleared or compacted mid-feature: locate the existing branch or worktree (`git worktree list`,
-`git branch --list`) — never re-run using-git-worktrees when a workspace exists. Compare the plan's milestones against
-`git log <BASE_SHA>..HEAD` to find the first incomplete one, reconstruct what you can of the `## Findings` block from
-the commit messages, note it's partial, and continue.
+If the session was cleared or compacted mid-feature: locate the existing branch or worktree (`git worktree list`, `git branch --list`) — never re-run
+using-git-worktrees when a workspace exists. Compare the plan's milestones against `git log <BASE_SHA>..HEAD` to find the first incomplete one, reconstruct what
+you can of the `## Findings` block from the commit messages, note it's partial, and continue.
 
 ## Clean code defaults
 
-"Smallest thing that passes" means smallest *that respects* the structure critic's checklist (`references/structure-critic-prompt.md`): one responsibility, one level of abstraction per function, no dead code, no premature abstraction. The critic checks it after green; the refactor pass enforces it.
+"Smallest thing that passes" means smallest *that respects* the structure critic's checklist (`references/structure-critic-prompt.md`): one responsibility, one
+level of abstraction per function, no dead code, no premature abstraction. The critic checks it after green; the refactor pass enforces it.
 
 ## The milestone loop
 
-For each milestone, run these steps in order, then repeat for the next milestone; after the last one, the end-of-feature
-review, promotion of findings, and the hand-off to finishing-branch.
+For each milestone, run these steps in order, then repeat for the next milestone; after the last one, the end-of-feature review, promotion of findings, and the
+hand-off to finishing-branch.
 
 ### Step 1 — Sketch behavioural test(s) (RED)
 
-Use **bdd-testing** to write the behavioural test for the milestone. One test per behaviour the milestone is supposed to
-add. Behaviour-level, not structural.
+Use **bdd-testing** to write the behavioural test for the milestone. One test per behaviour the milestone is supposed to add. Behaviour-level, not structural.
 
 ### Step 2 — Watch them fail
 
@@ -58,56 +58,60 @@ Re-read the milestone goal. Look at the diff for *only this milestone*. Answer:
 - **Did I leave anything broken?** Any test elsewhere this change might have affected?
 - **Anything surprising worth noting?** Discovered helper, unexpected coupling, sharp edge?
 
-If something's off: fix in place before continuing.
-If the code had to differ from the design's Contracts or Design: edit the design so it stays true and add one `Deviation:` line under its Approach — the end-of-feature reviewer compares against the design as written.
-If something's a note for later: add it to your in-session `## Findings` block (see "Findings" below).
+If something's off: fix in place before continuing. If the code had to differ from the design's Contracts or Design: edit the design so it stays true and add
+one `Deviation:` line under its Approach — the end-of-feature reviewer compares against the design as written. If something's a note for later: add it to your
+in-session `## Findings` block (see "Findings" below).
 
-"Added X but didn't wire it up at the call sites the plan named" is incomplete milestone work, not a finding — fix it
-now.
+"Added X but didn't wire it up at the call sites the plan named" is incomplete milestone work, not a finding — fix it now.
 
 ### Step 6 — Structure critic
 
-Dispatch ONE fresh subagent with `references/structure-critic-prompt.md`: this milestone's diff, the design's Contracts with their structural rules, the gate output. It returns at most six findings by location with the move, or "none"; a "design issue" goes to the circuit-breaker. The model that wrote the long method doesn't see it in the same context; a fresh one with a checklist does.
+Dispatch ONE fresh subagent with `references/structure-critic-prompt.md`: this milestone's diff, the design's Contracts with their structural rules, the gate
+output. It returns at most six findings by location with the move, or "none"; a "design issue" goes to the circuit-breaker. The model that wrote the long method
+doesn't see it in the same context; a fresh one with a checklist does.
 
 ### Step 7 — Refactor pass
 
-Apply the critic's findings first, then the boy scout rule: leave the code you touched — same file, the functions above and below, the helpers you called, immediate
-callers, and anything your change made worse or exposed — better than you found it. The scope is what you touched; the
-effort is whatever that scope needs, not a time-box. Allowed: rename, extract, collapse duplication, remove dead code, simplify a conditional, split the long function you had to modify, move a responsibility to the unit that owns it. Not allowed: cleaning code you didn't touch, and changing a contract other
-code depends on — that is a stop-and-ask, never a quiet refactor and never a followup. A bug in touched code is fixed
-here, with a scenario, and named in the commit; a bug elsewhere is a finding. Tests stay green throughout. "Looked,
-nothing worth doing" is a valid answer; "too big for now" is not — if you touched it, it's yours.
+Apply the critic's findings first, then the boy scout rule: leave the code you touched — same file, the functions above and below, the helpers you called,
+immediate callers, and anything your change made worse or exposed — better than you found it. The scope is what you touched; the effort is whatever that scope
+needs, not a time-box. Allowed: rename, extract, collapse duplication, remove dead code, simplify a conditional, split the long function you had to modify, move
+a responsibility to the unit that owns it. Not allowed: cleaning code you didn't touch, and changing a contract other code depends on — that is a stop-and-ask,
+never a quiet refactor and never a followup. A bug in touched code is fixed here, with a scenario, and named in the commit; a bug elsewhere is a finding. Tests
+stay green throughout. "Looked, nothing worth doing" is a valid answer; "too big for now" is not — if you touched it, it's yours.
 
 ### Step 8 — Run tests and gates again
 
-Tests and gates again; the refactor changed nothing observable and introduced no violation. Use **verifying-before-done** before claiming the milestone is complete.
+Tests and gates again; the refactor changed nothing observable and introduced no violation. Use **verifying-before-done** before claiming the milestone is
+complete.
 
 ### Step 9 — One milestone commit
 
-Invoke **milestone-commits**: one commit for the whole milestone, feature and refactor. Milestone titles are scaffolding for you, not commit subjects; describe the outcome.
+Invoke **milestone-commits**: one commit for the whole milestone, feature and refactor. Milestone titles are scaffolding for you, not commit subjects; describe
+the outcome.
 
 ### Repeat for each milestone.
 
 ## Circuit-breaker: the design might be wrong
 
-The milestone loop assumes the design is sound and your job is to build it. On a hard problem that assumption can fail *mid-build* — and every local instinct here (fix-in-place, boy-scout, defer to followups) will quietly push you to **patch around a broken design** instead of stopping. Watch for the tremors:
+The milestone loop assumes the design is sound and your job is to build it. On a hard problem that assumption can fail *mid-build* — and every local instinct
+here (fix-in-place, boy-scout, defer to followups) will quietly push you to **patch around a broken design** instead of stopping. Watch for the tremors:
 
-- You're adding a **compensating patch** — a mutator / guard / coercion whose only job is to force the design to
-  behave — **especially the second one.** One is a fix; a pile is a smell.
+- You're adding a **compensating patch** — a mutator / guard / coercion whose only job is to force the design to behave — **especially the second one.** One is
+  a fix; a pile is a smell.
 - The **plan's contract or interface has churned** — you've revised the same seam two or three times.
 - You're **fighting the plan** — each milestone needs more scaffolding than the last to hold together.
 
-These mean *the design is wrong*, not *this milestone is hard*. **STOP — do not keep patching.** Surface what you've learned and re-open brainstorming for the affected seam (for a slice, possibly the initiative's; a `proposed` ADR is revised there, in place). The tremors show long before the end-of-feature review, which is too late to unwind a wrong abstraction.
+These mean *the design is wrong*, not *this milestone is hard*. **STOP — do not keep patching.** Surface what you've learned and re-open brainstorming for the
+affected seam (for a slice, possibly the initiative's; a `proposed` ADR is revised there, in place). The tremors show long before the end-of-feature review,
+which is too late to unwind a wrong abstraction.
 
 ## Findings: Tier 1 (in-session) and Tier 2 (followups.md)
 
-**Tier 1 — in-session.** A running `## Findings` block in the conversation with three subsections: **Changes** (per
-milestone), **Gotchas** (what later milestones should know), **Open questions** (deferred refactors, design questions).
-It is input to the end-of-feature reviewer.
+**Tier 1 — in-session.** A running `## Findings` block in the conversation with three subsections: **Changes** (per milestone), **Gotchas** (what later
+milestones should know), **Open questions** (deferred refactors, design questions). It is input to the end-of-feature reviewer.
 
-**Tier 2 — durable followups** at `docs/followups.md`, append-only: only items that would need their own design / plan —
-architectural refactorings, generalizations, structural changes — in code this feature did not touch. Cleanliness debt
-on touched code never goes here; it is in scope now. Format:
+**Tier 2 — durable followups** at `docs/followups.md`, append-only: only items that would need their own design / plan — architectural refactorings,
+generalizations, structural changes — in code this feature did not touch. Cleanliness debt on touched code never goes here; it is in scope now. Format:
 
 ````markdown
 ## YYYY-MM-DD — short title
@@ -119,13 +123,11 @@ One-line description. File: src/path/file.py:line. Discovered while: feature-nam
 
 After the last milestone commits, run a single review pass before `finishing-branch`:
 
-1. Dispatch ONE reviewer subagent with the companion prompt `references/end-of-feature-reviewer-prompt.md`, giving it
-   the design, the plan, the feature diff (`BASE_SHA..HEAD`, from the using-git-worktrees report) and the `## Findings`
-   block.
-2. It returns Strengths / Issues (Critical / Important / Minor / Followup) / Assessment. Fix Critical, Important and
-   Minor; only Followup-tier items go to `followups.md`.
-3. Commit the fixes as one "review fixes" milestone (same loop). One pass, fix, move on — wanting a re-review means a
-   milestone was wrong; don't re-loop.
+1. Dispatch ONE reviewer subagent with the companion prompt `references/end-of-feature-reviewer-prompt.md`, giving it the design, the plan, the feature diff
+   (`BASE_SHA..HEAD`, from the using-git-worktrees report) and the `## Findings` block.
+2. It returns Strengths / Issues (Critical / Important / Minor / Followup) / Assessment. Fix Critical, Important and Minor; only Followup-tier items go to
+   `followups.md`.
+3. Commit the fixes as one "review fixes" milestone (same loop). One pass, fix, move on — wanting a re-review means a milestone was wrong; don't re-loop.
 
 ## Promotion: Tier 1 → Tier 2
 
@@ -142,7 +144,9 @@ Invoke **finishing-branch** to complete the work.
 
 ## Subagents during execution
 
-Standing dispatches: the structure critic per milestone (Step 6) and the end-of-feature reviewer. Beyond those, default: don't — only for 2+ genuinely independent investigations (**using-parallel-agents**, which also defines the `## Findings` block every subagent returns) or a context-heavy subtask whose findings, not its noise, you need. Store findings inline before the next milestone.
+Standing dispatches: the structure critic per milestone (Step 6) and the end-of-feature reviewer. Beyond those, default: don't — only for 2+ genuinely
+independent investigations (**using-parallel-agents**, which also defines the `## Findings` block every subagent returns) or a context-heavy subtask whose
+findings, not its noise, you need. Store findings inline before the next milestone.
 
 ## Red Flags — STOP
 

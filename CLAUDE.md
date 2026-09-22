@@ -1,10 +1,12 @@
 # Playbooks — working on the plugin itself
 
-This file is for Claude (or any agent) editing the source of the `playbooks` plugin. If you're using `playbooks` *as* a plugin in some other project, ignore this file — `using-playbooks/SKILL.md` is what you want.
+This file is for Claude (or any agent) editing the source of the `playbooks` plugin. If you're using `playbooks` *as* a plugin in some other project, ignore
+this file — `using-playbooks/SKILL.md` is what you want.
 
 ## What this repo is
 
-A Claude Code plugin: a `SessionStart` hook that injects `using-playbooks/SKILL.md` into every new / cleared / compacted session, plus a folder of skills loaded on demand via the `Skill` tool. That's the entire mechanism.
+A Claude Code plugin: a `SessionStart` hook that injects `using-playbooks/SKILL.md` into every new / cleared / compacted session, plus a folder of skills loaded
+on demand via the `Skill` tool. That's the entire mechanism.
 
 ## Where things live
 
@@ -21,12 +23,17 @@ docs/                          — design rationale and reference notes
 
 Skill files are prompts. Instruction count degrades adherence and early instructions win, so every line has to earn its place. The rules:
 
-- **YAML frontmatter required:** `name` (kebab-case, matches directory) and `description` in the shape "Use [trigger], to [goal]" — what and when, never a summary of the steps.
-- **Budget in words, not lines** (`wc -w`, tables included): ≤ 1,000 per SKILL.md; ≤ 1,500 for runbooks (`finishing-branch`, `executing-plans`, `consolidating-docs`); ≤ 1,200 for `writing-adr`, whose two lists are the skill, and for `brainstorming`, whose method is the skill; ≤ 500 for `using-playbooks`, which is loaded every session.
+- **YAML frontmatter required:** `name` (kebab-case, matches directory) and `description` in the shape "Use [trigger], to [goal]" — what and when, never a
+  summary of the steps.
+- **Budget in words, not lines** (`wc -w`, tables included): ≤ 1,000 per SKILL.md; ≤ 1,500 for runbooks (`finishing-branch`, `executing-plans`,
+  `consolidating-docs`); ≤ 1,200 for `writing-adr`, whose two lists are the skill, and for `brainstorming`, whose method is the skill; ≤ 500 for
+  `using-playbooks`, which is loaded every session.
 - **One gate per skill, first, with its reason, in normal register.** Everything else is a rule with a reason; caps live only inside that gate.
 - **One rule, one owner.** A rule lives in the skill or companion that owns it; other skills point to it and never restate it.
-- **Red Flags tables only where discipline is the point** (`using-playbooks`, `brainstorming`, `executing-plans`, `verifying-before-done`, `debugging`, `consolidating-docs`), ≤ 4 rows, each naming an excuse the body doesn't already refute — not a body rule with a quotation mark in front.
-- **No per-skill "Announce at start"** — the bootstrap says to announce once. **`dot` graphs only for a real loop or non-obvious branch**; linear flows are numbered lists.
+- **Red Flags tables only where discipline is the point** (`using-playbooks`, `brainstorming`, `executing-plans`, `verifying-before-done`, `debugging`,
+  `consolidating-docs`), ≤ 4 rows, each naming an excuse the body doesn't already refute — not a body rule with a quotation mark in front.
+- **No per-skill "Announce at start"** — the bootstrap says to announce once. **`dot` graphs only for a real loop or non-obvious branch**; linear flows are
+  numbered lists.
 - **"When to skip" is a standard section** in every directly-invocable skill; pipeline-only skills say "fired by X".
 - **Companions carry a read-when** ("read `references/design-doc-shape.md` before writing"). **Positive framing, reasons over emphasis, no brand names.**
 - **Structure is checked mechanically, not by prompting.** A structure rule belongs in a gate or in the critic's checklist, never as a lecture in a skill body.
@@ -34,14 +41,23 @@ Skill files are prompts. Instruction count degrades adherence and early instruct
 
 ## Conventions for produced artifacts
 
-This is the actual differentiator from superpowers. The artifacts the *user* reads (design docs, plans) have two readers: a teammate who follows the narrative without the codebase, and an implementer in another session — Opus-class by default — who must find nothing to guess. Structure and altitude, not length, are the bar:
+This is the actual differentiator from superpowers. The artifacts the *user* reads (design docs, plans) have two readers: a teammate who follows the narrative
+without the codebase, and an implementer in another session — Opus-class by default — who must find nothing to guess. Structure and altitude, not length, are
+the bar:
 
-- Every repo the pipeline works in has a `.claude/gates.md` naming its test, lint, complexity and structure commands, or a recorded decline; `setting-up-gates` proposes one when it's missing, and executing-plans treats a milestone as green only when tests and gates both pass.
-- Design docs are the trace of brainstorming's five stages — problem, diagnosis, decision, shape, check — with a fixed section set: Problem, Diagnosis, Approach (with alternatives), Decisions, Design (the one to three views a reader needs, each answering a named question; the mechanism only when it is the decision), Contracts, Guarantees, Assumptions, Open questions, Risks, Out of scope. The narrative layer reads in a few minutes; Contracts carry declarations with semantics — signatures, endpoints, schemas, flags, states — never bodies.
-- An initiative gets a design (target architecture, coexistence mechanism, shared contracts) and a roadmap (slices, order, exit criterion), both on the base branch; each slice then gets an ordinary design and plan that inherit from them.
-- Plans are exact work maps — a changes table by class and method, call-site from → to, scenarios tied to the design's Guarantees, milestones — and never restate the design. No test code, no bodies, no per-step commit messages.
+- Every repo the pipeline works in has a `.claude/gates.md` naming its test, lint, complexity and structure commands, or a recorded decline; `setting-up-gates`
+  proposes one when it's missing, and executing-plans treats a milestone as green only when tests and gates both pass.
+- Design docs are the trace of brainstorming's five stages — problem, diagnosis, decision, shape, check — with a fixed section set: Problem, Diagnosis, Approach
+  (with alternatives), Decisions, Design (the one to three views a reader needs, each answering a named question; the mechanism only when it is the decision),
+  Contracts, Guarantees, Assumptions, Open questions, Risks, Out of scope. The narrative layer reads in a few minutes; Contracts carry declarations with
+  semantics — signatures, endpoints, schemas, flags, states — never bodies.
+- An initiative gets a design (target architecture, coexistence mechanism, shared contracts) and a roadmap (slices, order, exit criterion), both on the base
+  branch; each slice then gets an ordinary design and plan that inherit from them.
+- Plans are exact work maps — a changes table by class and method, call-site from → to, scenarios tied to the design's Guarantees, milestones — and never
+  restate the design. No test code, no bodies, no per-step commit messages.
 - Commit messages follow Conventional Commits and describe the *why* of the slice, not a play-by-play of files.
-- ADRs are 2-minute reads at design altitude — no code, no symbols, alternatives named. Written when the decision is made (brainstorming), not when the feature lands.
+- ADRs are 2-minute reads at design altitude — no code, no symbols, alternatives named. Written when the decision is made (brainstorming), not when the feature
+  lands.
 
 Skill files themselves can be richer where compliance demands it — but the artifacts the user reads are the bloat target.
 
@@ -55,9 +71,15 @@ Verification is empirical, and a skill change does not ship on judgment alone.
    python3 -c "import json; json.load(open('hooks/hooks.json'))"
    bash -n hooks/session-start && CLAUDE_PLUGIN_ROOT=$(pwd) hooks/session-start | python3 -m json.tool
    ```
-2. **Run the gate:** `scripts/check-skills.sh` — the structural checks in `.claude/gates.md` (budgets, one gate per skill, Red Flags placement, links, example sections, reflow damage). It runs before every commit that touches `skills/`.
-3. **Run the evals.** `evals/evals.json` holds the prompts and expectations; `evals/fixtures/` the fixture repos; `evals/run-setup.sh <eval-id> <run-dir>` prepares a run; `evals/grade.py` grades the mechanical expectations into the skill-creator viewer format. Runs live outside the repo in `../playbooks-workspace/iteration-N/eval-*/<config>/run-1/`, one subagent per run **on Opus** (the model that runs these skills), with a snapshot of the previous skills as the baseline. Aggregate with the skill-creator's `aggregate_benchmark.py` and review in its viewer. A change ships when its delta is non-negative on pass rate and tokens.
-4. **Dogfood.** Load the plugin in a fresh session and run a small real task; "let's make a small react todo list" must trigger `brainstorming` unprompted, and a one-sentence rename must not.
+2. **Run the gate:** `scripts/check-skills.sh` — the structural checks in `.claude/gates.md` (budgets, one gate per skill, Red Flags placement, links, example
+   sections, reflow damage). It runs before every commit that touches `skills/`.
+3. **Run the evals.** `evals/evals.json` holds the prompts and expectations; `evals/fixtures/` the fixture repos; `evals/run-setup.sh <eval-id> <run-dir>`
+   prepares a run; `evals/grade.py` grades the mechanical expectations into the skill-creator viewer format. Runs live outside the repo in
+   `../playbooks-workspace/iteration-N/eval-*/<config>/run-1/`, one subagent per run **on Opus** (the model that runs these skills), with a snapshot of the
+   previous skills as the baseline. Aggregate with the skill-creator's `aggregate_benchmark.py` and review in its viewer. A change ships when its delta is
+   non-negative on pass rate and tokens.
+4. **Dogfood.** Load the plugin in a fresh session and run a small real task; "let's make a small react todo list" must trigger `brainstorming` unprompted, and
+   a one-sentence rename must not.
 
 ## Commits
 

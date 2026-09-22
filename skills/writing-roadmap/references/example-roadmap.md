@@ -1,19 +1,17 @@
 # Example roadmap
 
-The roadmap for `../../brainstorming/references/example-design-initiative.md`. Slices, order, exit criterion; nothing a
-slice plan will own.
+The roadmap for `../../brainstorming/references/example-design-initiative.md`. Slices, order, exit criterion; nothing a slice plan will own.
 
 ---
 
 # Event-driven report rendering — roadmap
 
-Initiative: `docs/playbooks/initiatives/<date>-event-driven-rendering.md` · ADR:
-`<date>-adr-render-on-change-not-on-schedule.md`
+Initiative: `docs/playbooks/initiatives/<date>-event-driven-rendering.md` · ADR: `<date>-adr-render-on-change-not-on-schedule.md`
 
 ## Exit criterion
 
-Every report type is rendered by the queue, the nightly scheduler and the routing table are deleted, and a change to any
-report is visible within the queue's delivery bound.
+Every report type is rendered by the queue, the nightly scheduler and the routing table are deleted, and a change to any report is visible within the queue's
+delivery bound.
 
 ## Slices
 
@@ -27,11 +25,10 @@ report is visible within the queue's delivery bound.
 
 ## Order
 
-Slice 1 is the skeleton: it carries real traffic for one low-volume type and proves the queue, a worker, the routing
-table and a revert end to end. Slice 2 is the riskiest: the high-volume types are where at-least-once delivery and
-idempotent renders either hold or don't, and changing the request contract is still cheap. Slices 2 and 3 are
-independent and may run in parallel worktrees. Slice 4 is bulk migration with no new design. Slice 5 removes coexistence
-and is only possible once nothing depends on the scheduler.
+Slice 1 is the skeleton: it carries real traffic for one low-volume type and proves the queue, a worker, the routing table and a revert end to end. Slice 2 is
+the riskiest: the high-volume types are where at-least-once delivery and idempotent renders either hold or don't, and changing the request contract is still
+cheap. Slices 2 and 3 are independent and may run in parallel worktrees. Slice 4 is bulk migration with no new design. Slice 5 removes coexistence and is only
+possible once nothing depends on the scheduler.
 
 ## Open questions
 

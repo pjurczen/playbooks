@@ -62,6 +62,29 @@ for f in sorted(glob.glob("skills/**/*.md", recursive=True)):
 sys.exit(1 if bad else 0)
 PY
 
+echo "== prose lines at most 160 columns (tables, fences and frontmatter excepted) =="
+python3 - <<'PY2' || fail=1
+import re, sys, subprocess
+files = subprocess.run(["git", "ls-files", "*.md"], capture_output=True, text=True).stdout.split()
+bad = 0
+for f in files:
+    lines = open(f).read().split("\n"); i = 0
+    if lines and lines[0].strip() == "---":
+        i = 1
+        while i < len(lines) and lines[i].strip() != "---": i += 1
+        i += 1
+    fence = None
+    for k in range(i, len(lines)):
+        l = lines[k]; m = re.match(r"^\s*(`{3,}|~{3,})", l)
+        if fence:
+            if l.strip().startswith(fence) and set(l.strip()) <= {fence[0]}: fence = None
+            continue
+        if m: fence = m.group(1); continue
+        if l.lstrip().startswith("|"): continue
+        if len(l) > 160: print(f"  LONG {f}:{k + 1} ({len(l)})"); bad += 1
+sys.exit(1 if bad else 0)
+PY2
+
 echo "== json =="
 python3 -c "import json; json.load(open('.claude-plugin/plugin.json')); json.load(open('hooks/hooks.json')); json.load(open('evals/evals.json'))" || fail=1
 

@@ -1,20 +1,17 @@
 # Example plan — exact, and nothing the design already says
 
-The plan for `../../brainstorming/references/example-design-replacement.md`. Read the two together: the design has the
-why, the shape and the contracts; this has the work. Every table row names the class and method the implementer must
-touch; every scenario names where it lives and which Guarantee it proves.
+The plan for `../../brainstorming/references/example-design-replacement.md`. Read the two together: the design has the why, the shape and the contracts; this
+has the work. Every table row names the class and method the implementer must touch; every scenario names where it lives and which Guarantee it proves.
 
 ---
 
 # One explicit product-recalculation service — implementation plan
 
-Design: `docs/playbooks/designs/<date>-product-recalculation-service.md` · ADR:
-`<date>-adr-business-process-state-outside-technical-lifecycle-scope.md`
+Design: `docs/playbooks/designs/<date>-product-recalculation-service.md` · ADR: `<date>-adr-business-process-state-outside-technical-lifecycle-scope.md`
 
 ## Goal
 
-Land ProduktRecalculationService and retire the collector, the event processor and the sequential discount loop with
-every existing scenario green.
+Land ProduktRecalculationService and retire the collector, the event processor and the sequential discount loop with every existing scenario green.
 
 ## Changes
 
@@ -39,23 +36,19 @@ Call sites:
 | `ProdukteFactory.neueProdukte`                                        | `markProdukteDirty`                                                  | nothing; `AngebotErstellenService` calls `recalculate` after `insertAngebot`                                                                 |
 | `AngebotMutationOrchestrator`                                         | inline `produktGateway.calculate`                                    | unchanged                                                                                                                                    |
 
-`ProduktCalculationContext` is built everywhere as
-`new ProduktCalculationContext(rabattgebendeOapService.ermittleRabattgebendeOap(angebot.getProdukte()))`.
+`ProduktCalculationContext` is built everywhere as `new ProduktCalculationContext(rabattgebendeOapService.ermittleRabattgebendeOap(angebot.getProdukte()))`.
 
 ## Behaviours to verify
 
-- G2 · `rabattnehmende_angebote_neuberechnen.feature` — given one discount-giving and two receiving offers, when the
-  giving one changes, then all three are recalculated, giving first, and each dependent's last-editor is updated.
-- G3 · `ProduktRecalculationServiceTest` — given the same family, when a receiving offer changes, then only that offer
-  is recalculated.
-- G4 · new scenario in the copy feature — given a Kundenberater copies a consultation's offers, when the request ends,
-  then every copy's health declaration is synchronised.
-- G4 · `AngebotMutationServiceTest` — given a non-Kundenberater mutates an offer, when finalised, then no
-  health-declaration call is made.
+- G2 · `rabattnehmende_angebote_neuberechnen.feature` — given one discount-giving and two receiving offers, when the giving one changes, then all three are
+  recalculated, giving first, and each dependent's last-editor is updated.
+- G3 · `ProduktRecalculationServiceTest` — given the same family, when a receiving offer changes, then only that offer is recalculated.
+- G4 · new scenario in the copy feature — given a Kundenberater copies a consultation's offers, when the request ends, then every copy's health declaration is
+  synchronised.
+- G4 · `AngebotMutationServiceTest` — given a non-Kundenberater mutates an offer, when finalised, then no health-declaration call is made.
 - G6 · `neukunde_familienrabatt`, copy, Partnerdaten and Personendaten features — pass unchanged.
 - Edge · `ProduktRecalculationServiceTest` — an empty batch makes no gateway call and finalises nothing.
-- Edge · Partnerdaten, Beruf and Abschluss unit tests — each recalculates exactly its offer and still flushes GD at
-  finalise.
+- Edge · Partnerdaten, Beruf and Abschluss unit tests — each recalculates exactly its offer and still flushes GD at finalise.
 
 ## Milestones
 
@@ -71,16 +64,13 @@ Each milestone starts with its Behaviours red.
 
 ## Execution risks / open questions
 
-- Milestones 2–4 leave both mechanisms alive; keep each milestone's scenario set broad enough to exercise the
-  coexistence window.
-- Check `AngebotLesenService` and test-support code for callers of the deleted types before milestone 5 — the design's
-  caller list came from mutation services only.
-- If no scenario asserts the dependents' `letzterBearbeiter` today, add the assertion in milestone 2; otherwise the
-  threaded bearbeiter is untested.
+- Milestones 2–4 leave both mechanisms alive; keep each milestone's scenario set broad enough to exercise the coexistence window.
+- Check `AngebotLesenService` and test-support code for callers of the deleted types before milestone 5 — the design's caller list came from mutation services
+  only.
+- If no scenario asserts the dependents' `letzterBearbeiter` today, add the assertion in milestone 2; otherwise the threaded bearbeiter is untested.
 
 Stop and ask if:
 
-- a contract in the design doesn't match the code as found — a third `finalisiereAenderung` overload, a different
-  `Bearbeiter` type.
+- a contract in the design doesn't match the code as found — a third `finalisiereAenderung` overload, a different `Bearbeiter` type.
 - milestone 2's scenarios can't go green without changing the product gateway contract (out of scope in the design).
 - any deleted type still has a production caller at milestone 5 that isn't in the call-site table.
