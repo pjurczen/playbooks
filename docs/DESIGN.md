@@ -683,3 +683,16 @@ gets disabled. The critic is a subagent because the evidence is specifically abo
 the same session would not do. And the reviewer is narrowed rather than strengthened, because the same evidence puts open-ended structural judgment by a model
 at the bottom, and a reviewer hunting for structural gaps is the failure Anthropic's own harness work warns pushes toward over-engineering. No skill body gained
 a rule about clean code; the rules went into the critic's prompt and the gate configuration, where instruction-count decay cannot reach them.
+
+The critic's checklist was shallow on its first cut — six technical smells, altitude defined as orchestration versus I/O — and the user's own examples fell
+through it: a business rule inside an adapter, mapping and calling in one function. The second cut is drawn from the lists that practitioners actually review
+against, and they converge on four axes. Boundaries, from Fowler's layering principles, presentation-domain-data layering, Cockburn's ports and adapters and the
+clean-architecture dependency rule: no business logic in handlers or adapters, no technology or outer data shape inside the domain, interfaces owned by the
+inner side. Placement, from Fowler's anemic domain model and tell-don't-ask and the couplers in the smell catalogue: behaviour next to its data, domain concepts
+as types. Function shape, from the single-level-of-abstraction principle and Beck's composed method, Ousterhout's "different layer, different abstraction", and
+CodeScene's code-health factors: one level per body, no bumpy road, no data clumps. Change axes, from Parnas's criterion, divergent change and shotgun surgery,
+Ousterhout's temporal decomposition and information leakage, and Google's reviewer guide on over-engineering: one reason to change per unit, one home per
+decision, and too much structure flagged as readily as too little. The four levels a function can sit at — policy, orchestration, translation, mechanism — are
+the clean-architecture circles seen from inside one function, and they are the same words the plan's altitude clauses use, so implementer and critic share a
+vocabulary. The implementer will still miss things; the evidence says a generator does not see its own long method. Up-front decomposition buys fewer and
+smaller findings, not none.

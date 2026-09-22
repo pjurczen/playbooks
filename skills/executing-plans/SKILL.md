@@ -10,7 +10,8 @@ Implement the plan in the main session, milestone by milestone; subagents only w
 ## Before you start
 
 1. Read the plan file once. Extract: the goal, the changes and call-site tables, the behaviours to verify, the full list of milestones with their done-when
-   criteria. Read the design it links for the contracts and guarantees.
+   criteria. Read the design it links for the contracts and guarantees, and `references/structure-critic-prompt.md` once: its four levels are the words the
+   plan's altitude clauses use, and the critic holds your code to its checklist.
 2. Re-read it critically. Any milestone unclear? Any missing dependency? Any behaviour you can't see how to verify? Raise it with the user before any code is
    written. The plan's *Stop and ask if* list stays binding throughout: when a condition hits mid-milestone, stop and ask — don't pick an interpretation and
    build on it.
@@ -20,14 +21,14 @@ Implement the plan in the main session, milestone by milestone; subagents only w
 
 ## Resuming a partially executed plan
 
-If the session was cleared or compacted mid-feature: locate the existing branch or worktree (`git worktree list`, `git branch --list`) — never re-run
-using-git-worktrees when a workspace exists. Compare the plan's milestones against `git log <BASE_SHA>..HEAD` to find the first incomplete one, reconstruct what
-you can of the `## Findings` block from the commit messages, note it's partial, and continue.
+After a clear or compaction mid-feature: find the existing branch or worktree (`git worktree list`, `git branch --list`) — never re-run using-git-worktrees when
+one exists. Compare the plan's milestones against `git log <BASE_SHA>..HEAD` for the first incomplete one, rebuild what you can of `## Findings` from the commit
+messages, note it's partial, continue.
 
 ## Clean code defaults
 
-"Smallest thing that passes" means smallest *that respects* the structure critic's checklist (`references/structure-critic-prompt.md`): one responsibility, one
-level of abstraction per function, no dead code, no premature abstraction. The critic checks it after green; the refactor pass enforces it.
+"Smallest thing that passes" means smallest *that sits where the plan put it*: each function at the one level the plan names for it, a rule in the unit that
+owns its data, translation in the adapter, no abstraction without a second caller. The critic holds the diff to the same checklist after green.
 
 ## The milestone loop
 
@@ -36,7 +37,7 @@ hand-off to finishing-branch.
 
 ### Step 1 — Sketch behavioural test(s) (RED)
 
-Use **bdd-testing** to write the behavioural test for the milestone. One test per behaviour the milestone is supposed to add. Behaviour-level, not structural.
+Use **bdd-testing**: one test per behaviour the milestone adds, behaviour-level, not structural.
 
 ### Step 2 — Watch them fail
 
@@ -44,7 +45,7 @@ Run it. It must fail because the behaviour is missing, not from a typo or an imp
 
 ### Step 3 — Implement smallest thing (GREEN)
 
-Write the smallest code that makes the test pass. No premature abstraction. No "while I'm here" features.
+Write the smallest code that makes the test pass, at the level and in the unit the plan names. No "while I'm here" features.
 
 ### Step 4 — Run tests + nearby smoke
 
@@ -62,7 +63,7 @@ If something's off: fix in place before continuing. If the code had to differ fr
 one `Deviation:` line under its Approach — the end-of-feature reviewer compares against the design as written. If something's a note for later: add it to your
 in-session `## Findings` block (see "Findings" below).
 
-"Added X but didn't wire it up at the call sites the plan named" is incomplete milestone work, not a finding — fix it now.
+"Added X but didn't wire the call sites the plan named" is incomplete milestone work, not a finding — fix it now.
 
 ### Step 6 — Structure critic
 
@@ -81,8 +82,7 @@ stay green throughout. "Looked, nothing worth doing" is a valid answer; "too big
 
 ### Step 8 — Run tests and gates again
 
-Tests and gates again; the refactor changed nothing observable and introduced no violation. Use **verifying-before-done** before claiming the milestone is
-complete.
+Tests and gates again; the refactor changed nothing observable and introduced no violation. **verifying-before-done** before claiming the milestone complete.
 
 ### Step 9 — One milestone commit
 
@@ -108,7 +108,7 @@ which is too late to unwind a wrong abstraction.
 ## Findings: Tier 1 (in-session) and Tier 2 (followups.md)
 
 **Tier 1 — in-session.** A running `## Findings` block in the conversation with three subsections: **Changes** (per milestone), **Gotchas** (what later
-milestones should know), **Open questions** (deferred refactors, design questions). It is input to the end-of-feature reviewer.
+milestones should know), **Open questions**. It is input to the end-of-feature reviewer.
 
 **Tier 2 — durable followups** at `docs/followups.md`, append-only: only items that would need their own design / plan — architectural refactorings,
 generalizations, structural changes — in code this feature did not touch. Cleanliness debt on touched code never goes here; it is in scope now. Format:
@@ -127,16 +127,12 @@ After the last milestone commits, run a single review pass before `finishing-bra
    (`BASE_SHA..HEAD`, from the using-git-worktrees report) and the `## Findings` block.
 2. It returns Strengths / Issues (Critical / Important / Minor / Followup) / Assessment. Fix Critical, Important and Minor; only Followup-tier items go to
    `followups.md`.
-3. Commit the fixes as one "review fixes" milestone (same loop). One pass, fix, move on — wanting a re-review means a milestone was wrong; don't re-loop.
+3. Commit the fixes as one milestone (same loop). One pass, fix, move on — wanting a re-review means a milestone was wrong.
 
 ## Promotion: Tier 1 → Tier 2
 
-After the end-of-feature review and its fixes:
-
-1. Read your in-session `## Findings` block.
-2. Drop anything that was addressed during the work.
-3. Promote only Tier-2 items per the definition above. Anything else gets fixed in a small follow-up commit or dropped.
-4. Commit the followups update.
+After the review fixes: drop what the work addressed, promote only Tier-2 items per the definition above, fix or drop the rest in a small follow-up commit, and
+commit the followups update.
 
 ## Hand off
 

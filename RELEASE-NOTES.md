@@ -18,10 +18,14 @@ per-stack reference of the lightest tools that cover the three mechanically chec
 recorded as a baseline. `using-git-worktrees` runs the gates as the clean baseline; `executing-plans` treats a milestone as green only when tests and gates both
 pass; `verifying-before-done` counts a structure claim as proven only by gate output. Designs gain **structural rules** in Contracts — dependency direction,
 ownership, limits — that milestone one of the plan wires into the config. A **structure critic** subagent runs once per milestone in fresh context, with the
-diff, the contracts and the gate output, against a fixed six-item checklist, and returns findings by location with the move; the refactor pass applies them. The
-clean-code checklist left the skill body for the critic's prompt. The end-of-feature reviewer is narrowed to correctness and conformance, and for structure runs
-the gates instead of judging. Plans carry one clause of **altitude** per new method and one responsibility per new class. And this repo eats its own cooking:
-`scripts/check-skills.sh` is its structural gate and `.claude/gates.md` its map.
+diff, the contracts and the gate output, against a fixed checklist of thirteen named smells on four axes — boundaries, placement of behaviour, function shape,
+change axes — drawn from Fowler's layering and domain-model writing, ports and adapters, the clean-architecture dependency rule, the single-level-of-abstraction
+principle, Ousterhout, Parnas, CodeScene's code-health factors and Google's reviewer guide; it returns findings by location with the move, and the refactor pass
+applies them. The checklist names four levels a function can sit at — policy, orchestration, translation, mechanism — and the plan's altitude clauses use the
+same words, so the implementer builds to the list the critic will hold it to. The clean-code checklist left the skill body for the critic's prompt. The
+end-of-feature reviewer is narrowed to correctness and conformance, and for structure runs the gates instead of judging. Plans carry one clause of **altitude**
+per new method and one responsibility per new class. And this repo eats its own cooking: `scripts/check-skills.sh` is its structural gate and `.claude/gates.md`
+its map.
 
 ## v0.9.0 (2026-09-22)
 
