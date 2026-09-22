@@ -22,12 +22,16 @@ model — not subagents. Subagents are for genuinely parallel or context-heavy s
 
 ## Resuming a partially executed plan
 
-If the session was cleared or compacted mid-feature: locate the existing branch or worktree (`git worktree list`, `git branch --list`) — never re-run using-git-worktrees when a workspace exists. Compare the plan's milestones against `git log <BASE_SHA>..HEAD` to find the first incomplete one, reconstruct what you can of the `## Findings` block from the commit messages, note it's partial, and continue.
+If the session was cleared or compacted mid-feature: locate the existing branch or worktree (`git worktree list`,
+`git branch --list`) — never re-run using-git-worktrees when a workspace exists. Compare the plan's milestones against
+`git log <BASE_SHA>..HEAD` to find the first incomplete one, reconstruct what you can of the `## Findings` block from
+the commit messages, note it's partial, and continue.
 
 ## Clean code defaults
 
 "Smallest thing that passes" means smallest *that respects* single responsibility, small functions, descriptive names,
-no dead or commented-out code, and no premature abstraction (three near-identical pieces → extract; two → leave). These shape the GREEN step; the refactor pass is where you enforce them deliberately.
+no dead or commented-out code, and no premature abstraction (three near-identical pieces → extract; two → leave). These
+shape the GREEN step; the refactor pass is where you enforce them deliberately.
 
 ## The milestone loop
 
@@ -70,7 +74,14 @@ now.
 
 ### Step 6 — Refactor pass
 
-Boy scout rule: leave the code you touched — same file, the functions above and below, the helpers you called, immediate callers, and anything your change made worse or exposed — better than you found it. The scope is what you touched; the effort is whatever that scope needs, not a time-box. Allowed: rename, extract a helper, collapse duplication, remove dead code, simplify a conditional, restructure within the touched unit — split the long function you had to modify, move a responsibility to the unit that owns it. Not allowed: cleaning code you didn't touch, and changing a contract other code depends on — that is a stop-and-ask, never a quiet refactor and never a followup. A bug in touched code is fixed here, with a scenario, and named in the commit; a bug elsewhere is a finding. Tests stay green throughout. "Looked, nothing worth doing" is a valid answer; "too big for now" is not — if you touched it, it's yours.
+Boy scout rule: leave the code you touched — same file, the functions above and below, the helpers you called, immediate
+callers, and anything your change made worse or exposed — better than you found it. The scope is what you touched; the
+effort is whatever that scope needs, not a time-box. Allowed: rename, extract a helper, collapse duplication, remove
+dead code, simplify a conditional, restructure within the touched unit — split the long function you had to modify, move
+a responsibility to the unit that owns it. Not allowed: cleaning code you didn't touch, and changing a contract other
+code depends on — that is a stop-and-ask, never a quiet refactor and never a followup. A bug in touched code is fixed
+here, with a scenario, and named in the commit; a bug elsewhere is a finding. Tests stay green throughout. "Looked,
+nothing worth doing" is a valid answer; "too big for now" is not — if you touched it, it's yours.
 
 ### Step 7 — Run tests again
 
@@ -87,7 +98,8 @@ outcome with a Conventional Commits type.
 ## Circuit-breaker: the design might be wrong
 
 The milestone loop assumes the design is sound and your job is to build it. On a hard problem that assumption can fail
-*mid-build* — and every local instinct here (fix-in-place, boy-scout, defer to followups) will quietly push you to **patch around a broken design** instead of stopping. Watch for the tremors:
+*mid-build* — and every local instinct here (fix-in-place, boy-scout, defer to followups) will quietly push you to *
+*patch around a broken design** instead of stopping. Watch for the tremors:
 
 - You're adding a **compensating patch** — a mutator / guard / coercion whose only job is to force the design to
   behave — **especially the second one.** One is a fix; a pile is a smell.
@@ -106,10 +118,13 @@ late to unwind a wrong abstraction.
 milestone), **Gotchas** (what later milestones should know), **Open questions** (deferred refactors, design questions).
 It is input to the end-of-feature reviewer.
 
-**Tier 2 — durable followups** at `docs/followups.md`, append-only: only items that would need their own design / plan — architectural refactorings, generalizations, structural changes — in code this feature did not touch. Cleanliness debt on touched code never goes here; it is in scope now. Format:
+**Tier 2 — durable followups** at `docs/followups.md`, append-only: only items that would need their own design / plan —
+architectural refactorings, generalizations, structural changes — in code this feature did not touch. Cleanliness debt
+on touched code never goes here; it is in scope now. Format:
 
 ````markdown
 ## YYYY-MM-DD — short title
+
 One-line description. File: src/path/file.py:line. Discovered while: feature-name.
 ````
 
@@ -140,7 +155,9 @@ Invoke **finishing-branch** to complete the work.
 
 ## Subagents during execution
 
-Default: don't. Dispatch one only for 2+ genuinely independent investigations (**using-parallel-agents**, which also defines the `## Findings` block every subagent returns) or a context-heavy subtask whose findings, not its noise, you need. Store the findings inline before the next milestone.
+Default: don't. Dispatch one only for 2+ genuinely independent investigations (**using-parallel-agents**, which also
+defines the `## Findings` block every subagent returns) or a context-heavy subtask whose findings, not its noise, you
+need. Store the findings inline before the next milestone.
 
 ## Red Flags — STOP
 
@@ -148,5 +165,5 @@ Default: don't. Dispatch one only for 2+ genuinely independent investigations (*
 |----------------------------------------------------|----------------------------------------------------------------------------------------------------------------------------|
 | "I'll skip the test, this case is obvious"         | Then the test takes 30 seconds. Write it.                                                                                  |
 | "I'll commit the feature now and refactor later"   | The refactor is part of the milestone commit. Do it now.                                                                   |
-| "It's pre-existing, my change didn't introduce it" | If you touched it, it's yours. Followups are for code you didn't touch.                                                                           |
+| "It's pre-existing, my change didn't introduce it" | If you touched it, it's yours. Followups are for code you didn't touch.                                                    |
 | "I'll just add one more guard to make it behave"   | Compensating patches accrete into a broken design. The second one means STOP and re-open the design (see Circuit-breaker). |
