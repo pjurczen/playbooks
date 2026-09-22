@@ -43,8 +43,7 @@ and deletes the file. The ADRs remain.
 
 A slice of an initiative inherits and does not restate: `Initiative:` in the header; Problem is one line naming the
 slice and what it delivers; Design draws only this slice's portion; Contracts lists only what the slice adds; Decisions
-only the slice's own; approaches are proposed only for the slice's delta. An ADR is rare here — the initiative's covers
-it. Resuming later: read the initiative design and the roadmap, take the next unblocked slice or the one the user names.
+only the slice's own; approaches are proposed only for the slice's delta. An ADR is rare here — the initiative's covers it. When the slice design is approved, flip the slice's roadmap row to `in progress` with a docs-only commit on the base branch, so anyone else can see it is taken. Resuming later: read the initiative design and the roadmap, take the next unblocked slice or the one the user names.
 
 ## Discovered mid-execution
 

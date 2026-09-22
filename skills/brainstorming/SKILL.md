@@ -59,8 +59,7 @@ with the approach itself; what is deliberately out. *Output:* Assumptions, Open 
 - **ADR** — when stage 3 says so, invoke **writing-adr**; the `proposed` ADR commits with the design.
 - **Write** — sections and rules in `references/design-doc-shape.md`; read `references/example-design-<kind>.md` for the
   chosen kind. Save to `docs/playbooks/designs/YYYY-MM-DD-<topic>.md` and commit.
-- **Self-review**, then the **review gate**, then the **hand-off**: **writing-plans** for a feature or slice, *
-  *writing-roadmap** for an initiative. Nothing else.
+- **Self-review**, then the **review gate**, then the **hand-off**: **writing-plans** for a feature or slice, **writing-roadmap** for an initiative. Nothing else.
 
 ## Initiatives
 

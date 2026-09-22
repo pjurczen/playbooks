@@ -52,8 +52,7 @@ How documentation is maintained in this repo.
 ## Bootstrap — when the map is absent
 
 1. Scan the repo: `README`, `docs/`, any `adr/`, doc conventions in CLAUDE.md.
-2. Draft `.claude/documentation.md` in the shape above: the real doc inventory plus routing rules. If the repo has **no
-   ** home for decisions at all, propose creating one (`docs/adr/` or a `DECISIONS.md`) — propose, don't impose.
+2. Draft `.claude/documentation.md` in the shape above: the real doc inventory plus routing rules. If the repo has **no** home for decisions at all, propose creating one (`docs/adr/` or a `DECISIONS.md`) — propose, don't impose.
 3. Present the draft. On approval, commit it, then continue.
 4. If the user declines, **stop**: leave the design/plan files untouched. Never delete what you couldn't consolidate.
 

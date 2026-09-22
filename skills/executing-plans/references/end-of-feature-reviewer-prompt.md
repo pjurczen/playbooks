@@ -88,7 +88,7 @@ feature):
 
 - `<file:line>` — <description>
 
-**Followup** (architectural — needs its own design / plan to address):
+**Followup** (outside the code this feature touched, or needs its own design / plan):
 
 - `<file:line>` — <description>
 

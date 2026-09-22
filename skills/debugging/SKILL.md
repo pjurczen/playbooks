@@ -12,8 +12,7 @@ for it, and only then change code.
 
 - **Typo-class fixes** — misspelled identifier, wrong constant, an off-by-one visible in the diff. Just fix it; still
   run **verifying-before-done**.
-- **Failures in work you're implementing right now** — a red test mid-milestone is the normal loop of **executing-plans
-  **, not a debugging session.
+- **Failures in work you're implementing right now** — a red test mid-milestone is the normal loop of **executing-plans**, not a debugging session.
 
 ## The loop
 

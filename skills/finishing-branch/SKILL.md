@@ -108,8 +108,7 @@ Which option?
 
 ### Step 5: Execute choice
 
-**Consolidation gate:** before executing any landing option (1, 2, D1, B1 — anything that integrates the work), invoke *
-*consolidating-docs** to graduate durable decisions from this feature's design/plan files into the repo's docs and
+**Consolidation gate:** before executing any landing option (1, 2, D1, B1 — anything that integrates the work), invoke **consolidating-docs** to graduate durable decisions from this feature's design/plan files into the repo's docs and
 delete the husks. It commits that as one change, so the doc updates land with the feature. For keep and discard
 options (3, 4, D2, D3, B2), skip consolidation — nothing is landing.
 

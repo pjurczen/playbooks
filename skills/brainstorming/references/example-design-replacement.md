@@ -95,8 +95,7 @@ public class ProduktRecalculationService {
    /** One already-loaded offer, recalculated in memory on that instance. No reload, no flush. A gateway failure propagates and leaves the offer unmodified. */
    public void recalculate(Angebot angebot, ProduktCalculationContext context);
 
-   /**
-    * Explicit batch. Marks each offer's health declaration dirty, recalculates discount-giving
+   /*** Explicit batch. Marks each offer's health declaration dirty, recalculates discount-giving
     * offers first, then the rest in a three-phase parallel pass; finalises every offer with the
     * given editor. Empty list: no-op. An unknown offer number fails the whole batch before any
     * recalculation starts.

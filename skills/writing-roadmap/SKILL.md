@@ -51,8 +51,7 @@ The shape is `references/example-roadmap.md` — read it, with its initiative de
 ## Lifecycle
 
 Lives beside the initiative design in `docs/playbooks/initiatives/`, committed to the base branch with the same
-confirmation. consolidating-docs flips a slice's status to `landed` when it lands and asks whether the initiative is
-complete when the last one does. Reorder or split slices as learning arrives: edit the table, never annotate it.
+confirmation. brainstorming flips a slice to `in progress` when its design is approved; consolidating-docs flips it to `landed` when it lands and asks whether the initiative is complete when the last one does. Reorder or split slices as learning arrives: edit the table, never annotate it.
 
 ## User review gate
 
