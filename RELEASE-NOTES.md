@@ -1,5 +1,15 @@
 # Playbooks Release Notes
 
+## v0.9.0 (2026-09-22)
+
+### brainstorming designs any kind of work; initiatives get a design and a roadmap
+
+The design-doc rules shipped in v0.7.0 had been reverse-engineered from one example — a replacement in a Java service — and promoted to laws: "what replaces what", before/after subgraphs, method signatures with javadoc, one diagram, twelve nodes. They fit that example and little else. The nine sections were right as concerns; the rule under each was overfit.
+
+`brainstorming` now starts by naming the kind of work — a feature in an existing codebase, greenfield, a replacement, an integration, a data change, a user-facing flow, an infrastructure change, a cross-cutting policy, an initiative — from a table in `references/design-doc-shape.md` that says, per kind, what to explore, what to ask, which views to draw, what the contracts are and which guarantees are typical. A new `references/design-views.md` is a catalogue of views, each a question and a mermaid type with a short snippet: context, structure with before/after, behaviour as a sequence, state, data, process, rollout. The rule is now the views a reader needs, usually one to three, each opening with its question. Contracts are any declaration the world sees — signatures, endpoints, schemas, flags, states — never bodies. Two sections are new: **Decisions**, one line per design-level decision with the alternative rejected, linking to an ADR only when one clears the test; and, inside Design, **the mechanism when it is the decision**: an algorithm whose complexity is the point, a concurrency scheme, a state machine, carried as pseudo-code as long as it needs to be and no longer, with the property it buys as a guarantee — never code that is merely the obvious way to implement a decision made elsewhere. "Shape" is renamed "Design". References are named by what they are, and worked examples by kind: `example-design-replacement.md`, `example-design-feature.md` (an API rate limiter, with a mechanism snippet), `example-design-initiative.md`.
+
+An **initiative** is now defined as work with a target state no single slice reaches, a coexistence period, and shared contracts set once. Its design (`references/initiative-design.md`) holds the target architecture, the coexistence mechanism, the shared contracts and the decisions, and no slices; it lives on the base branch so every slice sees it. Slicing is a separate artifact and a separate skill: **`writing-roadmap`** produces the roadmap — slices with what each delivers, dependencies and status, the ordering rationale, an exit criterion — and consolidating-docs advances it as slices land and consolidates the initiative when the last one does. Each slice is then an ordinary brainstorming → writing-plans → executing-plans → finishing-branch cycle that inherits from the initiative instead of restating it. using-playbooks routes an approved initiative design to writing-roadmap and a roadmap with open slices to brainstorming.
+
 ## v0.8.1 (2026-09-22)
 
 ### writing-adr: what counts as an ADR

@@ -10,7 +10,7 @@ How documentation is maintained in this repo. Consult this before adding, moving
 - `CLAUDE.md` — conventions for agents editing this plugin.
 - `RELEASE-NOTES.md` — user-facing changes per release.
 - `docs/followups.md` — durable, cross-feature backlog (created on first use).
-- `docs/playbooks/designs/`, `docs/playbooks/plans/` — ephemeral working artifacts; consolidated into the docs above and deleted when work lands. `docs/playbooks/initiatives/` — the shared shape for multi-slice work; consolidated only when its last slice lands.
+- `docs/playbooks/designs/`, `docs/playbooks/plans/` — ephemeral working artifacts; consolidated into the docs above and deleted when work lands. `docs/playbooks/initiatives/` — an initiative's design and roadmap, on the base branch; consolidated only when the roadmap's last slice lands.
 
 ## Routing — where durable knowledge goes
 

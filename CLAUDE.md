@@ -28,14 +28,15 @@ Skill files are prompts. Instruction count degrades adherence and early instruct
 - **Red Flags tables only where discipline is the point** (`using-playbooks`, `brainstorming`, `executing-plans`, `verifying-before-done`, `debugging`, `consolidating-docs`), ≤ 4 rows, each naming an excuse the body doesn't already refute — not a body rule with a quotation mark in front.
 - **No per-skill "Announce at start"** — the bootstrap says to announce once. **`dot` graphs only for a real loop or non-obvious branch**; linear flows are numbered lists.
 - **"When to skip" is a standard section** in every directly-invocable skill; pipeline-only skills say "fired by X".
-- **Companions carry a read-when** ("read `references/design-doc.md` before step 7"). **Positive framing, reasons over emphasis, no brand names.**
+- **Companions carry a read-when** ("read `references/design-doc-shape.md` before writing"). **Positive framing, reasons over emphasis, no brand names.**
 - **Tone:** senior dev to senior dev. State the rule and the reason; trust the reader.
 
 ## Conventions for produced artifacts
 
 This is the actual differentiator from superpowers. The artifacts the *user* reads (design docs, plans) have two readers: a teammate who follows the narrative without the codebase, and an implementer in another session — Opus-class by default — who must find nothing to guess. Structure and altitude, not length, are the bar:
 
-- Design docs have a fixed shape: Problem, Approach (with alternatives), Shape (one mermaid diagram), Contracts, Guarantees, Risks, Out of scope. The narrative layer reads in 2–3 minutes; Contracts carry public signatures with semantics — never bodies.
+- Design docs have a fixed shape: Problem, Approach (with alternatives), Decisions, Design (the one to three views a reader needs, each answering a named question; the mechanism only when it is the decision), Contracts, Guarantees, Assumptions, Open questions, Risks, Out of scope. The narrative layer reads in a few minutes; Contracts carry declarations with semantics — signatures, endpoints, schemas, flags, states — never bodies.
+- An initiative gets a design (target architecture, coexistence mechanism, shared contracts) and a roadmap (slices, order, exit criterion), both on the base branch; each slice then gets an ordinary design and plan that inherit from them.
 - Plans are exact work maps — a changes table by class and method, call-site from → to, scenarios tied to the design's Guarantees, milestones — and never restate the design. No test code, no bodies, no per-step commit messages.
 - Commit messages follow Conventional Commits and describe the *why* of the slice, not a play-by-play of files.
 - ADRs are 2-minute reads at design altitude — no code, no symbols, alternatives named. Written when the decision is made (brainstorming), not when the feature lands.
