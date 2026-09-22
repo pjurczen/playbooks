@@ -2,7 +2,7 @@
 
 Contents: Java · Kotlin · Python · TypeScript/JavaScript · Go · C# · Rust · Sonar
 
-For each stack: dependency direction, length and complexity, duplication. One tool per property, the minimal config, the command. Prefer what the repo already has; add only what covers a property nothing covers yet.
+For each stack: dependency direction, length and complexity, duplication. One tool per property, the minimal config, the command. Prefer what the repo already has; add only what covers a property nothing covers yet. Tools install through the repo's dev-dependency group; jscpd needs Node and is the fallback where a stack has no native duplication check.
 
 ## Java (Maven or Gradle)
 
@@ -25,8 +25,8 @@ For each stack: dependency direction, length and complexity, duplication. One to
 | Property | Tool | Config | Command |
 |---|---|---|---|
 | Dependency direction, layers | import-linter | `[tool.importlinter]` in `pyproject.toml` with a `layers` contract | `lint-imports` |
-| Length and complexity | ruff (`C901` max-complexity 10, `PLR0915` statements) plus xenon for a hard ceiling | `[tool.ruff.lint] select = ["C901"]`, `mccabe.max-complexity = 10` | `ruff check <files>`; `xenon --max-absolute B <files>` |
-| Duplication | jscpd (any language) | `.jscpd.json` with `minLines: 10` | `jscpd <paths>` |
+| Length and complexity | ruff — `C901` complexity 10, `PLR0915` statements 40 (no Python linter counts lines per function; statements are the proxy, and the map says so) | `[tool.ruff.lint] select = ["C901", "PLR0915"]`, `mccabe.max-complexity = 10`, `pylint.max-statements = 40` | `ruff check <files>` |
+| Duplication | pylint `duplicate-code` (R0801) — native; jscpd if Node is already present | `[tool.pylint.similarities] min-similarity-lines = 10` | `pylint --disable=all --enable=duplicate-code <package>` |
 
 ## TypeScript / JavaScript
 
