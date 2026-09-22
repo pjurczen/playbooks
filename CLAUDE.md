@@ -22,7 +22,7 @@ docs/                          — design rationale and reference notes
 Skill files are prompts. Instruction count degrades adherence and early instructions win, so every line has to earn its place. The rules:
 
 - **YAML frontmatter required:** `name` (kebab-case, matches directory) and `description` in the shape "Use [trigger], to [goal]" — what and when, never a summary of the steps.
-- **Budget in words, not lines** (`wc -w`, tables included): ≤ 1,000 per SKILL.md; ≤ 1,500 for runbooks (`finishing-branch`, `executing-plans`, `consolidating-docs`); ≤ 1,200 for `writing-adr`, whose two lists are the skill; ≤ 500 for `using-playbooks`, which is loaded every session.
+- **Budget in words, not lines** (`wc -w`, tables included): ≤ 1,000 per SKILL.md; ≤ 1,500 for runbooks (`finishing-branch`, `executing-plans`, `consolidating-docs`); ≤ 1,200 for `writing-adr`, whose two lists are the skill, and for `brainstorming`, whose method is the skill; ≤ 500 for `using-playbooks`, which is loaded every session.
 - **One gate per skill, first, with its reason, in normal register.** Everything else is a rule with a reason; caps live only inside that gate.
 - **One rule, one owner.** A rule lives in the skill or companion that owns it; other skills point to it and never restate it.
 - **Red Flags tables only where discipline is the point** (`using-playbooks`, `brainstorming`, `executing-plans`, `verifying-before-done`, `debugging`, `consolidating-docs`), ≤ 4 rows, each naming an excuse the body doesn't already refute — not a body rule with a quotation mark in front.
@@ -35,7 +35,7 @@ Skill files are prompts. Instruction count degrades adherence and early instruct
 
 This is the actual differentiator from superpowers. The artifacts the *user* reads (design docs, plans) have two readers: a teammate who follows the narrative without the codebase, and an implementer in another session — Opus-class by default — who must find nothing to guess. Structure and altitude, not length, are the bar:
 
-- Design docs have a fixed shape: Problem, Approach (with alternatives), Decisions, Design (the one to three views a reader needs, each answering a named question; the mechanism only when it is the decision), Contracts, Guarantees, Assumptions, Open questions, Risks, Out of scope. The narrative layer reads in a few minutes; Contracts carry declarations with semantics — signatures, endpoints, schemas, flags, states — never bodies.
+- Design docs are the trace of brainstorming's five stages — problem, diagnosis, decision, shape, check — with a fixed section set: Problem, Diagnosis, Approach (with alternatives), Decisions, Design (the one to three views a reader needs, each answering a named question; the mechanism only when it is the decision), Contracts, Guarantees, Assumptions, Open questions, Risks, Out of scope. The narrative layer reads in a few minutes; Contracts carry declarations with semantics — signatures, endpoints, schemas, flags, states — never bodies.
 - An initiative gets a design (target architecture, coexistence mechanism, shared contracts) and a roadmap (slices, order, exit criterion), both on the base branch; each slice then gets an ordinary design and plan that inherit from them.
 - Plans are exact work maps — a changes table by class and method, call-site from → to, scenarios tied to the design's Guarantees, milestones — and never restate the design. No test code, no bodies, no per-step commit messages.
 - Commit messages follow Conventional Commits and describe the *why* of the slice, not a play-by-play of files.
