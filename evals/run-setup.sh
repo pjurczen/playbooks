@@ -5,7 +5,7 @@ set -euo pipefail
 EVAL_ID="$1"; RUN="$2"
 HERE="$(cd "$(dirname "$0")" && pwd)"
 FX="$HERE/fixtures"
-rm -rf "$RUN/repo"; mkdir -p "$RUN/repo" "$RUN/outputs"
+rm -rf "$RUN/repo" "$RUN/outputs"; mkdir -p "$RUN/repo" "$RUN/outputs"
 cp -R "$FX/reportgen/." "$RUN/repo/"
 case "$EVAL_ID" in
   2) mkdir -p "$RUN/repo/docs/playbooks/designs"; cp "$FX/designs/2026-09-17-unified-cache.md" "$RUN/repo/docs/playbooks/designs/" ;;

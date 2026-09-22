@@ -29,9 +29,10 @@
         "Assumptions and Open questions are present and non-empty (a 'None.' line counts)",
         "The Problem section ends with a sentence beginning 'Done means'",
         "The design is at most 1,800 words",
-        "An ADR exists under docs/adr/ with no backticks, at most 40 lines, a proposed status, and at least one alternative",
+        "An ADR exists under docs/adr/ with no backticks, at most 450 words, a proposed status, and at least one alternative",
         "No sentence of the design is copied from the shipped example-design.md",
-        "The design (and ADR) were committed on a feature branch, not on main"
+        "The design (and ADR) were committed on a feature branch, not on main",
+        "The ADR's decision can be stated without naming the feature; the feature appears only as evidence in Context (grader judgment)"
       ]
     },
     {
@@ -71,9 +72,10 @@
         "The ADR is written in German, headings included",
         "The index doc/asciidoc/09_architecture_decisions.adoc gained a row linking the new ADR",
         "The ADR contains no backticks and no code fence",
-        "The ADR is at most 40 lines",
+        "The ADR is at most 450 words",
         "The ADR has a status line, a Kontext section in prose (no numbered list), an alternatives section with at least one entry, and a consequences section",
-        "The ADR does not copy the shape of the existing bloated ADR (no Referenzen section, no class listing)"
+        "The ADR does not copy the shape of the existing bloated ADR (no Referenzen section, no class listing)",
+        "The ADR's decision can be stated without naming the feature; the feature appears only as evidence in Context (grader judgment)"
       ]
     },
     {

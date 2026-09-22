@@ -54,8 +54,8 @@ def grade_1(out, repo, example):
     ex.append(("The design is at most 1,800 words", 0 < words(t) <= 1800, f"{words(t)} words"))
     adr = first(out / "docs/adr", "*.md")
     at = adr.read_text() if adr else ""
-    adr_ok = adr is not None and "`" not in at and len(at.splitlines()) <= 40 and re.search(r"proposed", at, re.I) and re.search(r"^## Alternativ", at, re.M | re.I) and re.search(r"^- ", at, re.M)
-    ex.append(("An ADR exists under docs/adr/ with no backticks, at most 40 lines, a proposed status, and at least one alternative", bool(adr_ok), f"{adr}; lines={len(at.splitlines())}; backticks={at.count('`')}"))
+    adr_ok = adr is not None and "`" not in at and len(at.split()) <= 450 and re.search(r"proposed", at, re.I) and re.search(r"^## Alternativ", at, re.M | re.I) and re.search(r"^- ", at, re.M)
+    ex.append(("An ADR exists under docs/adr/ with no backticks, at most 450 words, a proposed status, and at least one alternative", bool(adr_ok), f"{adr}; words={len(at.split())}; backticks={at.count('`')}"))
     shared = sentences(t) & sentences(Path(example).read_text()) if example and Path(example).exists() else set()
     ex.append(("No sentence of the design is copied from the shipped example-design.md", len(shared) == 0, f"{len(shared)} shared sentences"))
     branch = subprocess.run(["git", "-C", str(repo), "rev-parse", "--abbrev-ref", "HEAD"], capture_output=True, text=True).stdout.strip()
@@ -94,7 +94,7 @@ def grade_3(out, repo):
     it = idx.read_text() if idx.exists() else ""
     ex.append(("The index doc/asciidoc/09_architecture_decisions.adoc gained a row linking the new ADR", bool(new) and new[0].name in it, "index copied" if idx.exists() else "index not in outputs"))
     ex.append(("The ADR contains no backticks and no code fence", "`" not in t and bool(t), f"backticks={t.count('`')}"))
-    ex.append(("The ADR is at most 40 lines", 0 < len(t.splitlines()) <= 40, f"{len(t.splitlines())} lines"))
+    ex.append(("The ADR is at most 450 words", 0 < len(t.split()) <= 450, f"{len(t.split())} words, {len(t.splitlines())} lines"))
     k = section(t, "Kontext") or ""
     shape = bool(re.search(r"Status", t)) and not re.search(r"^\s*\d+\.\s", k, re.M) and bool(re.search(r"^## Alternativ", t, re.M)) and bool(re.search(r"^## Konsequenzen", t, re.M))
     ex.append(("The ADR has a status line, a Kontext section in prose (no numbered list), an alternatives section with at least one entry, and a consequences section", shape, ""))
