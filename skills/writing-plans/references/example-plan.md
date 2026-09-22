@@ -6,7 +6,7 @@ The plan for `../../brainstorming/references/example-design.md`. Read the two to
 
 # One explicit product-recalculation service — implementation plan
 
-Design: `docs/playbooks/designs/<date>-product-recalculation-service.md` · ADR: `<date>-adr-product-recalculation-without-request-scope.md`
+Design: `docs/playbooks/designs/<date>-product-recalculation-service.md` · ADR: `<date>-adr-business-process-state-outside-technical-lifecycle-scope.md`
 
 ## Goal
 

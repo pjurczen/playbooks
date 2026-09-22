@@ -1,29 +1,34 @@
 # Example ADR
 
-A real decision at the altitude `writing-adr` asks for. Match this altitude — not the altitude of whatever ADRs your repo already has.
+The shape every ADR takes, on a real decision: a rule stated without the feature that surfaced it, alternatives at the rule's altitude, and the cost accepted.
 
 ---
 
-# Product recalculation as one explicit domain service, no request scope
+# Business-process state outside technical lifecycle scope
 
 **Status:** accepted (2026-09-16)
 
 ## Context
 
-After the move to the mutation orchestrator, the offer context had two overlapping ways to recalculate products: a request-scoped collector that marked offers dirty and flushed them at request end, and a sequential discount recalculation that flushed once per dependent offer. The deferral almost never batched — only two callers ever marked more than one offer — and the main command path bypassed it entirely, so the "we defer N offers" mental model was wrong where it mattered. Parallelising the sequential path had been abandoned over transaction-scope clashes.
+During discovery and design of product recalculation, we found that pending domain work was accumulated in a request-scoped bean and executed at the end of the request. This made the business-process boundary depend on a technical lifecycle, hid the pending work and its finalisation, and made the process difficult to reuse from non-request entry points. The case exposed a general problem: request scope is appropriate for technical context, but not for owning business-process state.
+
+Here, business-process state means pending work, process scope, progress, completion, retry, or outcome. It is distinct from technical request context such as authentication, correlation, or locale.
 
 ## Decision
 
-We replace both mechanisms with one explicit, stateless domain service. It recalculates either a single already-loaded offer in memory, or an explicit batch — discount-giving offers first, then a three-phase run: read, compute on workers, reconcile and finalise on the main thread. We chose this over keeping either existing path to get one predictable recalculation route and to unlock the parallel run the old design blocked, accepting that batch callers must now name their offers explicitly.
+For domain processes that coordinate or defer work, business-process state and pending domain actions must not be accumulated in request-scoped or analogous technical lifecycle scopes. The caller must pass the process scope explicitly to an application use case, which orchestrates the process without retaining state in the request lifecycle. Domain services may encapsulate domain rules and request scope may carry technical context only, accepting that every caller now passes the scope of its work explicitly and that batch callers must name their items.
 
 ## Alternatives
 
-- Keep the request-scoped collector, drop the sequential path — rejected: the deferral had no real batching benefit and hid the flush point.
-- Keep the sequential path and fix its parallelism in place — rejected: per-element mark-and-finalise is what caused the transaction clash; parallelism needs the in-memory/finalise split.
+- Track pending domain work in request-scoped beans — rejected because request completion becomes an implicit business-process boundary and couples the process to synchronous request handling.
+- Move the accumulation to a longer-lived technical scope — rejected because changing the scope does not change the ownership problem; technical lifecycle scopes are not business-process models.
+- Keep the existing process-specific orchestration and optimise it in place — rejected because the work scope and finalisation remain implicit, making transaction handling, reuse, and parallelisation harder to control.
 
 ## Consequences
 
-- One recalculation path; the request-scoped collector and its event processor are gone.
-- Batch boundaries are visible at the call site instead of hidden in request state.
-- Discount fan-out is one-directional: mutating a discount-giving offer recalculates its dependents, never the reverse. New callers must respect this.
-- Health-declaration sync stays synchronous; the lazy variant from the earlier ADR remains unimplemented.
+- Request completion does not implicitly trigger or finalise deferred or accumulated business work.
+- Business-process boundaries, inputs, and batch scope are visible at the call site.
+- The same process can be invoked from requests, commands, batch jobs, or other adapters without scope-bound tracking.
+- Stateless application services become the natural orchestration mechanism; statelessness follows from explicit process scope rather than being the primary decision.
+- Request-scoped beans remain valid for technical context, but not for business-process state.
+- A process that must survive beyond one invocation requires an explicit process model, durable work item, or message; this ADR does not prescribe which mechanism to use.

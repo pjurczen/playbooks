@@ -6,7 +6,7 @@ A real design in the shape `design-doc.md` gives: a narrative a teammate can fol
 
 # One explicit product-recalculation service, no request-scoped deferral
 
-Status: approved · Ticket: <id> · ADR: `<date>-adr-product-recalculation-without-request-scope.md`
+Status: approved · Ticket: <id> · ADR: `<date>-adr-business-process-state-outside-technical-lifecycle-scope.md`
 
 ## Problem
 
@@ -14,7 +14,7 @@ When an offer changes, its products must be recalculated; when the discount-givi
 
 ## Approach
 
-Replace both with one explicit, stateless domain service, ProduktRecalculationService, offering two operations: recalculate one already-loaded offer in memory, or recalculate an explicit list of offers as a batch. The batch orders discount-giving offers before discount-receiving ones — they are its input — and reuses the proven three-phase pattern: read all, compute in memory on worker threads, reconcile and finalise on the main thread. Batch callers name their offers instead of draining hidden request state. Rationale in the ADR above.
+Replace both with one explicit, stateless domain service, ProduktRecalculationService, offering two operations: recalculate one already-loaded offer in memory, or recalculate an explicit list of offers as a batch. The batch orders discount-giving offers before discount-receiving ones — they are its input — and reuses the proven three-phase pattern: read all, compute in memory on worker threads, reconcile and finalise on the main thread. Batch callers name their offers instead of draining hidden request state. This design instantiates the rule recorded in the ADR above.
 
 - Keep the deferral and route the discount loop through it — rejected. Its batching never materialises, since only two flows ever mark more than one offer, and it keeps the flush point hidden in request state. It would only become right if most callers genuinely batched, which none do.
 - Fix the sequential loop's parallelism in place — rejected. The per-item flush inside the loop is exactly what causes the transaction clash, so parallelising it needs the in-memory / finalise split anyway; at that point it is the new service under another name.

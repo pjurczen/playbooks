@@ -5,7 +5,7 @@ description: Use when brainstorming settles an architecturally significant choic
 
 # Writing ADRs
 
-An Architecture Decision Record captures one decision, the forces behind it, the options rejected, and what it costs. It is written when the decision is made — not after the code exists — and it stays readable after every rename. This skill is the only place ADR text is written; consolidating-docs promotes `proposed` to `accepted` at landing but never writes ADR text itself.
+An Architecture Decision Record captures one decision, the forces behind it, the options rejected, and what it costs. It is written when the decision is made, not after the code exists. This skill is the only place ADR text is written; consolidating-docs promotes `proposed` to `accepted` at landing but never writes one.
 
 ## When this runs — and when to skip
 
@@ -14,30 +14,40 @@ An Architecture Decision Record captures one decision, the forces behind it, the
 - **Invoked directly** — "ADR this", "write down why we chose X".
 
 Skip when:
-- The decision doesn't clear the bar below. Most features don't.
+- The decision isn't worth an ADR (below). Most features don't produce one.
 - The decision already has an ADR: `proposed` → edit it in place; `accepted` → write a superseding one only if the decision is actually being reversed.
 - The user asks "why did we choose X?" — that's a read. Find the ADR and answer.
 
-## The bar — all three, or no ADR
+## Worth an ADR, or not
 
-1. **Constrains work beyond this feature.** Others will have to follow it or work around it.
-2. **Hard to reverse.** It's structural: a boundary, a data flow, a dependency, a mechanism added or removed.
-3. **There was a real choice.** Two or more approaches a competent engineer might reasonably have picked. If brainstorming's options were the obvious way, the obvious way with a twist, and a strawman, nothing was decided.
+The deciding test: **state the decision without naming the feature that triggered it.** If nothing is left, it is a design decision — it lives in the design doc, and its one durable sentence goes to the architecture doc. An ADR is for decisions that govern work outside the feature.
 
-| Decision | ADR? |
-|----------|------|
-| A new pattern every future caller must follow | yes |
-| Removing a mechanism someone might otherwise reintroduce | yes |
-| Reversing an accepted ADR | yes — as a supersede |
-| A component built the way its neighbours are built | no |
-| The obvious standard library for the job | no |
-| Naming, formatting, a version bump, a refactor that keeps the design | no |
+**Worth an ADR** — specific in the choice, system-wide in scope ("use Prisma", not "use an ORM"):
+- A structural rule every process must follow.
+- A technology or platform choice.
+- A boundary, contract or API other modules build against.
+- A data model or caching policy.
+- A cross-cutting policy: transactions, idempotency, security, deployment.
+- A deliberate trade-off with lasting cost.
+- A reversal of any of the above — as a supersede.
 
-**Most features produce no ADR.** One per feature is the norm. If you're writing a third, the feature should have been split at brainstorming.
+**Not worth an ADR** — design-doc content, or a commit message:
+- A refactoring outcome: "replace X and Y with Z".
+- An internal algorithm, module placement, naming.
+- Removing a mechanism — unless stated as the rule that keeps the mechanism out.
+- Anything true of only one feature.
+
+A real ADR also constrains work beyond this feature, is hard to reverse, and came from a real choice between approaches a competent engineer might have picked. One per feature is the norm; most features produce none.
+
+## Rule or instance
+
+The approach brainstorming picked is usually an instance. If it instantiates a rule the team is adopting, the rule is the decision and the feature is the evidence in Context. If the approach is itself a system-level choice — a database, a platform — record the choice. Neither: no ADR.
+
+An ADR records a decision that was taken. Someone who sees a wider rule in a design proposes a *new* ADR, status `proposed`, for the team to decide; they don't rewrite the record of the narrower one.
 
 ## Conventions come from the map, not from this skill
 
-Read `.claude/documentation.md` first. It owns where ADRs live (possibly several homes, one per domain — pick by the feature's domain; ask if it isn't obvious), the filename pattern, the language — prose *and* headings; German ADRs get German headings — whether there is an index to update (never create one the map doesn't mention), and any status vocabulary.
+Read `.claude/documentation.md` first. It owns where ADRs live (several homes → pick by the feature's domain; ask if unclear), the filename pattern, the language — prose *and* headings — any index to update (never create one the map doesn't mention), and any status vocabulary.
 
 Follow the repo's naming and language. Follow *this skill's* shape — not the shape of the ADRs already in the directory; they may be the bloated ones this skill exists to stop.
 
@@ -45,37 +55,25 @@ Follow the repo's naming and language. Follow *this skill's* shape — not the s
 
 ## The shape
 
-```markdown
-# <The decision, as a short noun phrase — names the choice, not the class>
+The shape is `references/example.md` — read it before writing. Its sections, and what each must hold:
 
-**Status:** proposed
+- **Title** — the decision as a short noun phrase; names the choice, not a class.
+- **Status** — one line; `proposed` when written (see Lifecycle).
+- **Context** — two to five sentences of prose: what hurt, what constrained, what was at stake. When a future reader must apply a rule, one sentence defines its key term.
+- **Decision** — one to three sentences in Y-statement form: in the context of <situation>, facing <concern>, we decided <this> over <that>, to achieve <quality>, accepting <cost>. The cost is not optional.
+- **Alternatives** — one line each: the option and why it lost, at the decision's altitude — for a rule, rule-level alternatives, not ways to fix the triggering feature. None means it wasn't a decision.
+- **Consequences** — three to six honest bullets: what gets easier, what gets harder, what future work must respect.
 
-## Context
-Two to five sentences of prose. The forces at play: what hurt, what constrained, what was at stake.
-
-## Decision
-One to three sentences. Y-statement shape: "In the context of <situation>, facing <concern>,
-we decided <this> over <that> and <the other>, to achieve <quality>, accepting <cost>."
-
-## Alternatives
-- <Option> — rejected because <one clause>.
-- <Option> — rejected because <one clause>.
-
-## Consequences
-- Three to six honest bullets: what gets easier, what gets harder, what future work must respect.
-```
-
-Whole thing under ~40 lines — a two-minute read. See `references/example.md` for a real decision at the right altitude.
+Whole thing under ~40 lines — a two-minute read.
 
 ## Altitude — mechanical rules
 
-The ADR sits one level above the design doc: components and mechanisms, not classes and methods, because the design doc is a husk and the ADR outlives every rename.
+The ADR sits one level above the design doc — components and mechanisms, not classes and methods — because it outlives every rename.
 
 - **No code blocks. No backticks.** A component may be named as a proper noun in prose; the moment you reach for a backtick you're at code altitude.
 - **No annotations, signatures, or file paths.** Git has them, and they rot on the first rename.
 - **Context is prose, not a list.** A numbered findings list is a review report, not the forces behind a decision.
 - **Consequences say what got easier or harder** — not which classes were deleted; that's a diff summary.
-- **Alternatives are one line each** — the reason it lost, not a pros-and-cons matrix. No alternatives means it wasn't a decision, and it doesn't need an ADR.
 
 ## Lifecycle
 
@@ -83,7 +81,7 @@ The ADR sits one level above the design doc: components and mechanisms, not clas
 proposed → accepted (YYYY-MM-DD) → superseded by <link> | deprecated
 ```
 
-- **proposed** — written at brainstorming, on the feature branch; editable in place (a circuit-breaker re-open, a reviewer's drift finding). An implementation that changed a bit means editing this one, never a second ADR.
+- **proposed** — written at brainstorming, on the feature branch; editable in place (a circuit-breaker re-open, a reviewer's drift finding). Never a second ADR for the same decision.
 - **accepted** — flipped by consolidating-docs at landing, dated. From here the status line is the one mutable field; everything else is superseded, not edited.
 - **superseded / deprecated** — set on the old ADR when a new one reverses it or its feature is removed; always link the replacement.
 
