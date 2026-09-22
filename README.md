@@ -2,7 +2,7 @@
 
 A lean, opinionated library of workflow skills for Claude Code.
 
-Playbooks gives Claude a small set of process skills — for designing features, planning, executing in milestones, debugging, testing, and finishing branches — that auto-load at the start of every session. The library is intentionally small: fourteen skills, about 12,000 words of markdown in total, and every change to a skill is measured against evals before it ships. Less to read, less ceremony, more trust in the model.
+Playbooks gives Claude a small set of process skills — for designing features, planning, executing in milestones, debugging, testing, and finishing branches — that auto-load at the start of every session. The library is intentionally small: fifteen skills, about 13,000 words of markdown in total, and every change to a skill is measured against evals before it ships. Less to read, less ceremony, more trust in the model.
 
 ## Why not just use [superpowers](https://github.com/obra/superpowers)?
 
@@ -37,7 +37,7 @@ Once loaded, the `SessionStart` hook fires on session start / clear / compact an
 - `brainstorming` — design dialogue → committed design doc: a narrative a teammate can follow, the views the reader needs, the contracts the implementer must match; kinds of work from a feature to an initiative
 - `writing-plans` — design → exact implementation plan an implementer in another session can execute; stands on the design, never restates it
 - `writing-roadmap` — initiative design → a roadmap of independently landable slices, their order and exit criterion
-- `executing-plans` — main-session milestone loop with self-checkpoints, refactor pass, end-of-feature review
+- `executing-plans` — main-session milestone loop: tests and gates green, a fresh-context structure critic, a refactor pass, one commit per milestone, an end-of-feature review
 - `debugging` — root cause with evidence before any fix, pinned by a red-first regression test
 - `finishing-branch` — verify tests, then merge / PR / keep / discard
 - `consolidating-docs` — on landing, graduate durable decisions into real docs and delete the design/plan husks
@@ -45,6 +45,7 @@ Once loaded, the `SessionStart` hook fires on session start / clear / compact an
 
 **Implementation** (how to do the work):
 - `using-git-worktrees` — pick a workspace mode before anything is committed (default: new worktree on a new branch)
+- `setting-up-gates` — propose and wire the lightest linters, complexity limits and architecture tests the stack supports, recorded in `.claude/gates.md`
 - `bdd-testing` — behaviour-shaped tests for code with interesting logic
 - `milestone-commits` — one commit per slice, Conventional Commits format
 
