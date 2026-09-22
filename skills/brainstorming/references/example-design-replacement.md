@@ -1,6 +1,6 @@
-# Example design
+# Example design — a replacement in an existing codebase
 
-A real design in the shape `design-doc.md` gives: a narrative a teammate can follow without the codebase, then the contracts the implementer must match. Its plan is `../../writing-plans/references/example-plan.md`; together the two are complete, and nothing is said twice.
+Two overlapping mechanisms become one explicit service. A narrative a teammate can follow without the codebase, then the contracts the implementer must match. Its plan is `../../writing-plans/references/example-plan-replacement.md`; together the two are complete, and nothing is said twice.
 
 ---
 
@@ -19,7 +19,13 @@ Replace both with one explicit, stateless domain service, ProduktRecalculationSe
 - Keep the deferral and route the discount loop through it — rejected. Its batching never materialises, since only two flows ever mark more than one offer, and it keeps the flush point hidden in request state. It would only become right if most callers genuinely batched, which none do.
 - Fix the sequential loop's parallelism in place — rejected. The per-item flush inside the loop is exactly what causes the transaction clash, so parallelising it needs the in-memory / finalise split anyway; at that point it is the new service under another name.
 
-## Shape
+## Decisions
+
+- The batch operation takes an explicit list of offer numbers, not a query by family — rejected the query because callers already hold the list and a query would hide a second read path.
+- Discount-giving offers are recalculated first inside the batch, not by the caller — rejected caller ordering because every caller would repeat it.
+- The health-declaration flush stays synchronous at finalise — the lazy variant is an earlier, unimplemented ADR and out of scope here.
+
+## Design
 
 What replaces what:
 
