@@ -7,7 +7,7 @@ Qualitative expectations are left to the grader subagent; this script only recor
 import argparse, json, re, subprocess, sys
 from pathlib import Path
 
-SECTIONS = ["Problem", "Approach", "Shape", "Contracts", "Guarantees", "Assumptions", "Open questions", "Risks", "Out of scope"]
+SECTIONS = ["Problem", "Approach", "Decisions", "Design", "Contracts", "Guarantees", "Assumptions", "Open questions", "Risks", "Out of scope"]
 STATEMENT = re.compile(r"^\s+(return\b|if\b|for\b|while\b|with\b|try:|except\b|raise\b|self\.\w+\s*=|\w+\s*=\s*[^=]|print\()")
 FENCE = re.compile(r"```(\w*)\n(.*?)```", re.S)
 
@@ -16,10 +16,14 @@ def fences(t): return FENCE.findall(t)
 def sentences(t):
     t = FENCE.sub("", t); t = re.sub(r"\|.*?\n", "", t)
     return {s.strip().lower() for s in re.split(r"(?<=[.!?])\s+|\n", t) if len(s.strip()) > 40}
-def has_bodies(text):
+def has_bodies(text, allow_in=None):
+    """Count statement-looking lines in non-mermaid fences. Fences inside the section named by allow_in
+    (the Design section, where a mechanism snippet is permitted) are exempt when they are <= 12 lines."""
+    exempt = section(text, allow_in) if allow_in else None
     bad = 0
     for lang, body in fences(text):
         if lang == "mermaid": continue
+        if exempt and body in exempt and len(body.strip().splitlines()) <= 12: continue
         for line in body.splitlines():
             if STATEMENT.match(line) and not line.strip().startswith(('"""', "#", "*", "/**", "//")):
                 bad += 1
@@ -38,11 +42,11 @@ def grade_1(out, repo, example):
     t = d.read_text() if d else ""
     heads = [h for h in re.findall(r"^## (.+?)\s*$", t, re.M)]
     order = [h for h in heads if h in SECTIONS]
-    ex.append(("The design has the nine sections Problem, Approach, Shape, Contracts, Guarantees, Assumptions, Open questions, Risks, Out of scope, in that order", order == SECTIONS, f"headings: {heads}"))
+    ex.append(("The design has the ten sections Problem, Approach, Decisions, Design, Contracts, Guarantees, Assumptions, Open questions, Risks, Out of scope, in that order", order == SECTIONS, f"headings: {heads}"))
     mm = sum(1 for l, _ in fences(t) if l == "mermaid")
-    ex.append(("The design contains exactly one mermaid code fence", mm == 1, f"{mm} mermaid fences"))
-    b = has_bodies(t)
-    ex.append(("Every non-mermaid code fence in the design is signature-only (no statement bodies)", b == 0, f"{b} statement-looking lines in fences"))
+    ex.append(("The design contains one to three mermaid views", 1 <= mm <= 3, f"{mm} mermaid fences"))
+    b = has_bodies(t, allow_in="Design")
+    ex.append(("Code fences outside the Design section are declaration-only; a mechanism snippet inside Design is at most 12 lines", b == 0, f"{b} statement-looking lines outside the allowance"))
     g = section(t, "Guarantees") or ""
     items = re.findall(r"^\s*\d+\.\s+(.*)$", g, re.M)
     last_ok = bool(items) and bool(re.search(r"must not change|unchanged|not change", items[-1], re.I))

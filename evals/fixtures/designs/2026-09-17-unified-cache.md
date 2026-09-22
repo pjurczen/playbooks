@@ -13,7 +13,13 @@ Put one ReportCache in front of every read. It keeps memory in front of disk int
 - Keep both caches and document the sync rules — rejected. The rules already exist as comments and are already broken in three places; documentation does not stop the fourth caller from adding a fourth rule. It would only become right if the two stores had genuinely different lifecycles, which they do not.
 - One store only, in memory, persisted at exit — rejected. It loses the cross-run reuse the file cache exists for, and persisting a memo on exit is the same two-store problem moved to shutdown.
 
-## Shape
+## Decisions
+
+- One cache class owns key naming, not the callers — rejected caller-owned keys because prefix invalidation needs consistent names.
+- Memory sits in front of disk inside the cache, not as two caches the caller chooses between — rejected caller choice because that is today's problem.
+- Invalidation is by key prefix, not by enumerating keys — rejected enumeration because callers would need to know every key class.
+
+## Design
 
 What replaces what:
 
