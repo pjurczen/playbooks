@@ -465,3 +465,13 @@ What was deliberately not taken, because it is the superpowers direction — com
 The lean pass (v0.8.0) keeps every rule and cuts the restatements: one gate per skill, first, with its reason; one owner per rule; Red Flags only on the six discipline skills, four rows each, excuses not rules; no announce lines, no digraphs for linear flows; budgets in words. 11,200 words, bootstrap 465.
 
 The other reversal is that a skill change now needs evidence. `evals/` holds four evals run on Opus — the model that runs these skills — in three configurations. Iteration 1: trimmed and pre-trim skills both 30/32, trimmed 4.5% cheaper; no skills 15/32, reproducing the exact artifacts that started this work. The eval that did not discriminate (a trivial rename all three configurations skipped) stays as the guard against an over-triggering bootstrap. Open: reconciling the remaining Red Flags rows against the no-skill transcripts, and trigger evals for the descriptions.
+
+---
+
+## 15. Addendum — what counts as an ADR (2026-09)
+
+The example ADR shipped with v0.7.0 recorded a refactoring outcome in ADR headings. A reviewer's critique made the gap precise: an ADR preserves a decision that governs work outside the feature, and the durable content of that feature — that request scope must not own business-process state — was a rule the feature instantiated, not the feature itself. The skill's three-part bar could not tell the two apart, and its altitude rule had one axis (symbols versus components) where two were needed (instance versus rule). This is also the mechanism behind the original complaint that consolidation produced too many ADRs.
+
+Two things were restored from the source skill after being cut in the lean pass as padding: the category table with examples, which is the calibration a writer actually uses, and the Do/Don't list, which is a different reading moment from the per-section rules — a checklist at writing time rather than a shape at planning time. The lesson for the conventions is that "one rule, one owner" is about restating rules across skills, not about refusing a skill its own checklist; the word budget yields to a list that is the skill.
+
+Two boundaries were drawn in the discussion and now stand in the skill. Not every architecture decision is a rule — "Postgres over Mongo" is an instance and is recorded as one — so the test is scope, not abstraction. And an ADR records a decision that was taken: a reviewer who sees a wider principle in a design proposes a new ADR for the team to adopt; they do not rewrite the narrower record with a motivation the team never had.

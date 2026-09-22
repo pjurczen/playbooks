@@ -1,5 +1,17 @@
 # Playbooks Release Notes
 
+## v0.8.1 (2026-09-22)
+
+### writing-adr: what counts as an ADR
+
+A reviewer read the shipped example ADR and pointed out that it recorded a local design choice — replace two recalculation mechanisms with one service — not an architecture decision. The skill's bar had let it through: any shared service with two future callers passed all three of its tests, and one table row ("removing a mechanism") was exactly how the example got written. The source skill's answer to "what is an ADR", a category table with examples, had been cut as padding in the lean pass.
+
+The skill now leads with the deciding test — state the decision without naming the feature that triggered it; if nothing is left, it is a design decision and belongs in the design doc, with one sentence in the architecture doc — followed by a category table with examples of what is worth recording, a list of what is not, and a short "rule or instance" section: the approach brainstorming picked is usually an instance; if it instantiates a rule the team is adopting, the rule is the decision and the feature is the evidence; and an ADR records a decision that was taken, so someone who sees a wider rule proposes a new one rather than rewriting the record. The writing rules are a Do/Don't list again, as in the source, carrying ours: design altitude, the cost stated, alternatives at the decision's altitude, present tense, no second ADR for a drifted proposed one. The example is a rule-level ADR, "Business-process state outside technical lifecycle scope", with the feature as evidence.
+
+Across the shape skills, the examples now own the shape: the skeleton in `writing-adr`, the template in `writing-plans` and the section skeleton in `design-doc.md` are gone, and each skill keeps only what each section must hold. brainstorming's decision step asks what rule, if any, the chosen approach instantiates before applying the test.
+
+Evals: under the new skill, eval 3 (an ADR under a German per-domain map, with a bloated ADR already in the directory) passes 7/7 in both runs, as does the v0.8.0 baseline; the new skill's ADRs are titled as rules with the feature as evidence, the baseline's as instances. The length check in the skill and the grader now counts words rather than lines, since hard-wrapped paragraphs had turned a 379-word ADR into 48 lines. Results in `evals/results/`.
+
 ## v0.8.0 (2026-09-17)
 
 ### Lean skills, measured
