@@ -42,10 +42,10 @@ together they are complete, and nothing is said twice. Its sections, and what ea
 - **Goal** — one sentence.
 - **Changes** — always a table by unit: new / changed / deleted, and what exactly, by method name. A call-site table ( site · from · to) when existing callers
   move; a Depends-on column when it drives milestone order. Greenfield: the new units, their files, and the milestone that builds each. The improvements the
-  design folded in are rows too, so the cleanup this work owes is planned rather than left to a pass. A new method carries one clause of altitude — which of the
-  four levels in `../executing-plans/references/structure-critic-prompt.md` it sits at (policy, orchestration, translation, mechanism) and what it must not
-  contain; a new class carries its one responsibility. Milestone one wires any structural rule from the design that `.claude/gates.md` doesn't enforce yet.
-  Never restates responsibilities or contracts — the design's Design and Contracts sections own them.
+  design folded in are rows too, so the cleanup this work owes is planned rather than left to a pass. A new method carries one clause of altitude — whether it
+  decides (policy), orchestrates, translates between representations, or performs I/O (mechanism) — and what it must not contain; a new class carries its one
+  responsibility. Milestone one wires any structural rule from the design that `.claude/gates.md` doesn't enforce yet. Never restates responsibilities or
+  contracts — the design's Design and Contracts sections own them.
 - **Behaviours to verify** — given/when/then scenarios, each naming its test home and the design Guarantee it proves, or marked Edge. Every Guarantee has at
   least one.
 - **Milestones** — a table: milestone, what it delivers, done when (the named suites or scenarios green), biggest risk. Vertical slices with observable progress
