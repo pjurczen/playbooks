@@ -8,6 +8,7 @@ How documentation is maintained in this repo. Consult this before adding, moving
 - `docs/DESIGN.md` — design rationale: why the methodology is shaped the way it is. A point-in-time analysis plus dated addenda.
 - `skills/<name>/SKILL.md` — the skills themselves; each is the source of truth for how that workflow behaves.
 - `CLAUDE.md` — conventions for agents editing this plugin.
+- `.claude/gates.md` — the repo's quality gates: which commands prove structure, and what is not enforced.
 - `RELEASE-NOTES.md` — user-facing changes per release.
 - `docs/followups.md` — durable, cross-feature backlog (created on first use).
 - `docs/playbooks/designs/`, `docs/playbooks/plans/` — ephemeral working artifacts; consolidated into the docs above and deleted when work lands. `docs/playbooks/initiatives/` — an initiative's design and roadmap, on the base branch; consolidated only when the roadmap's last slice lands.

@@ -29,12 +29,14 @@ Skill files are prompts. Instruction count degrades adherence and early instruct
 - **No per-skill "Announce at start"** — the bootstrap says to announce once. **`dot` graphs only for a real loop or non-obvious branch**; linear flows are numbered lists.
 - **"When to skip" is a standard section** in every directly-invocable skill; pipeline-only skills say "fired by X".
 - **Companions carry a read-when** ("read `references/design-doc-shape.md` before writing"). **Positive framing, reasons over emphasis, no brand names.**
+- **Structure is checked mechanically, not by prompting.** A structure rule belongs in a gate or in the critic's checklist, never as a lecture in a skill body.
 - **Tone:** senior dev to senior dev. State the rule and the reason; trust the reader.
 
 ## Conventions for produced artifacts
 
 This is the actual differentiator from superpowers. The artifacts the *user* reads (design docs, plans) have two readers: a teammate who follows the narrative without the codebase, and an implementer in another session — Opus-class by default — who must find nothing to guess. Structure and altitude, not length, are the bar:
 
+- Every repo the pipeline works in has a `.claude/gates.md` naming its test, lint, complexity and structure commands, or a recorded decline; `setting-up-gates` proposes one when it's missing, and executing-plans treats a milestone as green only when tests and gates both pass.
 - Design docs are the trace of brainstorming's five stages — problem, diagnosis, decision, shape, check — with a fixed section set: Problem, Diagnosis, Approach (with alternatives), Decisions, Design (the one to three views a reader needs, each answering a named question; the mechanism only when it is the decision), Contracts, Guarantees, Assumptions, Open questions, Risks, Out of scope. The narrative layer reads in a few minutes; Contracts carry declarations with semantics — signatures, endpoints, schemas, flags, states — never bodies.
 - An initiative gets a design (target architecture, coexistence mechanism, shared contracts) and a roadmap (slices, order, exit criterion), both on the base branch; each slice then gets an ordinary design and plan that inherit from them.
 - Plans are exact work maps — a changes table by class and method, call-site from → to, scenarios tied to the design's Guarantees, milestones — and never restate the design. No test code, no bodies, no per-step commit messages.
@@ -53,7 +55,7 @@ Verification is empirical, and a skill change does not ship on judgment alone.
    python3 -c "import json; json.load(open('hooks/hooks.json'))"
    bash -n hooks/session-start && CLAUDE_PLUGIN_ROOT=$(pwd) hooks/session-start | python3 -m json.tool
    ```
-2. **Word budgets and structure:** `wc -w skills/*/SKILL.md` against the budgets above; one gate per skill; Red Flags only on the six discipline skills.
+2. **Run the gate:** `scripts/check-skills.sh` — the structural checks in `.claude/gates.md` (budgets, one gate per skill, Red Flags placement, links, example sections, reflow damage). It runs before every commit that touches `skills/`.
 3. **Run the evals.** `evals/evals.json` holds the prompts and expectations; `evals/fixtures/` the fixture repos; `evals/run-setup.sh <eval-id> <run-dir>` prepares a run; `evals/grade.py` grades the mechanical expectations into the skill-creator viewer format. Runs live outside the repo in `../playbooks-workspace/iteration-N/eval-*/<config>/run-1/`, one subagent per run **on Opus** (the model that runs these skills), with a snapshot of the previous skills as the baseline. Aggregate with the skill-creator's `aggregate_benchmark.py` and review in its viewer. A change ships when its delta is non-negative on pass rate and tokens.
 4. **Dogfood.** Load the plugin in a fresh session and run a small real task; "let's make a small react todo list" must trigger `brainstorming` unprompted, and a one-sentence rename must not.
 
