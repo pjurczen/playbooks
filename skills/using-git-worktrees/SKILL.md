@@ -100,8 +100,7 @@ No lockfile match? Use whatever the project's README / CI config declares — do
 
 ## Step 3: Verify clean baseline
 
-Run the project's test command. If tests fail: report failures and ask whether to proceed or investigate first — don't
-silently continue.
+Run the gates from `.claude/gates.md` — tests, lint, structure. No map? Offer **setting-up-gates** (ask first); if declined, run the test command alone. If anything fails: report it and ask whether to proceed or investigate first — don't silently continue.
 
 No test infrastructure yet (greenfield)? Say so and continue — don't block. The plan's first milestone should establish
 it (see writing-plans).
@@ -117,6 +116,7 @@ Path:           <full-path>
 Branch:         <branch-name>
 Base SHA:       <output of `git rev-parse HEAD`>
 Tests:          <N passed, 0 failed>
+Gates:          <clean | N violations | no map>
 Ready to work on <feature-name>.
 ```
 
