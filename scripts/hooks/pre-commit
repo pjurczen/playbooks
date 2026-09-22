@@ -1,0 +1,19 @@
+#!/usr/bin/env bash
+# Reflow staged markdown at 160 columns and run the structural gate before every commit.
+# Install once per clone:  git config core.hooksPath scripts/hooks
+set -euo pipefail
+cd "$(git rev-parse --show-toplevel)"
+
+staged=$(git diff --cached --name-only --diff-filter=ACMR -- '*.md')
+for f in $staged; do
+  if ! git diff --quiet -- "$f"; then
+    echo "pre-commit: $f has unstaged changes; stage or stash them so the reflow can't pick up hunks you didn't stage" >&2
+    exit 1
+  fi
+done
+if [ -n "$staged" ]; then
+  scripts/reflow-md.py -q $staged
+  git add $staged
+fi
+
+scripts/check-skills.sh >/dev/null || { scripts/check-skills.sh; exit 1; }

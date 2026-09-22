@@ -85,6 +85,13 @@ Verification is empirical, and a skill change does not ship on judgment alone.
 
 Conventional Commits 1.0.0. See `skills/milestone-commits/SKILL.md` for the rules — they apply to this repo's own history.
 
+A pre-commit hook reflows staged markdown at 160 columns (`scripts/reflow-md.py`, which leaves fences, tables and frontmatter alone) and runs the gate. Install
+it once per clone:
+
+```bash
+git config core.hooksPath scripts/hooks
+```
+
 ## License
 
 [MIT](LICENSE).

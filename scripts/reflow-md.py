@@ -3,7 +3,7 @@
 Untouched: frontmatter, fences (mermaid etc.), tables, headings, rules, tag lines.
 Invariant: the whitespace-collapsed content of every file is identical before and after.
 
-Usage: git ls-files '*.md' | xargs scripts/reflow-md.py"""
+Usage: git ls-files '*.md' | xargs scripts/reflow-md.py   (-q: print only when something changed)"""
 import re, sys
 
 WIDTH = 160
@@ -151,8 +151,14 @@ def reflow(fname):
     return False
 
 
-changed = [f for f in sys.argv[1:] if reflow(f)]
-print(f"reflowed {len(changed)} of {len(sys.argv) - 1} files")
+quiet = "-q" in sys.argv
+files = [f for f in sys.argv[1:] if f != "-q"]
+changed = [f for f in files if reflow(f)]
+if quiet:
+    for f in changed:
+        print(f"reflowed {f}")
+    sys.exit(0)
+print(f"reflowed {len(changed)} of {len(files)} files")
 if report["indented_para"]:
     print("paragraphs indented >= 4 (check they were not code):", *report["indented_para"], sep="\n  ")
 print(f"{len(report['over'])} lines still over {WIDTH}:")

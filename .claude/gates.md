@@ -26,4 +26,4 @@ the skill library.
 
 ## Conventions
 - A structural rule a skill change introduces is added to `scripts/check-skills.sh` and listed here in the same commit.
-- Every commit that touches `skills/` runs the script first.
+- The pre-commit hook in `scripts/hooks/` reflows staged markdown and runs the script; `git config core.hooksPath scripts/hooks` installs it.
