@@ -22,7 +22,7 @@ docs/                          — design rationale and reference notes
 Skill files are prompts. Instruction count degrades adherence and early instructions win, so every line has to earn its place. The rules:
 
 - **YAML frontmatter required:** `name` (kebab-case, matches directory) and `description` in the shape "Use [trigger], to [goal]" — what and when, never a summary of the steps.
-- **Budget in words, not lines** (`wc -w`, tables included): ≤ 1,000 per SKILL.md; ≤ 1,500 for runbooks (`finishing-branch`, `executing-plans`, `consolidating-docs`); ≤ 500 for `using-playbooks`, which is loaded every session.
+- **Budget in words, not lines** (`wc -w`, tables included): ≤ 1,000 per SKILL.md; ≤ 1,500 for runbooks (`finishing-branch`, `executing-plans`, `consolidating-docs`); ≤ 1,200 for `writing-adr`, whose two lists are the skill; ≤ 500 for `using-playbooks`, which is loaded every session.
 - **One gate per skill, first, with its reason, in normal register.** Everything else is a rule with a reason; caps live only inside that gate.
 - **One rule, one owner.** A rule lives in the skill or companion that owns it; other skills point to it and never restate it.
 - **Red Flags tables only where discipline is the point** (`using-playbooks`, `brainstorming`, `executing-plans`, `verifying-before-done`, `debugging`, `consolidating-docs`), ≤ 4 rows, each naming an excuse the body doesn't already refute — not a body rule with a quotation mark in front.
