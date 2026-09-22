@@ -53,7 +53,7 @@ Read `.claude/documentation.md` first. It owns where ADRs live (several homes �
 
 ## The shape
 
-The shape is `references/example.md` — read it before writing: Title, Status, Context, Decision, Alternatives, Consequences. Under ~40 lines: a two-minute read.
+The shape is `references/example.md` — read it before writing: Title, Status, Context, Decision, Alternatives, Consequences. Under ~400 words: a two-minute read.
 
 ## What makes a good ADR
 
@@ -65,7 +65,7 @@ The shape is `references/example.md` — read it before writing: Title, Status, 
 - **State consequences honestly** — three to six bullets: what gets easier, what gets harder, what future work must respect.
 - **Stay at design altitude** — components and mechanisms as proper nouns in prose. The ADR outlives every rename.
 - **Use present tense** — "we use X", not "we will use X".
-- **Keep it short** — a two-minute read.
+- **Keep it short** — under ~400 words, a two-minute read; wrapping style is the repo's, length is not.
 
 **Don't**
 - **No code blocks, backticks, annotations, signatures or file paths** — git has them; they rot on the first rename.
