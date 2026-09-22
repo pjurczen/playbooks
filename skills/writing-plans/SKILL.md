@@ -22,17 +22,17 @@ A plan is as long as the work map needs and no longer; the test is the implement
 
 ## Scope check
 
-1. One coherent feature? If the design sprawls across independent subsystems, send it back to brainstorming for decomposition — an initiative design plus slice designs.
+1. One coherent feature? If the design sprawls across independent subsystems, send it back to brainstorming, which writes an initiative design and hands off to writing-roadmap.
 2. `docs/followups.md`, if it exists — intersecting items are folded in explicitly, as milestones or parts of them, never quietly.
 3. Entered without brainstorming (the user brought a design)? Apply **writing-adr**'s bar to its approach; if it clears and no ADR exists on the branch, invoke **writing-adr** from the design doc before planning — the decision is still fresh here; at landing it won't be.
 
 ## The plan shape
 
-The shape is `references/example-plan.md` — read it, and its design `../brainstorming/references/example-design.md`, before writing; together they are complete, and nothing is said twice. Its sections, and what each must hold:
+The shape is `references/example-plan-replacement.md` — read it, and its design `../brainstorming/references/example-design-replacement.md`, before writing; together they are complete, and nothing is said twice. Its sections, and what each must hold:
 
-- **Header** — links the design and the ADR, if any.
+- **Header** — links the design, the ADR if any, and the initiative for a slice.
 - **Goal** — one sentence.
-- **Changes** — always a table by unit: new / changed / deleted, and what exactly, by method name. A call-site table (site · from · to) when existing callers move; a Depends-on column when it drives milestone order. Greenfield: the new units, their files, and the milestone that builds each. Never restates responsibilities or contracts — the design's Shape and Contracts own them.
+- **Changes** — always a table by unit: new / changed / deleted, and what exactly, by method name. A call-site table (site · from · to) when existing callers move; a Depends-on column when it drives milestone order. Greenfield: the new units, their files, and the milestone that builds each. Never restates responsibilities or contracts — the design's Design and Contracts sections own them.
 - **Behaviours to verify** — given/when/then scenarios, each naming its test home and the design Guarantee it proves, or marked Edge. Every Guarantee has at least one.
 - **Milestones** — a table: milestone, what it delivers, done when (the named suites or scenarios green), biggest risk. Vertical slices with observable progress — small enough to commit cleanly, big enough for a self-checkpoint and a refactor pass; the table is what a team reads in a meeting. Greenfield: milestone 1 includes the minimal test scaffolding. Each milestone starts with its Behaviours red.
 - **Execution risks / open questions** — only what the design didn't say: ordering, big-bang compile steps, hidden callers, decisions needed mid-execution. Ends with a *Stop and ask if* list, binding on the implementer: an unlisted surprise is reported, not resolved by picking an interpretation.

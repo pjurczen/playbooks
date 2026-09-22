@@ -62,6 +62,8 @@ ADRs are handled once, up front, and never from inside the per-file loop below. 
 
 Most features have no ADR to promote and don't earn one at the fallback. That's the normal outcome, not a gap.
 
+**Slices.** If the design links an initiative, flip the slice's row in the roadmap to `landed` (both files live on the base branch and travel with the merge). When every row is landed, ask whether the initiative is complete; on yes, graduate per `../brainstorming/references/initiative-design.md` — the target architecture into the architecture doc, the below-bar decisions as sentences there, the coexistence mechanism dropped — and delete the initiative design and the roadmap. The ADRs remain.
+
 ## The consolidation loop
 
 For each target file:
@@ -86,7 +88,7 @@ Also grep each deleted file's basename. Any hit naming a specific design or plan
 ## Scope by entry point
 
 - **Per-feature (finishing-branch):** the design and plan files for the feature being landed — those added on this branch under `docs/playbooks/designs/` and `plans/`. Identify them with `git diff --name-only <base>..HEAD`, `<base>` being the branch point finishing-branch establishes in its Step 3 — the workspace is chosen during brainstorming, so the feature's design/plan commits are always inside that range. Never `docs/playbooks/initiatives/` — an initiative outlives its slices.
-- **Sweep (manual):** every file under `docs/playbooks/designs/` and `plans/`. Summarize what you intend to consolidate and where *before* touching anything, then work file by file. For `docs/playbooks/initiatives/`: ask whether every slice in the initiative's table has landed. Only then graduate its Shape and Contracts into the architecture doc the map names and delete it; otherwise leave it untouched.
+- **Sweep (manual):** every file under `docs/playbooks/designs/` and `plans/`. Summarize what you intend to consolidate and where *before* touching anything, then work file by file. For `docs/playbooks/initiatives/`: ask whether every slice in the roadmap has landed. Only then graduate the initiative as above; otherwise leave both files untouched.
 
 ## Durable vs ephemeral
 

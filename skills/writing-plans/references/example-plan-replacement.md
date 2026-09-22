@@ -1,6 +1,6 @@
 # Example plan — exact, and nothing the design already says
 
-The plan for `../../brainstorming/references/example-design.md`. Read the two together: the design has the why, the shape and the contracts; this has the work. Every table row names the class and method the implementer must touch; every scenario names where it lives and which Guarantee it proves.
+The plan for `../../brainstorming/references/example-design-replacement.md`. Read the two together: the design has the why, the shape and the contracts; this has the work. Every table row names the class and method the implementer must touch; every scenario names where it lives and which Guarantee it proves.
 
 ---
 

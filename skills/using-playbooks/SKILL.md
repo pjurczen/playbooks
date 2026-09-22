@@ -25,8 +25,10 @@ User instructions (CLAUDE.md, AGENTS.md, the message itself) take precedence ove
 | Graduating design/plan docs into real documentation | **consolidating-docs** |
 | The user asks to record a decision ("ADR this") | **writing-adr** |
 | 2+ independent investigations that can run in parallel | **using-parallel-agents** |
+| An approved initiative design without a roadmap | **writing-roadmap** |
+| Continuing an initiative with a roadmap in `docs/playbooks/initiatives/` | **brainstorming** (next slice) |
 
-The pipeline runs in order — no code before a design, no execution before a plan. Work the user has already approved enters where it stands: a design at **writing-plans**, a plan at **executing-plans**.
+The pipeline runs in order — no code before a design, no execution before a plan; an initiative runs brainstorming → writing-roadmap, then the pipeline per slice. Work the user has already approved enters where it stands: a design at **writing-plans**, a plan at **executing-plans**.
 
 ## When to skip
 
@@ -37,7 +39,7 @@ Just answer, or just do it, for:
 - **Trivial changes** — anything you can describe in one sentence and verify with one command; a design and a plan would take longer to review than the change takes to make.
 - **Work inside a running skill** — it names the sub-skills it needs.
 
-The bar is *clearly applies*, not *might apply if I squint*.
+The bar is *clearly applies*, not *might apply*.
 
 ## Red Flags — STOP
 
