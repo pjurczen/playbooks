@@ -14,6 +14,7 @@ Verify tests → detect environment → present options → consolidate docs (wh
 Run the project's test suite (adjust to project: `npm test` / `cargo test` / `pytest` / `go test ./...`).
 
 If tests fail:
+
 ```
 Tests failing (<N> failures). Must fix before completing:
 
@@ -24,11 +25,13 @@ Cannot proceed with merge / PR until tests pass.
 
 Stop. Do not proceed to Step 2.
 
-If the project has **no test suite at all**, state that explicitly and continue — a missing suite is not a failing suite.
+If the project has **no test suite at all**, state that explicitly and continue — a missing suite is not a failing
+suite.
 
 ### Step 2: Detect environment — capture state NOW, from inside the workspace
 
-Run these once, from the workspace you implemented in, and keep the values. Step 6 consumes them *after* you've `cd`'d away — re-running the detection from the main checkout always concludes "no worktree".
+Run these once, from the workspace you implemented in, and keep the values. Step 6 consumes them *after* you've `cd`'d
+away — re-running the detection from the main checkout always concludes "no worktree".
 
 ```bash
 GIT_DIR=$(cd "$(git rev-parse --git-dir)" 2>/dev/null && pwd -P)
@@ -38,12 +41,12 @@ CURRENT_BRANCH=$(git rev-parse --abbrev-ref HEAD)   # prints "HEAD" when detache
 MAIN_ROOT=$(git -C "$GIT_COMMON/.." rev-parse --show-toplevel)
 ```
 
-| State | Menu | Cleanup |
-|-------|------|---------|
-| `CURRENT_BRANCH` is the base branch (current-branch mode) | On-base menu (B1–B2) | None |
-| `GIT_DIR == GIT_COMMON`, feature branch (normal repo) | Standard menu (1–4) | No worktree to clean up |
-| `GIT_DIR != GIT_COMMON`, named branch (worktree) | Standard menu (1–4) | Provenance-based (Step 6) |
-| `GIT_DIR != GIT_COMMON`, detached HEAD | Detached menu (D1–D3) | None (externally managed) |
+| State                                                     | Menu                  | Cleanup                   |
+|-----------------------------------------------------------|-----------------------|---------------------------|
+| `CURRENT_BRANCH` is the base branch (current-branch mode) | On-base menu (B1–B2)  | None                      |
+| `GIT_DIR == GIT_COMMON`, feature branch (normal repo)     | Standard menu (1–4)   | No worktree to clean up   |
+| `GIT_DIR != GIT_COMMON`, named branch (worktree)          | Standard menu (1–4)   | Provenance-based (Step 6) |
+| `GIT_DIR != GIT_COMMON`, detached HEAD                    | Detached menu (D1–D3) | None (externally managed) |
 
 ### Step 3: Determine base branch
 
@@ -53,13 +56,15 @@ You need the base branch *name* (later commands check it out) and the branch poi
 BASE_BRANCH=$(git symbolic-ref --short refs/remotes/origin/HEAD 2>/dev/null | sed 's|^origin/||')
 ```
 
-If that's unset, look for a local `main` / `master`; if still ambiguous, ask: "This branch split from main — is that correct?" Then:
+If that's unset, look for a local `main` / `master`; if still ambiguous, ask: "This branch split from main — is that
+correct?" Then:
 
 ```bash
 BASE_POINT=$(git merge-base HEAD "$BASE_BRANCH")
 ```
 
-In current-branch mode `merge-base` is just `HEAD` — use the `BASE_SHA` recorded in the using-git-worktrees report as the branch point instead.
+In current-branch mode `merge-base` is just `HEAD` — use the `BASE_SHA` recorded in the using-git-worktrees report as
+the branch point instead.
 
 ### Step 4: Present options
 
@@ -103,7 +108,10 @@ Which option?
 
 ### Step 5: Execute choice
 
-**Consolidation gate:** before executing any landing option (1, 2, D1, B1 — anything that integrates the work), invoke **consolidating-docs** to graduate durable decisions from this feature's design/plan files into the repo's docs and delete the husks. It commits that as one change, so the doc updates land with the feature. For keep and discard options (3, 4, D2, D3, B2), skip consolidation — nothing is landing.
+**Consolidation gate:** before executing any landing option (1, 2, D1, B1 — anything that integrates the work), invoke *
+*consolidating-docs** to graduate durable decisions from this feature's design/plan files into the repo's docs and
+delete the husks. It commits that as one change, so the doc updates land with the feature. For keep and discard
+options (3, 4, D2, D3, B2), skip consolidation — nothing is landing.
 
 #### Option 1: Merge locally
 
@@ -118,6 +126,7 @@ git merge <feature-branch>
 ```
 
 Then: cleanup worktree (Step 6, using the Step-2 values), then delete branch:
+
 ```bash
 git branch -d <feature-branch>
 ```
@@ -146,6 +155,7 @@ Report: "Keeping branch <name>. Worktree preserved at <path>." **Don't clean up 
 #### Option 4: Discard
 
 Confirm first:
+
 ```
 This will permanently delete:
 - Branch <name>
@@ -156,6 +166,7 @@ Type 'discard' to confirm.
 ```
 
 Wait for the exact word "discard". If confirmed: `cd "$MAIN_ROOT"`, cleanup worktree (Step 6), then force-delete branch:
+
 ```bash
 git branch -D <feature-branch>
 ```
@@ -177,7 +188,8 @@ Report: "Keeping work at <HEAD SHA>. Workspace preserved." Nothing else to do.
 
 #### Option D3: Discard (detached)
 
-Confirm with the typed word "discard" (list the commits, as Option 4). There is no branch to delete and the workspace is externally managed — report the HEAD SHA so the commits stay recoverable, and leave everything in place.
+Confirm with the typed word "discard" (list the commits, as Option 4). There is no branch to delete and the workspace is
+externally managed — report the HEAD SHA so the commits stay recoverable, and leave everything in place.
 
 #### Option B1: Keep work already on base
 
@@ -195,34 +207,38 @@ git revert --no-edit <BASE_SHA>..HEAD
 
 ### Step 6: Cleanup workspace
 
-**Only runs for Options 1 and 4.** Options 2 and 3 preserve the worktree; detached and on-base modes never clean up. Use the values captured in Step 2 — do not re-detect from the main checkout.
+**Only runs for Options 1 and 4.** Options 2 and 3 preserve the worktree; detached and on-base modes never clean up. Use
+the values captured in Step 2 — do not re-detect from the main checkout.
 
 - **If `GIT_DIR == GIT_COMMON`:** normal repo, no worktree to clean up. Done.
-- **If `WORKTREE_PATH` is under `.worktrees/`, `worktrees/`, or `~/.config/playbooks/worktrees/`:** playbooks created this worktree — we own cleanup.
+- **If `WORKTREE_PATH` is under `.worktrees/`, `worktrees/`, or `~/.config/playbooks/worktrees/`:** playbooks created
+  this worktree — we own cleanup.
   ```bash
   cd "$MAIN_ROOT"
   git worktree remove "$WORKTREE_PATH"
   git worktree prune
   ```
-- **Otherwise:** the harness owns this workspace. Do NOT remove it. Use the harness's exit tool if available; otherwise leave it.
+- **Otherwise:** the harness owns this workspace. Do NOT remove it. Use the harness's exit tool if available; otherwise
+  leave it.
 
 ## Quick reference
 
-| Option | Integrates | Push | Keep workspace | Branch cleanup |
-|--------|-----------|------|----------------|----------------|
-| 1. Merge locally | yes | - | removed (Step 6) | delete |
-| 2. Create PR | via PR | yes | yes | - |
-| 3. Keep as-is | - | - | yes | - |
-| 4. Discard | - | - | removed (Step 6) | force-delete |
-| D1. Push + PR | via PR | yes | yes (external) | - |
-| D2. Keep | - | - | yes (external) | - |
-| D3. Discard | - | - | yes (external) | none exists |
-| B1. Keep on base | already landed | - | yes | - |
-| B2. Revert | - | - | yes | revert commits |
+| Option           | Integrates     | Push | Keep workspace   | Branch cleanup |
+|------------------|----------------|------|------------------|----------------|
+| 1. Merge locally | yes            | -    | removed (Step 6) | delete         |
+| 2. Create PR     | via PR         | yes  | yes              | -              |
+| 3. Keep as-is    | -              | -    | yes              | -              |
+| 4. Discard       | -              | -    | removed (Step 6) | force-delete   |
+| D1. Push + PR    | via PR         | yes  | yes (external)   | -              |
+| D2. Keep         | -              | -    | yes (external)   | -              |
+| D3. Discard      | -              | -    | yes (external)   | none exists    |
+| B1. Keep on base | already landed | -    | yes              | -              |
+| B2. Revert       | -              | -    | yes              | revert commits |
 
 ## Red Flags
 
 **Never:**
+
 - Proceed with failing tests
 - Merge without verifying tests on the merged result
 - Delete or revert work without typed confirmation
@@ -234,6 +250,7 @@ git revert --no-edit <BASE_SHA>..HEAD
 - Delete or `git reset` the base branch — B2 reverts, nothing else
 
 **Always:**
+
 - Verify tests before offering options
 - Capture Step-2 state from inside the workspace, before any `cd`
 - Present exactly the menu the Step-2 table names (1–4, D1–D3, or B1–B2)

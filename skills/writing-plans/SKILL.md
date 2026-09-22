@@ -5,7 +5,10 @@ description: Use after brainstorming and before any code, to turn an approved de
 
 # Writing Plans
 
-Take an approved design and produce the plan that gets it built: what changes where, in what order, proven by which scenarios. The plan stands on the design and links it; it never restates it. Design = why, shape, contract. Plan = work. The implementer is in another session with none of this conversation: name what they would otherwise have to search for or decide, and nothing more — a plan that restates the design and the code is a plan nobody reads.
+Take an approved design and produce the plan that gets it built: what changes where, in what order, proven by which
+scenarios. The plan stands on the design and links it; it never restates it. Design = why, shape, contract. Plan = work.
+The implementer is in another session with none of this conversation: name what they would otherwise have to search for
+or decide, and nothing more — a plan that restates the design and the code is a plan nobody reads.
 
 <HARD-GATE>
 Don't pre-write the implementation: no method bodies, no test code, no complete file contents, no per-step commit messages, no bash recipes. The plan says WHAT changes and WHERE, by exact name; HOW the body reads is the implementer's, and a pre-written body rots before it's read.
@@ -13,8 +16,11 @@ Don't pre-write the implementation: no method bodies, no test code, no complete 
 
 ## The two tests a plan must pass
 
-- **Implementer test** — given only the design, this plan and the repo, could an implementer with none of this conversation produce the right code without guessing a name, a signature, an order, or a test? "They'd have to search for it" → name the file or method. "They'd have to decide it" → decide it here, or list it as an open question.
-- **Overlap test** — a sentence the design already says gets deleted and linked. Responsibilities, contracts, the diagram and design risks live in the design.
+- **Implementer test** — given only the design, this plan and the repo, could an implementer with none of this
+  conversation produce the right code without guessing a name, a signature, an order, or a test? "They'd have to search
+  for it" → name the file or method. "They'd have to decide it" → decide it here, or list it as an open question.
+- **Overlap test** — a sentence the design already says gets deleted and linked. Responsibilities, contracts, the
+  diagram and design risks live in the design.
 
 A plan is as long as the work map needs and no longer; the test is the implementer, not the clock.
 
@@ -22,33 +28,54 @@ A plan is as long as the work map needs and no longer; the test is the implement
 
 ## Scope check
 
-1. One coherent feature? If the design sprawls across independent subsystems, send it back to brainstorming, which writes an initiative design and hands off to writing-roadmap.
-2. `docs/followups.md`, if it exists — intersecting items are folded in explicitly, as milestones or parts of them, never quietly.
-3. Entered without brainstorming (the user brought a design)? Apply **writing-adr**'s bar to its approach; if it clears and no ADR exists on the branch, invoke **writing-adr** from the design doc before planning — the decision is still fresh here; at landing it won't be.
+1. One coherent feature? If the design sprawls across independent subsystems, send it back to brainstorming, which
+   writes an initiative design and hands off to writing-roadmap.
+2. `docs/followups.md`, if it exists — intersecting items are folded in explicitly, as milestones or parts of them,
+   never quietly.
+3. Entered without brainstorming (the user brought a design)? Apply **writing-adr**'s bar to its approach; if it clears
+   and no ADR exists on the branch, invoke **writing-adr** from the design doc before planning — the decision is still
+   fresh here; at landing it won't be.
 
 ## The plan shape
 
-The shape is `references/example-plan-replacement.md` — read it, and its design `../brainstorming/references/example-design-replacement.md`, before writing; together they are complete, and nothing is said twice. Its sections, and what each must hold:
+The shape is `references/example-plan-replacement.md` — read it, and its design
+`../brainstorming/references/example-design-replacement.md`, before writing; together they are complete, and nothing is
+said twice. Its sections, and what each must hold:
 
 - **Header** — links the design, the ADR if any, and the initiative for a slice.
 - **Goal** — one sentence.
-- **Changes** — always a table by unit: new / changed / deleted, and what exactly, by method name. A call-site table (site · from · to) when existing callers move; a Depends-on column when it drives milestone order. Greenfield: the new units, their files, and the milestone that builds each. Never restates responsibilities or contracts — the design's Design and Contracts sections own them.
-- **Behaviours to verify** — given/when/then scenarios, each naming its test home and the design Guarantee it proves, or marked Edge. Every Guarantee has at least one.
-- **Milestones** — a table: milestone, what it delivers, done when (the named suites or scenarios green), biggest risk. Vertical slices with observable progress — small enough to commit cleanly, big enough for a self-checkpoint and a refactor pass; the table is what a team reads in a meeting. Greenfield: milestone 1 includes the minimal test scaffolding. Each milestone starts with its Behaviours red.
-- **Execution risks / open questions** — only what the design didn't say: ordering, big-bang compile steps, hidden callers, decisions needed mid-execution. Ends with a *Stop and ask if* list, binding on the implementer: an unlisted surprise is reported, not resolved by picking an interpretation.
+- **Changes** — always a table by unit: new / changed / deleted, and what exactly, by method name. A call-site table (
+  site · from · to) when existing callers move; a Depends-on column when it drives milestone order. Greenfield: the new
+  units, their files, and the milestone that builds each. Never restates responsibilities or contracts — the design's
+  Design and Contracts sections own them.
+- **Behaviours to verify** — given/when/then scenarios, each naming its test home and the design Guarantee it proves, or
+  marked Edge. Every Guarantee has at least one.
+- **Milestones** — a table: milestone, what it delivers, done when (the named suites or scenarios green), biggest risk.
+  Vertical slices with observable progress — small enough to commit cleanly, big enough for a self-checkpoint and a
+  refactor pass; the table is what a team reads in a meeting. Greenfield: milestone 1 includes the minimal test
+  scaffolding. Each milestone starts with its Behaviours red.
+- **Execution risks / open questions** — only what the design didn't say: ordering, big-bang compile steps, hidden
+  callers, decisions needed mid-execution. Ends with a *Stop and ask if* list, binding on the implementer: an unlisted
+  surprise is reported, not resolved by picking an interpretation.
 
 ## Self-review
 
 1. **Body scan** — any code block that is more than a signature? Replace it with a table row.
-2. **Implementer test** — walk the design and the plan as the implementer: every name written, every order fixed, every test named.
-3. **Overlap scan** — any sentence the design already says? Delete it. Any component named differently in the two documents? Align it.
-4. **Coverage, both directions** — walk the design's Guarantees: each has a scenario. Walk the scenarios: each names a Guarantee or is marked Edge. Walk Changes: each row is built in some milestone. Start from the design's list so a missing one shows.
+2. **Implementer test** — walk the design and the plan as the implementer: every name written, every order fixed, every
+   test named.
+3. **Overlap scan** — any sentence the design already says? Delete it. Any component named differently in the two
+   documents? Align it.
+4. **Coverage, both directions** — walk the design's Guarantees: each has a scenario. Walk the scenarios: each names a
+   Guarantee or is marked Edge. Walk Changes: each row is built in some milestone. Start from the design's list so a
+   missing one shows.
 5. **Milestone independence** — each a real vertical slice with observable progress, not "set up scaffolding".
 
 Fix inline.
 
 ## User review gate
 
-> "Plan written and committed to `<path>`. Please review it and let me know if you want changes before we move to executing-plans."
+> "Plan written and committed to `<path>`. Please review it and let me know if you want changes before we move to
+> executing-plans."
 
-Wait for explicit approval; on changes, apply them and re-run the self-review. Then invoke **executing-plans** — the only skill you invoke from here.
+Wait for explicit approval; on changes, apply them and re-run the self-review. Then invoke **executing-plans** — the
+only skill you invoke from here.

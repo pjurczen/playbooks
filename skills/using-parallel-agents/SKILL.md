@@ -5,21 +5,25 @@ description: Use when 2+ independent tasks can run without shared state or seque
 
 # Using Parallel Agents
 
-Subagents are specialized workers with isolated context. By precisely crafting their instructions, you keep them focused and preserve your own context for coordination work.
+Subagents are specialized workers with isolated context. By precisely crafting their instructions, you keep them focused
+and preserve your own context for coordination work.
 
-When you have multiple unrelated failures or independent investigations, doing them sequentially wastes time. One subagent per problem domain. Concurrent dispatch.
+When you have multiple unrelated failures or independent investigations, doing them sequentially wastes time. One
+subagent per problem domain. Concurrent dispatch.
 
 **Core principle:** One agent per independent problem. Parallel where possible.
 
 ## When to use
 
 **Use when:**
+
 - 2+ test files failing with different root causes
 - Multiple subsystems broken independently
 - Each problem can be understood without context from the others
 - Investigations would all touch different files / modules
 
 **Don't use when:**
+
 - Failures might be related (fixing one might fix others — investigate together first)
 - You need full system state to understand the issue
 - Subagents would interfere (editing the same files, racing on resources)
@@ -29,7 +33,9 @@ When you have multiple unrelated failures or independent investigations, doing t
 
 ### 1. Identify independent domains
 
-Group the failures or tasks by what's broken or what needs to be done. Each domain must be understandable without the others:
+Group the failures or tasks by what's broken or what needs to be done. Each domain must be understandable without the
+others:
+
 - File A tests: tool approval flow
 - File B tests: batch completion behaviour
 - File C tests: abort functionality
@@ -39,17 +45,20 @@ Fixing tool approval doesn't affect abort tests — those are independent.
 ### 2. Craft focused subagent prompts
 
 Each subagent gets:
+
 - **Specific scope** — one test file, one subsystem
 - **Clear goal** — what success looks like
 - **Constraints** — don't change other code; don't redesign
 - **Required output** — a `## Findings` block (see below)
 
 A good prompt is:
+
 1. Focused — one clear problem domain
 2. Self-contained — paste error messages, test names, the relevant snippet
 3. Specific about output
 
 Example:
+
 ```
 Fix the 3 failing tests in src/agents/agent-tool-abort.test.ts:
 
@@ -70,11 +79,14 @@ Return: a `## Findings` block with Changes / Gotchas / Open questions.
 
 ### 3. Dispatch in parallel
 
-Send all subagent dispatches in a single response (multiple tool calls in one message) so they run concurrently. Sequential dispatches defeat the point. Never dispatch two agents that touch the same files — they will conflict — and never dispatch before you know what's broken; exploration is sequential.
+Send all subagent dispatches in a single response (multiple tool calls in one message) so they run concurrently.
+Sequential dispatches defeat the point. Never dispatch two agents that touch the same files — they will conflict — and
+never dispatch before you know what's broken; exploration is sequential.
 
 ### 4. Review and integrate
 
 When subagents return:
+
 - Read each Findings block and record it in the parent session before moving on — without this, what was learned is lost
 - Check for conflicts (did they edit the same code?)
 - Run the full test suite yourself; a subagent's own green run and its success report are not enough
@@ -88,13 +100,14 @@ Every subagent must return:
 - **Gotchas** — things future work should know (existing utilities discovered, naming conventions, sharp edges)
 - **Open questions** — anything they couldn't resolve
 
-The parent stores these inline before the next step. This is what keeps context flowing across subagent boundaries — without it, every subagent dispatch loses what was learned.
+The parent stores these inline before the next step. This is what keeps context flowing across subagent boundaries —
+without it, every subagent dispatch loses what was learned.
 
 ## Common mistakes
 
-| Bad | Good |
-|-----|------|
-| "Fix all the tests" | "Fix agent-tool-abort.test.ts (3 specific failures listed)" |
-| No context — "fix the race condition" | Paste error messages, test names, relevant snippet |
-| No constraints — agent restructures everything | "Do NOT change production code" / "Fix tests only" |
-| Vague output — "fix it" | "Return a Findings block with Changes / Gotchas / Open questions" |
+| Bad                                            | Good                                                              |
+|------------------------------------------------|-------------------------------------------------------------------|
+| "Fix all the tests"                            | "Fix agent-tool-abort.test.ts (3 specific failures listed)"       |
+| No context — "fix the race condition"          | Paste error messages, test names, relevant snippet                |
+| No constraints — agent restructures everything | "Do NOT change production code" / "Fix tests only"                |
+| Vague output — "fix it"                        | "Return a Findings block with Changes / Gotchas / Open questions" |

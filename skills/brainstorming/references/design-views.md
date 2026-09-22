@@ -2,7 +2,10 @@
 
 Contents: rules for every view · context · structure · behaviour · state · data · process · rollout
 
-A view is a diagram plus the question it answers, stated in the sentence before it. Draw the views a reader needs to understand the problem and the solution — usually one to three — and none that doesn't change a reader's understanding. The prose after a view explains it; neither is self-sufficient. Mermaid, because GitHub, GitLab, Bitbucket and the JetBrains preview render it natively; never `dot` in a design — that notation is for skill files, read by the agent.
+A view is a diagram plus the question it answers, stated in the sentence before it. Draw the views a reader needs to
+understand the problem and the solution — usually one to three — and none that doesn't change a reader's understanding.
+The prose after a view explains it; neither is self-sufficient. Mermaid, because GitHub, GitLab, Bitbucket and the
+JetBrains preview render it natively; never `dot` in a design — that notation is for skill files, read by the agent.
 
 ## Rules for every view
 
@@ -13,7 +16,8 @@ A view is a diagram plus the question it answers, stated in the sentence before 
 
 ## Context — where does the change sit?
 
-Who talks to the system and what the system talks to. The first view for greenfield and infrastructure work, and often the only one a stakeholder reads.
+Who talks to the system and what the system talks to. The first view for greenfield and infrastructure work, and often
+the only one a stakeholder reads.
 
 ```mermaid
 flowchart LR
@@ -24,7 +28,8 @@ flowchart LR
 
 ## Structure — what are the parts, and what replaces what?
 
-Components and their dependencies; before and after when something is replaced. The default view for a feature in an existing codebase.
+Components and their dependencies; before and after when something is replaced. The default view for a feature in an
+existing codebase.
 
 ```mermaid
 flowchart LR
@@ -40,7 +45,8 @@ flowchart LR
 
 ## Behaviour — in what order does it happen?
 
-A request or event travelling through components over time, including the failure path. The view for integrations and for any flow that changes.
+A request or event travelling through components over time, including the failure path. The view for integrations and
+for any flow that changes.
 
 ```mermaid
 sequenceDiagram
@@ -78,7 +84,8 @@ erDiagram
 
 ## Process — who does what, in what order?
 
-A human or business workflow with roles as lanes. The view when the design changes how people work, not only how code runs.
+A human or business workflow with roles as lanes. The view when the design changes how people work, not only how code
+runs.
 
 ```mermaid
 flowchart LR
@@ -93,10 +100,11 @@ flowchart LR
 
 ## Rollout — in what phases does it land?
 
-Not a diagram: a table of phases, what each delivers, and what the old path still serves meanwhile. The view for migrations, infrastructure changes and initiatives.
+Not a diagram: a table of phases, what each delivers, and what the old path still serves meanwhile. The view for
+migrations, infrastructure changes and initiatives.
 
-| Phase | Delivers | Old path still serves |
-|---|---|---|
-| 1 | one report type through the new pipeline | every other type |
-| 2 | the high-volume types | the long tail |
-| 3 | the long tail; the old scheduler is deleted | nothing |
+| Phase | Delivers                                    | Old path still serves |
+|-------|---------------------------------------------|-----------------------|
+| 1     | one report type through the new pipeline    | every other type      |
+| 2     | the high-volume types                       | the long tail         |
+| 3     | the long tail; the old scheduler is deleted | nothing               |

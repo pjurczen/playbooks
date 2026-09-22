@@ -23,32 +23,40 @@ You are reviewing a completed feature implementation.
 
 ## Your task
 
-Review the feature against the design and the plan. You are a senior peer reviewer — flag what matters, ignore taste differences.
+Review the feature against the design and the plan. You are a senior peer reviewer — flag what matters, ignore taste
+differences.
 
 Do NOT trust the implementer's narrative. Read the actual code.
 
 ## What to check
 
 **Design alignment**
+
 - Does the implementation match the design's architecture and components?
-- Does the code hold every Guarantee (G1…Gn) the design states, and match every signature in its Contracts, including any `Deviation:` lines under Approach? Name any it doesn't.
+- Does the code hold every Guarantee (G1…Gn) the design states, and match every signature in its Contracts, including
+  any `Deviation:` lines under Approach? Name any it doesn't.
 - Was anything added that wasn't in the design? (Scope creep.)
-- If the branch adds a `proposed` ADR: is its Decision still true of the code? Name any drift — consolidating-docs reconciles the ADR from your answer.
+- If the branch adds a `proposed` ADR: is its Decision still true of the code? Name any drift — consolidating-docs
+  reconciles the ADR from your answer.
 
 **Plan alignment**
+
 - Does each milestone correspond to code/commits that deliver the done-when criteria?
 - Are any milestones missing or incomplete?
 
 **Code quality**
+
 - Is each unit's responsibility clear and bounded? (Single Responsibility Principle.)
 - Are functions reasonably sized, with descriptive names that explain what they do?
 - Any obvious duplication that should be DRY'd, or premature abstraction that should be unwound?
 - Any dead code, commented-out blocks, or `TODO` / `FIXME` comments left behind?
-- Are tests behavioural (assert what the code does for callers), not structural (assert that classes / fields / methods exist)?
+- Are tests behavioural (assert what the code does for callers), not structural (assert that classes / fields / methods
+  exist)?
 - Any obvious bugs, race conditions, missing error handling at real boundaries?
 - Any pre-existing problems this change made worse?
 
 **Findings handling**
+
 - Are the implementer's open-question findings reasonable to defer, or do any need to be addressed before merge?
 
 ## What to ignore
@@ -62,23 +70,31 @@ Do NOT trust the implementer's narrative. Read the actual code.
 Return:
 
 ### Strengths
+
 - <bullet list>
 
 ### Issues
 
 **Critical** (blocks merge):
+
 - `<file:line>` — <description and why it's critical>
 
 **Important** (should fix before merge):
+
 - `<file:line>` — <description>
 
-**Minor** (in-scope cleanup — fix in the review-fix milestone, including pre-existing issues in code touched by this feature):
+**Minor** (in-scope cleanup — fix in the review-fix milestone, including pre-existing issues in code touched by this
+feature):
+
 - `<file:line>` — <description>
 
 **Followup** (architectural — needs its own design / plan to address):
+
 - `<file:line>` — <description>
 
 ### Assessment
+
 One paragraph: ready to merge / needs fixes / needs rework.
 
-Be specific. "Looks good" is not a review. If there are zero issues, say zero issues — but only after actually reading the code.
+Be specific. "Looks good" is not a review. If there are zero issues, say zero issues — but only after actually reading
+the code.

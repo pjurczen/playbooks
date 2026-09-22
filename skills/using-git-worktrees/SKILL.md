@@ -5,7 +5,9 @@ description: Use when a design is approved and before any artifact is committed,
 
 # Using Git Worktrees
 
-Choose where the work will land before anything is committed. Normally fired from **brainstorming** right after design approval — so the design doc, plan, and implementation all end up on the feature branch. Default is a new worktree on a new feature branch — it keeps your current checkout untouched and lets multiple features run in parallel.
+Choose where the work will land before anything is committed. Normally fired from **brainstorming** right after design
+approval — so the design doc, plan, and implementation all end up on the feature branch. Default is a new worktree on a
+new feature branch — it keeps your current checkout untouched and lets multiple features run in parallel.
 
 ## Step 0: Already isolated?
 
@@ -15,8 +17,10 @@ GIT_COMMON=$(cd "$(git rev-parse --git-common-dir)" 2>/dev/null && pwd -P)
 SUPER=$(git rev-parse --show-superproject-working-tree 2>/dev/null)
 ```
 
-- `git rev-parse` fails entirely → not a git repo. Offer `git init` (ask first); if declined, skip workspace setup and warn that the pipeline's commits and doc consolidation won't work.
-- `GIT_DIR != GIT_COMMON` and `SUPER` empty → you're already in a linked worktree. Skip to Step 2. Do NOT nest another worktree.
+- `git rev-parse` fails entirely → not a git repo. Offer `git init` (ask first); if declined, skip workspace setup and
+  warn that the pipeline's commits and doc consolidation won't work.
+- `GIT_DIR != GIT_COMMON` and `SUPER` empty → you're already in a linked worktree. Skip to Step 2. Do NOT nest another
+  worktree.
 - `GIT_DIR != GIT_COMMON` and `SUPER` non-empty → you're in a submodule. Treat as a normal repo and continue.
 - `GIT_DIR == GIT_COMMON` → normal checkout. Continue.
 
@@ -35,11 +39,14 @@ For option 3, if the current branch is `main` or `master`, require an explicit s
 
 ### Option 1 — new worktree on a new feature branch (default)
 
-If the harness provides a native worktree tool (`EnterWorktree`, a `/worktree` command, a `--worktree` flag), use it and skip to Step 2. Native tools handle placement and cleanup; using `git worktree add` alongside a native tool creates phantom state the harness can't manage.
+If the harness provides a native worktree tool (`EnterWorktree`, a `/worktree` command, a `--worktree` flag), use it and
+skip to Step 2. Native tools handle placement and cleanup; using `git worktree add` alongside a native tool creates
+phantom state the harness can't manage.
 
 Otherwise, git fallback:
 
 **Directory** — first match wins:
+
 1. User-declared preference.
 2. Existing `.worktrees/` or `worktrees/` (`.worktrees/` wins if both).
 3. Existing `~/.config/playbooks/worktrees/<project>/`.
@@ -60,7 +67,8 @@ git worktree add "$path/$BRANCH_NAME" -b "$BRANCH_NAME"
 cd "$path/$BRANCH_NAME"
 ```
 
-If creation fails with a permission error (sandbox denial), tell the user the sandbox blocked it and re-ask Step 1 — option 2 or 3 is now the realistic choice.
+If creation fails with a permission error (sandbox denial), tell the user the sandbox blocked it and re-ask Step 1 —
+option 2 or 3 is now the realistic choice.
 
 ### Option 2 — new feature branch in current checkout
 
@@ -92,13 +100,16 @@ No lockfile match? Use whatever the project's README / CI config declares — do
 
 ## Step 3: Verify clean baseline
 
-Run the project's test command. If tests fail: report failures and ask whether to proceed or investigate first — don't silently continue.
+Run the project's test command. If tests fail: report failures and ask whether to proceed or investigate first — don't
+silently continue.
 
-No test infrastructure yet (greenfield)? Say so and continue — don't block. The plan's first milestone should establish it (see writing-plans).
+No test infrastructure yet (greenfield)? Say so and continue — don't block. The plan's first milestone should establish
+it (see writing-plans).
 
 ## Report
 
-Record `BASE_SHA` now — it marks where the feature starts. The end-of-feature review (executing-plans) diffs `BASE_SHA..HEAD`, and in current-branch mode it's the only thing that identifies the feature's commits.
+Record `BASE_SHA` now — it marks where the feature starts. The end-of-feature review (executing-plans) diffs
+`BASE_SHA..HEAD`, and in current-branch mode it's the only thing that identifies the feature's commits.
 
 ```
 Workspace mode: <worktree | feature-branch | current-branch>
@@ -111,4 +122,6 @@ Ready to work on <feature-name>.
 
 ## Two things that go wrong
 
-Native tool first: a `git worktree add` next to a harness that manages worktrees creates phantom state the harness can't see, and that is the most common failure here. And a failing baseline is never "probably pre-existing" — stop and confirm with the user before continuing.
+Native tool first: a `git worktree add` next to a harness that manages worktrees creates phantom state the harness can't
+see, and that is the most common failure here. And a failing baseline is never "probably pre-existing" — stop and
+confirm with the user before continuing.
