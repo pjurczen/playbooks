@@ -7,7 +7,9 @@ Qualitative expectations are left to the grader subagent; this script only recor
 import argparse, json, re, subprocess, sys
 from pathlib import Path
 
-SECTIONS = ["Problem", "Diagnosis", "Approach", "Decisions", "Design", "Contracts", "Guarantees", "Assumptions", "Open questions", "Risks", "Out of scope"]
+SECTIONS = ["Problem", "Diagnosis", "Approach", "Decisions", "Architecture", "Logic", "Contracts", "Consequences", "Open questions"]
+CORE = {"Problem", "Diagnosis", "Approach", "Architecture"}
+REMOVED = {"Guarantees", "Assumptions", "Risks", "Out of scope"}
 STATEMENT = re.compile(r"^\s+(return\b|if\b|for\b|while\b|with\b|try:|except\b|raise\b|self\.\w+\s*=|\w+\s*=\s*[^=]|print\()")
 FENCE = re.compile(r"```(\w*)\n(.*?)```", re.S)
 
@@ -18,12 +20,12 @@ def sentences(t):
     return {s.strip().lower() for s in re.split(r"(?<=[.!?])\s+|\n", t) if len(s.strip()) > 40}
 def has_bodies(text, allow_in=None):
     """Count statement-looking lines in non-mermaid fences. Fences inside the section named by allow_in
-    (the Design section, where a mechanism snippet is permitted) are exempt when they are <= 12 lines."""
+    (the Logic section, where a rule is stated concretely) are exempt when they are <= 25 lines."""
     exempt = section(text, allow_in) if allow_in else None
     bad = 0
     for lang, body in fences(text):
         if lang == "mermaid": continue
-        if exempt and body in exempt and len(body.strip().splitlines()) <= 12: continue
+        if exempt and body in exempt and len(body.strip().splitlines()) <= 25: continue
         for line in body.splitlines():
             if STATEMENT.match(line) and not line.strip().startswith(('"""', "#", "*", "/**", "//")):
                 bad += 1
@@ -41,21 +43,18 @@ def grade_1(out, repo, example):
     ex.append(("A design file exists under docs/playbooks/designs/", d is not None, str(d) if d else "none found"))
     t = d.read_text() if d else ""
     heads = [h for h in re.findall(r"^## (.+?)\s*$", t, re.M)]
-    order = [h for h in heads if h in SECTIONS]
-    ex.append(("The design has the eleven sections Problem, Diagnosis, Approach, Decisions, Design, Contracts, Guarantees, Assumptions, Open questions, Risks, Out of scope, in that order", order == SECTIONS, f"headings: {heads}"))
+    ex.append(("The design has the core sections Problem, Diagnosis, Approach and Architecture, and its sections come from the known set in order (Problem, Diagnosis, Approach, Decisions, Architecture, Logic, Contracts, Consequences, Open questions)", CORE <= set(heads) and heads == [s for s in SECTIONS if s in heads], f"headings: {heads}"))
     mm = sum(1 for l, _ in fences(t) if l == "mermaid")
-    ex.append(("The design contains one to three mermaid views", 1 <= mm <= 3, f"{mm} mermaid fences"))
-    b = has_bodies(t, allow_in="Design")
-    ex.append(("Code fences outside the Design section are declaration-only; a mechanism snippet inside Design is at most 12 lines", b == 0, f"{b} statement-looking lines outside the allowance"))
-    g = section(t, "Guarantees") or ""
-    items = re.findall(r"^\s*\d+\.\s+(.*)$", g, re.M)
-    last_ok = bool(items) and bool(re.search(r"must not change|unchanged|not change", items[-1], re.I))
-    ex.append(("Guarantees are a numbered list of at least three and the last one states what must not change", len(items) >= 3 and last_ok, f"{len(items)} items; last: {items[-1][:80] if items else ''}"))
-    a, o = section(t, "Assumptions") or "", section(t, "Open questions") or ""
-    ex.append(("Assumptions and Open questions are present and non-empty (a 'None.' line counts)", a.strip() != "" and o.strip() != "", f"assumptions={len(a.strip())} chars, open={len(o.strip())} chars"))
+    ex.append(("The design contains one or two mermaid views", 1 <= mm <= 2, f"{mm} mermaid fences"))
+    b = has_bodies(t, allow_in="Logic")
+    ex.append(("Code fences outside the Logic section are declaration-only; a rule inside Logic is at most 25 lines", b == 0, f"{b} statement-looking lines outside the allowance"))
+    gone = [h for h in heads if h in REMOVED]
+    ex.append(("The design has no Guarantees, Assumptions, Risks or Out of scope section", bool(t) and not gone, f"found: {gone}"))
+    hollow = [h for h in heads if re.fullmatch(r"(none\.?)?", (section(t, h) or "").strip(), re.I)]
+    ex.append(("No section is a placeholder: none is empty or only a 'None.' line", bool(t) and not hollow, f"hollow: {hollow}"))
     p = (section(t, "Problem") or "").strip()
     ex.append(("The Problem section ends with a sentence beginning 'Done means'", bool(re.search(r"Done means[^.]*\.?\s*$", p)), p[-120:]))
-    ex.append(("The design is at most 1,800 words", 0 < words(t) <= 1800, f"{words(t)} words"))
+    ex.append(("The design is at most 1,200 words", 0 < words(t) <= 1200, f"{words(t)} words"))
     adr = first(out / "docs/adr", "*.md")
     at = adr.read_text() if adr else ""
     adr_ok = adr is not None and "`" not in at and len(at.split()) <= 450 and re.search(r"proposed", at, re.I) and re.search(r"^## Alternativ", at, re.M | re.I) and re.search(r"^- ", at, re.M)
@@ -72,17 +71,19 @@ def grade_2(out, repo, fixture_design):
     p = first(out / "docs/playbooks/plans", "*.md")
     t = p.read_text() if p else ""
     ex.append(("A plan file exists under docs/playbooks/plans/ and links the design by filename", p is not None and "unified-cache" in t and "Design" in t, str(p)))
-    ex.append(("The plan has a Changes table whose header names the unit and the change", bool(re.search(r"^\|\s*Unit.*\|\s*Change", t, re.M | re.I)), ""))
-    ex.append(("The plan has a call-site table with From and To columns", bool(re.search(r"^\|\s*Site\s*\|\s*From\s*\|\s*To", t, re.M | re.I)), ""))
-    gs = re.findall(r"\bG\d+\b", t)
-    ex.append(("At least two scenarios cite a design Guarantee by number (G1, G2, ...)", len(gs) >= 2, f"citations: {gs[:8]}"))
-    ex.append(("Milestones are a table with a Done-when column", bool(re.search(r"^\|.*Done when.*\|", t, re.M | re.I)), ""))
-    ex.append(("The plan has a 'Stop and ask' list", "stop and ask" in t.lower(), ""))
+    parts = section(t, "Parts involved") or ""
+    ex.append(("The plan has a Parts involved table with a Tests column", bool(re.search(r"^\|.*\bTests\b.*\|", parts, re.M | re.I)), ""))
+    order = section(t, "Order") or ""
+    blocks = [b for b in re.split(r"^### ", order, flags=re.M)[1:] if all(k in b.lower() for k in ("builds", "after it", "proven by"))]
+    ex.append(("The plan has an Order section with at least two milestone blocks, each carrying Builds, After it and Proven by", len(blocks) >= 2 and len(blocks) == len(re.findall(r"^### ", order, re.M)), f"{len(blocks)} complete blocks"))
+    checked = re.findall(r"^- ", section(t, "Checked") or "", re.M)
+    ex.append(("The plan has a Checked section with at least three entries", len(checked) >= 3, f"{len(checked)} entries"))
+    ex.append(("The plan has no 'Stop and ask' list", bool(t) and "stop and ask" not in t.lower(), ""))
     shared = sentences(t) & sentences(Path(fixture_design).read_text()) if fixture_design else set()
     ex.append(("No sentence of the plan is copied from the design", len(shared) == 0, f"{len(shared)} shared: {list(shared)[:2]}"))
     long_f = [b for l, b in fences(t) if len(b.strip().splitlines()) > 5]
     ex.append(("No code fence in the plan contains statement bodies or exceeds five lines", has_bodies(t) == 0 and not long_f, f"bodies={has_bodies(t)}, long fences={len(long_f)}"))
-    ex.append(("The plan is at most 1,400 words", 0 < words(t) <= 1400, f"{words(t)} words"))
+    ex.append(("The plan is at most 1,000 words", 0 < words(t) <= 1000, f"{words(t)} words"))
     return ex
 
 def grade_3(out, repo):
