@@ -696,3 +696,36 @@ decision, and too much structure flagged as readily as too little. The four leve
 the clean-architecture circles seen from inside one function, and they are the same words the plan's altitude clauses use, so implementer and critic share a
 vocabulary. The implementer will still miss things; the evidence says a generator does not see its own long method. Up-front decomposition buys fewer and
 smaller findings, not none.
+
+---
+
+## 18. Addendum — one reader first: focused designs, verified plans (2026-09)
+
+§12 resolved the two-readers tension by layering — a narrative for the teammate, a precision layer for the implementer — and declared that "the pair is as long
+as completeness needs, and the test is the implementer, not the clock". §13 then added Status, Assumptions, Open questions, a preservation guarantee and a
+stop-and-ask list because every RFC culture and spec tool has them. A real feature run through the result showed what that adds up to: a design nobody read from
+start to finish and a plan that was approved and failed in its first hour.
+
+Three things in those sections were wrong. The layers were never separable: nothing marked the narrative as sufficient, Decisions demanded "no decision hides
+elsewhere", and the component list had no zoom level, so a person had to read the precision layer to be sure of having read the design. The implementer test has
+no stopping point: there is always one more name that saves a search, so it justified every addition and removed nothing. And mandatory sections with quotas are
+a generator of restatement — a model asked for three to seven guarantees rewrites the decisions in when-then form; asked for assumptions that are "never
+omitted", it writes down what it should have checked. The borrowed elements were each defensible in the source they came from; together they made the document's
+purpose — explaining a solution — a minority of its text.
+
+The reversal is in who the artifact answers to. A design is written for the person who reviews and presents it, under one test — does this line tell the reader
+something not already on the page and not visible in the code — and the implementer reads the same document. What the user called the most valuable content was
+the concrete content, so concreteness is promoted rather than rationed: §12's "most designs need no code" became a Logic section that states every rule that
+gets built, once, at the level a domain expert can check. Guarantees are dropped rather than moved: the plan's tests cite the rule they prove, and a numbered
+index between two documents was traceability for its own sake. Risks and Out of scope merged into Consequences because they were two views of the same facts and
+were filled twice.
+
+The plan changed purpose. §12 made it "more exact" — a changes table by class and method — on the evidence that file localisation is the measured hard step.
+That evidence is about models given nothing; an Opus-class implementer with the design's architecture and a list of the parts involved finds its files. What it
+cannot recover from is an order that does not work, and the old shape had no step that tested one: it recorded doubts as "stop and ask if" for a later session.
+So the gate moved from "don't pre-write the implementation" to "walk the order against the repo before presenting it", and the plan's content became the order
+and the evidence for it. The per-method altitude clauses of §17 went with the table that carried them; the critic's checklist is unchanged.
+
+Recorded exception to §14: this change shipped without an eval run, on the user's decision, after reading the skills and a rewrite of the real design. The
+fixture, expectations and grader were updated to the new shapes so the next run measures them. Still not measured: whether an implementer does as well from the
+leaner pair.

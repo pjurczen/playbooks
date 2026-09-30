@@ -1,5 +1,38 @@
 # Playbooks Release Notes
 
+## v0.11.0 (2026-09-30)
+
+### Focused designs, and plans that are a verified order
+
+A real design and plan produced by v0.10.0 were complete and unreadable. The design ran to eleven sections in which every fact appeared two to six times: its
+seven guarantees each restated a decision, a line of pseudo-code or a table row a few lines above; five of its six assumptions could have been looked up in the
+code or were non-decisions; one contract gap was told in Approach, the rule, a guarantee, an open question, a risk and an out-of-scope line. Its only diagram
+was a sequence of method calls. The parts the user valued — the recipient rule as pseudo-code, the signatures — were the only places anything was said once and
+concretely. The plan spent its length on a table of every class to change, was approved, and failed at the start of execution on a premise it had handed to the
+implementer as a "stop and ask if" instead of checking.
+
+The cause was in the shapes. A fixed section set with "never omit" and quotas ("three to seven guarantees") gets filled, and the filler is restatement; every
+test the skills applied was the implementer's ("would they have to guess?"), which has no natural end; altitude was defined by what is banned rather than by
+what to show; and guarantees were a traceability index for the plan's scenarios, placed in the document a person reads.
+
+**Designs** now answer to one test per line: does the reader learn something that is not already on the page and not visible in the code? Problem, Diagnosis,
+Approach and Architecture are always present; Decisions, Logic, Contracts, Consequences and Open questions exist when they have content. *Architecture* is a
+view of which parts of the system take part and who owns what — components, never a call chain. *Logic* is new: the rules, algorithms and states that get built,
+stated once in their most concrete form, in the component that owns them. *Consequences* replaces Risks and Out of scope: what the solution changes and costs,
+most serious first. Guarantees and Assumptions are gone — an assumption is looked up or asked, and only what someone outside the session must answer is an open
+question. There is no word cap; a bigger feature takes more pages, an unfocused design is cut.
+
+**Plans** are now an implementation order, and the skill's gate is that the order was walked against the repo before the plan is presented: every premise a
+milestone rests on — a dependency version that resolves, a type that exists, the callers of what changes, a build that stays green in the intermediate state —
+is checked at planning time and recorded under *Checked*. The shape is *Parts involved* (modules and components with their tests), *Order* (per milestone: what
+it builds, the state of the system after it, why it comes here, the tests that prove it), *Checked* and *Open*. The per-class changes table, the call-site
+table, the per-plan stop-and-ask list and the per-method altitude clauses are removed; `executing-plans` stops when the code contradicts a *Checked* line or a
+milestone cannot reach its stated state, and the structure critic still holds every function to one level.
+
+`executing-plans`, both reviewer prompts, `writing-roadmap`, the three example designs, the example plan, the structural gate and the eval fixture, expectations
+and grader follow the new shapes. This release shipped on the user's read-through of the skills and a rewrite of the real design in the new shape; the evals
+were updated and not run.
+
 ## v0.10.0 (2026-09-22)
 
 ### Structure quality: gates, a critic, altitude in plans
