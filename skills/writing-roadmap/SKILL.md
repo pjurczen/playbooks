@@ -6,7 +6,7 @@ description: Use after brainstorming approves an initiative design, to slice it 
 # Writing a Roadmap
 
 An initiative lands slice by slice. The roadmap says which slices, in what order, and when the initiative is done. It is a plan at the initiative's grain: it
-owns slices the way a feature plan owns milestones, and it owns nothing a slice plan will — no behaviours, no changes tables, no milestones.
+owns slices the way a feature plan owns milestones, and it owns nothing a slice plan will — no parts, no milestones, no tests.
 
 <HARD-GATE>
 Every slice must land on its own — mergeable, tested, leaving the system working with old and new side by side. A slice that only makes sense once the next one
@@ -40,7 +40,7 @@ The shape is `references/example-roadmap.md` — read it, with its initiative de
 ## Self-review
 
 1. Every slice lands on its own, and the old path keeps serving whatever the slice doesn't cover.
-2. The initiative design's coexistence mechanism supports this order — its guarantee says which orders it supports.
+2. The initiative design's coexistence mechanism supports this order — its Consequences say which orders it supports.
 3. Every shared contract is introduced by some slice, and no slice needs a contract a later slice introduces.
 4. The first slice is a skeleton or the riskiest piece, not the easiest.
 5. The exit criterion is observable.

@@ -1,7 +1,7 @@
 # Example design — a feature in an existing codebase
 
-A new capability added to a running service, with an endpoint, configuration, a changed flow, and a mechanism that is the decision. The narrative a teammate can
-follow, then the contracts the implementer must match.
+A new capability added to a running service: where it sits, the decisions, the rule that gets built, the surface it adds and what it costs. Every fact appears
+once.
 
 ---
 
@@ -34,39 +34,33 @@ from tenant configuration with a default.
 
 ## Decisions
 
-- Limit per tenant, not per API key — a tenant with many keys would otherwise multiply its allowance.
+- One bucket per tenant per instance, not shared across instances — a shared bucket needs a shared store and is its own design. The accepted cost: a tenant's
+  effective limit is the per-instance limit times the instance count.
 - Reject with 429 and a Retry-After header rather than delaying the request — delaying holds a connection and hides the overload from the client.
+- Limit per tenant, not per API key — a tenant with many keys would otherwise multiply its allowance.
 - Limits live in tenant configuration with a service-wide default — a global limit alone can't give the enterprise tenant its contracted rate.
-- One bucket per tenant per instance, not shared across instances — see Out of scope; the accepted cost is a tenant's effective limit being the per-instance
-  limit times the instance count.
 
-## Design
+## Architecture
 
-In what order does a request pass the limiter, and where does it stop?
+Where is a request stopped, and who decides?
 
 ```mermaid
-sequenceDiagram
-  participant C as Client
-  participant L as Rate limiter
-  participant H as Render handler
-  C->>L: POST /reports/{name}/render
-  L->>L: take token for tenant
-  alt token available
-    L->>H: forward
-    H-->>C: 202 job accepted
-  else bucket empty
-    L-->>C: 429 Retry-After
-  end
+flowchart LR
+  C[Client] -->|render request| RC[Render controller]
+  RC -->|may this tenant?| RL[Rate limiter]
+  TC[Tenant config] -->|rate and burst| RL
+  RC -->|accepted requests| WP[Worker pool]
 ```
 
-- **RateLimiter** (new) — holds one bucket per tenant, refills lazily on access, and answers allow or deny with the wait until the next token. Owns nothing
-  about HTTP.
-- **RenderController** (changed) — asks the limiter before queueing a render; turns a deny into the 429 response.
-- **TenantConfig** (changed) — gains the rate and burst fields with defaults.
-- **Render handler and worker pool** — unchanged.
+- **Rate limiter** (new) — holds one bucket per tenant and answers allow, or deny with the wait until the next token. Knows nothing about HTTP.
+- **Render controller** (changed) — asks the limiter before queueing a render and turns a deny into the 429 response.
+- **Tenant config** (changed) — gains the rate and burst fields with defaults.
+- **Worker pool** — unchanged; it never sees a rejected request.
 
-The refill is the decision, so it is spelled out: no timers, no background thread, and constant work per request, because the bucket computes what it would have
-refilled since it was last touched.
+## Logic
+
+**Taking a token** — in the rate limiter. The bucket computes what it would have refilled since it was last touched, so there are no timers, no background
+thread, and constant work per request.
 
 ```
 take(tenant, now):
@@ -76,6 +70,8 @@ take(tenant, now):
   if b.tokens >= 1: b.tokens -= 1; return allow
   return deny(wait = (1 - b.tokens) / rate)
 ```
+
+A tenant without a configured limit gets the service-wide default.
 
 ## Contracts
 
@@ -102,37 +98,16 @@ tenant configuration (per tenant, defaults service-wide):
   rateLimit.burst               default 100
 ```
 
-**Structural rules**
+Dependency rule: the rate limiter depends on neither the HTTP layer nor the render handler; the controller depends on it.
 
-- The rate limiter has no dependency on the HTTP layer or the render handler; the controller depends on it, not the reverse.
-- Tenant configuration is read through the existing config unit; the limiter holds no parsing.
-- Bucket arithmetic lives in one function under the map's limits; the controller's deny path is a separate function.
+## Consequences
 
-## Guarantees
-
-1. When a tenant has spent its burst and sends another request within the refill time, then it receives 429 with a Retry-After that is at least the true wait.
-2. When a tenant is under its rate, then none of its requests is delayed or rejected by another tenant's traffic.
-3. When any request passes the limiter, then the limiter did constant work and started no timer or thread.
-4. When an instance restarts, then every tenant's bucket starts full — a burst after restart is accepted, and that is the accepted cost of keeping no state.
-5. When a tenant has no configured limit, then the service-wide default applies.
-6. Must not change: the 202 response, the job queue, and the worker pool.
-
-## Assumptions
-
-- Clients honour Retry-After; the header is advisory and the limiter does not wait for them.
-- A tenant is identified before the limiter runs; authentication already establishes it.
+- A limit set too low on the enterprise tenant looks like an outage to them. The limiter ships with no limit as the default and is enabled per tenant, after
+  support has reviewed the first values.
+- Buckets live in memory: after a restart every tenant's bucket is full, so a burst right after a deploy is accepted.
+- Tenants are not prioritised against each other under overload; every tenant is bounded, none is favoured.
+- Unchanged: the 202 response, the job queue and the worker pool.
 
 ## Open questions
 
-- Should the 429 carry the tenant's configured rate in the body so clients can self-tune? Product owner, before milestone 2.
-
-## Risks
-
-- A limit set too low on the enterprise tenant looks like an outage to them; the default and the first per-tenant values need a review with support before
-  rollout.
-- Rollout: the limiter ships disabled behind the configuration default of no limit, and is enabled per tenant.
-
-## Out of scope
-
-- A limit shared across service instances; it needs a shared store and is its own design.
-- Prioritising tenants against each other under overload.
+- Should the 429 body carry the tenant's configured rate so clients can self-tune? — product owner; blocks the controller change.

@@ -1,7 +1,8 @@
 # Example design — an initiative
 
-A legacy nightly scheduler replaced by an event-driven render pipeline, one report type at a time. The target architecture, the coexistence mechanism, the
-shared contracts. Its roadmap is `../../writing-roadmap/references/example-roadmap.md`; slices get their own designs that link this one.
+A legacy nightly scheduler replaced by an event-driven render pipeline, one report type at a time: the target architecture, the coexistence mechanism as the
+logic, the shared contracts, and what holds while slices land. Its roadmap is `../../writing-roadmap/references/example-roadmap.md`; slices get their own
+designs that link this one.
 
 ---
 
@@ -39,12 +40,12 @@ in the ADR above.
   legacy path.
 - Delivery is at-least-once with idempotent renders keyed by report and source version — rejected exactly-once because it needs a transactional outbox the
   sources don't share, while a duplicate render is harmless.
-- A render request carries the source versions it was triggered by, so a worker can detect and skip a request already superseded by a newer one.
-- The scheduler is the fallback until the last slice, never a parallel path: a migrated type is rendered by the queue only.
+- A type is rendered by exactly one path at a time — rejected running both in parallel for a comparison period, because two writers to the rendered-reports
+  store would need a reconciliation the scheduler cannot do.
 
-## Design
+## Architecture
 
-Where does the change sit, and what does the end state look like?
+What does the end state look like?
 
 ```mermaid
 flowchart LR
@@ -66,17 +67,33 @@ flowchart LR
   Q --> W[Workers] --> R
 ```
 
-- **Render queue** (new) — holds render requests; at-least-once delivery; dead-letters after the retry budget.
-- **Render workers** (new) — render one request at a time, idempotently by report and source version; record a render job per request.
+- **Render queue** (new) — holds render requests and dead-letters them after the retry budget.
+- **Render workers** (new) — render one request at a time and record a render job per request.
 - **Change emitters** (changed) — the definition service and each source adapter emit a render request on change, for migrated types only.
-- **Nightly scheduler** (changed, then removed) — skips migrated types; deleted by the last slice with the routing table.
-- **Routing table** (new, temporary) — the set of migrated report types, in configuration; read by emitters and by the scheduler.
+- **Nightly scheduler** (changed, then removed) — skips migrated types; deleted by the last slice together with the routing table. It gains no new dependency in
+  any slice.
+- **Routing table** (new, temporary) — the set of migrated report types, in configuration; the one thing emitters and scheduler both read.
 
-**The coexistence mechanism.** A report type is either migrated or not, never both. Emitters check the routing table before emitting; the scheduler checks it
-before rendering. Migrating a type is one configuration change, made after the type's emitters ship, and reverting it is the same change in the other direction:
-the scheduler renders the type again on the next night and the queue stops receiving for it. Rendered output for unmigrated types stays byte-identical to
-today's because the scheduler code path for them does not change. State is not duplicated: rendered reports are one store written by either path, and render
-jobs exist only for the queue path.
+## Logic
+
+**Coexistence** — in the routing table, read by emitters and scheduler. A report type is rendered by exactly one path at any time.
+
+```
+on a change to a report:     type migrated → emit a render request      else → nothing; the night picks it up
+nightly run, per type:       type migrated → skip                       else → render as today
+migrate a type:              ship its emitters, then add it to the routing table
+revert a type:               remove it from the routing table; the next night renders it again
+```
+
+Rendered reports are one store written by either path, so no state is duplicated; render jobs exist only for the queue path.
+
+**Superseded requests** — in the render workers. A request carries the source versions that triggered it.
+
+```
+on delivery:
+  request's source versions older than the report's last render → skip
+  otherwise render, keyed by report and source versions        → a second delivery of the same request rewrites the same output
+```
 
 ## Contracts
 
@@ -99,39 +116,21 @@ public interface RoutingTable {
 }
 ```
 
-**Structural rules**
+Dependency rules: emitters and workers depend on the queue interface, never on each other or on the scheduler; no module reads the routing configuration key
+except through the routing table.
 
-- Emitters and workers depend on the queue interface, never on each other or on the scheduler.
-- The routing table is read through its interface only; no module reads the configuration key directly.
-- The nightly scheduler gains no new dependency in any slice; it only loses them.
+## Consequences
 
-## Guarantees
-
-1. When a type is migrated, then every change to a report of that type produces a render within the queue's delivery bound, and the scheduler never renders it.
-2. When a type is not migrated, then its rendered output is byte-identical to today's.
-3. When a render request is delivered twice, then the second render produces the same output and the report is not corrupted in between.
-4. When a request arrives whose source versions are older than the report's last render, then it is skipped.
-5. When a type's migration is reverted, then the next nightly run renders it and nothing is lost.
-6. Types migrate in any order; the coexistence mechanism does not depend on it.
-7. Must not change: the rendered report format and the location advisors read from.
-
-## Assumptions
-
-- Every source adapter can tell when its data changed; the two that cannot are handled by a periodic version check inside the adapter, not by the scheduler.
-- A duplicate render is cheap enough that at-least-once is acceptable everywhere.
+- Types can migrate in any order and one at a time; the roadmap is free to choose. The one ordering that matters is inside a migration: emitters ship before the
+  routing table changes, or changes to that type are rendered by nobody until the entry is reverted.
+- Until its slice lands, an unmigrated type behaves exactly as today, next-morning latency included.
+- The two source adapters without change detection get a periodic version check of their own. If that check is expensive, their types are the long tail and stay
+  on the scheduler longest.
+- Renders can happen twice. That is accepted everywhere a render is cheap; a type where it is not needs its own decision in its slice.
+- Unchanged throughout: the rendered report format and the location advisors read from.
+- Not part of this: rendering priority between tenants, and retention of render jobs beyond debugging needs.
 
 ## Open questions
 
-- Retry budget and dead-letter handling — operations, before the first slice's design.
-- Whether the render job store is the same database as the reports — before the first slice's design.
-
-## Risks
-
-- The two adapters without change detection are the likely long tail; if their version check is expensive, those types may stay on the scheduler longer than
-  planned.
-- Rollout is per type and reversible by configuration; the risk is a type migrated before its emitters ship, which the routing table's ordering rule guards.
-
-## Out of scope
-
-- Rendering priority between tenants.
-- Retention of render jobs beyond debugging needs.
+- Retry budget and dead-letter handling — operations; blocks the first slice's design.
+- Is the render job store the same database as the reports? — operations; blocks the first slice's design.

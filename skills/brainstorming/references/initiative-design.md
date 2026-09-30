@@ -15,11 +15,13 @@ The same sections as a feature design (`design-doc-shape.md`), with these differ
 
 - **Problem** and **Diagnosis** at system level, up to three paragraphs each; Problem ends with what done means for the whole initiative: the end state reached
   and the legacy that is gone.
-- **Design** holds two things a feature design never has. The **target architecture**: the after-picture, as a context or structure view of the end state. The
-  **coexistence mechanism**: how work is routed between old and new while slices land, what stays byte-identical, what state is duplicated and how it stays
-  consistent, and how the split disappears at the end. Coexistence is where the risk lives, and a slice design cannot own it.
+- **Architecture** holds the target: the after-picture, as a context or structure view of the end state, and a second view of how work is routed between old and
+  new while slices land.
+- **Logic** holds the **coexistence mechanism** as rules: who renders, writes or serves what while both exist, how a part migrates and how it is reverted, what
+  state is duplicated and how it stays consistent, and how the split disappears at the end. Coexistence is where the risk lives, and a slice design cannot own
+  it.
 - **Contracts** are the shared ones, what every slice builds against. A slice's own contracts stay in its design.
-- **Guarantees** hold at every intermediate state, not only at the end. One of them says which slice orders the coexistence mechanism supports — the roadmap may
+- **Consequences** say what holds at every intermediate state, not only at the end, and which slice orders the coexistence mechanism supports — the roadmap may
   only choose among those.
 - **Decisions** as in a feature design. The target architecture is usually the ADR-worthy one: written `proposed` with the initiative, promoted when the first
   slice lands.
@@ -36,10 +38,11 @@ architecture doc, drops the coexistence mechanism because it's over, writes the 
 
 ## Slice mode
 
-A slice of an initiative inherits and does not restate: `Initiative:` in the header; Problem is one line naming the slice and what it delivers; Design draws
-only this slice's portion; Contracts lists only what the slice adds; Decisions only the slice's own; approaches are proposed only for the slice's delta. An ADR
-is rare here — the initiative's covers it. When the slice design is approved, flip the slice's roadmap row to `in progress` with a docs-only commit on the base
-branch, so anyone else can see it is taken. Resuming later: read the initiative design and the roadmap, take the next unblocked slice or the one the user names.
+A slice of an initiative inherits and does not restate: `Initiative:` in the header; Problem is one line naming the slice and what it delivers; Architecture
+draws only this slice's portion; Logic and Contracts hold only what the slice adds; Decisions only the slice's own; approaches are proposed only for the slice's
+delta. An ADR is rare here — the initiative's covers it. When the slice design is approved, flip the slice's roadmap row to `in progress` with a docs-only
+commit on the base branch, so anyone else can see it is taken. Resuming later: read the initiative design and the roadmap, take the next unblocked slice or the
+one the user names.
 
 ## Discovered mid-execution
 

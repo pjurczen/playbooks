@@ -35,14 +35,15 @@ for f in glob.glob("skills/**/*.md", recursive=True):
 sys.exit(1 if bad else 0)
 PY
 
-echo "== example designs and the fixture carry the eleven sections in order =="
+echo "== example designs and the fixture: core sections present, only known sections, in order =="
 python3 - <<'PY' || fail=1
 import re, sys
-S = ["Problem","Diagnosis","Approach","Decisions","Design","Contracts","Guarantees","Assumptions","Open questions","Risks","Out of scope"]
+S = ["Problem","Diagnosis","Approach","Decisions","Architecture","Logic","Contracts","Consequences","Open questions"]
+CORE = {"Problem","Diagnosis","Approach","Architecture"}
 bad = 0
 for f in ["skills/brainstorming/references/example-design-replacement.md","skills/brainstorming/references/example-design-feature.md","skills/brainstorming/references/example-design-initiative.md","evals/fixtures/designs/2026-09-17-unified-cache.md"]:
-    h = [x for x in re.findall(r"^## (.+?)\s*$", open(f).read(), re.M) if x in S]
-    if h != S: print("  SECTIONS", f, h); bad += 1
+    h = re.findall(r"^## (.+?)\s*$", open(f).read(), re.M)
+    if not CORE <= set(h) or h != [x for x in S if x in h]: print("  SECTIONS", f, h); bad += 1
 sys.exit(1 if bad else 0)
 PY
 

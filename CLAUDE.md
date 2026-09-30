@@ -41,20 +41,21 @@ Skill files are prompts. Instruction count degrades adherence and early instruct
 
 ## Conventions for produced artifacts
 
-This is the actual differentiator from superpowers. The artifacts the *user* reads (design docs, plans) have two readers: a teammate who follows the narrative
-without the codebase, and an implementer in another session — Opus-class by default — who must find nothing to guess. Structure and altitude, not length, are
-the bar:
+This is the actual differentiator from superpowers. The artifacts the *user* reads (design docs, plans) are read first by a person — who reviews them, presents
+them to a team and approves them — and then by an implementer in another session, Opus-class by default. Focus is the bar: every line tells the reader something
+that is not already on the page and not visible in the code. A section filled because a template lists it is the failure to avoid. The conventions:
 
 - Every repo the pipeline works in has a `.claude/gates.md` naming its test, lint, complexity and structure commands, or a recorded decline; `setting-up-gates`
   proposes one when it's missing, and executing-plans treats a milestone as green only when tests and gates both pass.
-- Design docs are the trace of brainstorming's five stages — problem, diagnosis, decision, shape, check — with a fixed section set: Problem, Diagnosis, Approach
-  (with alternatives), Decisions, Design (the one to three views a reader needs, each answering a named question; the mechanism only when it is the decision),
-  Contracts, Guarantees, Assumptions, Open questions, Risks, Out of scope. The narrative layer reads in a few minutes; Contracts carry declarations with
-  semantics — signatures, endpoints, schemas, flags, states — never bodies.
+- Design docs are the trace of brainstorming's five stages — problem, diagnosis, decision, shape, check. Problem, Diagnosis, Approach (with alternatives) and
+  Architecture (a view of which parts interact and who owns what) always; Decisions, Logic (the rules and algorithms that get built, stated concretely, in the
+  component that owns them), Contracts, Consequences and Open questions when they have content. One fact, one place; no section exists to be filled. Nothing is
+  written down as an assumption: it is looked up in the code or asked.
 - An initiative gets a design (target architecture, coexistence mechanism, shared contracts) and a roadmap (slices, order, exit criterion), both on the base
   branch; each slice then gets an ordinary design and plan that inherit from them.
-- Plans are exact work maps — a changes table by class and method, call-site from → to, scenarios tied to the design's Guarantees, milestones — and never
-  restate the design. No test code, no bodies, no per-step commit messages.
+- Plans are a verified implementation order — the parts of the system involved with their tests, then milestones that each leave the build and the suites green,
+  with what each builds, the state after it, and the tests that prove it — plus the premises that were checked against the repo while planning. A premise that
+  could be checked is never handed to the implementer as a stop-and-ask. No list of files to edit, no test code, no bodies, and nothing the design already says.
 - Commit messages follow Conventional Commits and describe the *why* of the slice, not a play-by-play of files.
 - ADRs are 2-minute reads at design altitude — no code, no symbols, alternatives named. Written when the decision is made (brainstorming), not when the feature
   lands.

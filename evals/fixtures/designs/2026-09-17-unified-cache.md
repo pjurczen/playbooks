@@ -31,9 +31,9 @@ fresh run invalidates by prefix instead of purging two stores.
 - Memory sits in front of disk inside the cache, not as two caches the caller chooses between — rejected caller choice because that is today's problem.
 - Invalidation is by key prefix, not by enumerating keys — rejected enumeration because callers would need to know every key class.
 
-## Design
+## Architecture
 
-What replaces what:
+What replaces what?
 
 ```mermaid
 flowchart LR
@@ -54,11 +54,27 @@ flowchart LR
   end
 ```
 
-- **ReportCache** (new) — the only cache. Memory tier in front of a disk tier, one TTL per entry, one invalidation call by prefix. Owns key naming.
-- **sources loader** (changed) — asks the cache for rows, reads disk on a miss, puts with the source TTL. No longer drops anyone else's keys.
-- **summariser** (changed) — asks the cache for the summary, computes on a miss, puts with the summary TTL.
-- **report builder** (changed) — a fresh run invalidates the source and summary prefixes; nothing else changes.
+- **ReportCache** (new) — the only cache: a memory tier in front of a disk tier. Owns key naming, validity and invalidation.
+- **sources loader** (changed) — asks the cache for rows and reads the data file on a miss. No longer drops anyone else's keys.
+- **summariser** (changed) — asks the cache for the summary and computes on a miss.
+- **report builder** (changed) — a fresh run invalidates by prefix; it no longer reaches into any store.
 - **Removed** — the memo module, the file cache as a public collaborator, the loader's forget function.
+
+## Logic
+
+**Validity** — in ReportCache. Every entry carries its expiry; nothing else decides whether a value may be served.
+
+```
+get(key):
+  memory has it and not expired        → value
+  disk has it and not expired          → copy to memory, value
+  expired in either tier               → drop from both, none
+put(key, value, ttl):  store in memory and on disk with expiry = now + ttl
+invalidate(prefix):    drop every key starting with prefix from both tiers
+```
+
+**Fresh runs and dependent values** — in the report builder and the loader. A fresh run invalidates the source and the summary prefixes before building. A
+summary is never served over newer rows: the summary TTL is not longer than the source TTL, and a source re-read invalidates that source's summary.
 
 ## Contracts
 
@@ -77,40 +93,23 @@ class ReportCache:
 ```
 
 ```python
-# sources — signature gains the cache; behaviour: get, read disk on miss, put with SOURCE_TTL.
+# each gains the cache as a collaborator
 def load_source(name: str, cache: ReportCache) -> list[dict]: ...
-
-# summary — same pattern with SUMMARY_TTL.
 def summarize(name: str, cache: ReportCache) -> dict: ...
-
-# report — fresh=True calls cache.invalidate("source:") and cache.invalidate("summary:").
 def build_report(names: list[str], cache: ReportCache, fresh: bool = False) -> str: ...
 ```
 
-## Guarantees
+Dependency rule: no module but ReportCache imports the storage it sits on.
 
-1. When any module needs cached rows or summaries, then it goes through ReportCache; no module holds its own store.
-2. When a value is older than its TTL, then a get returns None and the entry is gone from both tiers.
-3. When a fresh report is requested, then every source is re-read from disk exactly once and every summary is recomputed.
-4. When a source is re-read, then the summary built from it is recomputed before the report uses it.
-5. When the process restarts within the source TTL, then sources are served from disk without a data read.
-6. Must not change: report output format, CLI flags, and the behaviour the three existing tests assert — their fixture wiring may be re-pointed at the new
-   cache, their assertions may not.
+## Consequences
 
-## Assumptions
-
-- A single TTL per key class (sources, summaries) is enough; no caller needs per-call TTL.
-- The summary TTL is never longer than the source TTL; guarantee 4 depends on it.
+- The memo was process-wide; the cache is a collaborator. A caller that constructs its own ReportCache silently gets its own memory tier, so the CLI builds one
+  and passes it down.
+- A restart within the source TTL now serves sources from disk without a data read; before, the memo was lost and the file cache decided alone.
+- Two processes sharing the disk tier are not coordinated.
+- Unchanged: report output, CLI flags, the JSON source format, and what the three existing tests assert — their wiring may be re-pointed at the new cache, their
+  assertions may not.
 
 ## Open questions
 
-- Should the disk tier survive `--fresh`, or does fresh mean both tiers? Contracts say both; the owner confirms by milestone 1.
-
-## Risks
-
-- The memo was process-wide; the cache is now a collaborator. Any caller constructing its own ReportCache silently gets its own tiers.
-
-## Out of scope
-
-- Concurrency between processes sharing the disk tier.
-- Changing the JSON source format.
+- Does `--fresh` clear the disk tier too, or only memory? Contracts say both. — the project owner; blocks the report-builder milestone.

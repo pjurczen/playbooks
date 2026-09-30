@@ -13,7 +13,7 @@ markdown — but the philosophy diverges in a few specific ways:
 
 | Topic | Superpowers | Playbooks |
 |-------|-------------|-----------|
-| Plans | Pre-write every test, every method signature, every commit message | An exact work map — changes by class and method, scenarios tied to the design's guarantees, milestones. Signatures live in the design's contracts; bodies, tests and commit messages stay with the implementer. |
+| Plans | Pre-write every test, every method signature, every commit message | A verified implementation order — the parts involved, milestones that each leave the system working, the tests that prove each, and the premises checked against the repo while planning. Logic and signatures live in the design; bodies, tests and commit messages stay with the implementer. |
 | Execution | Subagent-driven by default; cheaper models for "mechanical" tasks | Main-session by default, on the main model. Subagents are situational (parallel work, context-heavy lookups). |
 | Commits | One per TDD step (~5 per task, dozens per feature) | One per milestone; uses Conventional Commits. |
 | Testing | Strict TDD, including structural tests | BDD-flavoured: behaviour-shaped tests for code with interesting logic. No tests for enums, dataclasses, thin wrappers. |
@@ -39,9 +39,10 @@ demand via the `Skill` tool.
 ## What's inside
 
 **Process** (how to approach the work):
-- `brainstorming` — design dialogue → committed design doc: a narrative a teammate can follow, the views the reader needs, the contracts the implementer must
-  match; kinds of work from a feature to an initiative
-- `writing-plans` — design → exact implementation plan an implementer in another session can execute; stands on the design, never restates it
+- `brainstorming` — design dialogue → committed design doc a teammate reads once: the architecture, the decisions, the logic that gets built, the contracts and
+  the consequences, each fact in one place; kinds of work from a feature to an initiative
+- `writing-plans` — design → an implementation order verified against the repo: the parts involved, milestones that each leave the system working, the tests
+  that prove each; stands on the design, never restates it
 - `writing-roadmap` — initiative design → a roadmap of independently landable slices, their order and exit criterion
 - `executing-plans` — main-session milestone loop: tests and gates green, a fresh-context structure critic, a refactor pass, one commit per milestone, an
   end-of-feature review

@@ -6,7 +6,8 @@ description: Use before any non-trivial creative work (features, components, beh
 # Brainstorming
 
 Turn a request into a design by reasoning in five stages — problem, diagnosis, decision, shape, check — each producing one thing the next depends on. The design
-doc is the trace of that reasoning, not a form. Dialogue throughout: one question at a time, and approval before anything is built on.
+doc is the trace of that reasoning, written to be read once, not a form to fill. Dialogue throughout: one question at a time, and approval before anything is
+built on.
 
 <HARD-GATE>
 Present a design and get the user's approval before invoking a planning skill or writing any code — for every project, a todo list included. "Simple" is where
@@ -16,17 +17,15 @@ unexamined assumptions cost the most; the design can be a few sentences when the
 ## When to skip
 
 A change you can describe in one sentence and verify with one command — a rename, a typo, a constant — never enters brainstorming; using-playbooks' skip list
-handles it. Once you're here, don't skip the design.
+handles it.
 
 ## The five stages
 
-Track them as todos; present each stage's output as you reach it and ask "looks right so far?" — a wrong diagnosis is cheap before approaches are proposed and
-expensive after.
+Track them as todos; present each stage's output as you reach it and ask "looks right so far?" — a wrong diagnosis is cheap to fix before approaches exist.
 
 **1. Problem — what are we actually trying to solve?** The request is usually phrased as a solution ("add a cache"). Recover the need behind it: who hurts, what
 happens if nothing is done, what "done" looks like as something observable. The clarifying questions belong here — one at a time, multiple-choice when it fits,
-about purpose, constraints and success, not implementation. If the ask and the need differ, the design is about the need. *Output:* Problem, ending in "Done
-means".
+about purpose, constraints and success, not implementation. *Output:* Problem, ending in "Done means".
 
 **2. Diagnosis — what causes it?** Ground the problem in what exists, driven by the problem rather than by a category: the code paths, data and callers that
 produce the pain; `docs/followups.md` (earlier attempts); existing ADRs per `.claude/documentation.md` (they constrain the fix; reversing one is a supersede);
@@ -39,14 +38,14 @@ something, integrates, changes the data or a flow — or cannot land at once and
 whether the approach instantiates a rule the team is adopting or is itself a system-level choice, and apply **writing-adr**'s test to that. *Output:* Approach
 with the alternatives it beat, and Decisions.
 
-**4. Shape — what does it look like, exactly?** The components; the views a reader needs (`references/design-views.md`; the kinds table in
-`references/design-doc-shape.md` maps the chosen approach to views and contracts); the contracts the implementer must match, including the structural rules the
-gates check; the mechanism only where it is the decision; the guarantees as falsifiable properties. Units with one purpose and clean interfaces — leaking
-internals mean a wrong boundary; follow the codebase's patterns, leave unrelated refactoring alone. *Output:* Design, Contracts, Guarantees.
+**4. Shape — what does it look like, and what gets built?** The parts of the system that take part and who owns what, as a view (`references/design-views.md`;
+the kinds table in `references/design-doc-shape.md` maps the approach to views, logic and contracts); the logic that carries the solution — rules, algorithms,
+states — stated concretely, in the component that owns it; the contracts others build against. Units with one purpose and clean interfaces — leaking internals
+mean a wrong boundary; follow the codebase's patterns, leave unrelated refactoring alone. *Output:* Architecture, Logic, Contracts.
 
-**5. Check — does it solve the problem?** Hold the design against stage 1: does it remove the diagnosed cause; do the guarantees cover "done means"; what was
-assumed without asking; what stays open; what could go wrong with the approach itself; what is deliberately out. *Output:* Assumptions, Open questions, Risks,
-Out of scope.
+**5. Check — does it solve the problem, and what does it cost?** Hold the design against stage 1: does it remove the diagnosed cause and reach "done means";
+what changes for users and callers, what stops working, what could go wrong. Anything you assumed is settled now — looked up in the code, or asked; only what
+someone outside the session must answer stays open. *Output:* Consequences, Open questions.
 
 ## Mechanics around the stages
 
@@ -71,13 +70,12 @@ make the structure deterministic and use the model only for bounded content-fill
 
 ## Self-review
 
-1. **The chain holds** — the diagnosis explains the problem; the approach answers the diagnosis; the guarantees cover " done means".
-2. **Placeholders, contradictions, ambiguity** — no TBDs; sections agree; a requirement readable two ways gets one reading, stated.
-3. **Stranger test** — could a teammate who has never opened the codebase follow Problem → Diagnosis → Approach → Design? A sentence needing three identifiers
-   to parse is rewritten at component level.
-4. **Walk the per-section rules** in `references/design-doc-shape.md`: each view answers its named question; a snippet only where the mechanism is the decision;
-   Decisions, Assumptions, Open questions present; guarantees numbered and falsifiable; Status set.
-5. **Accuracy** — before cutting anything: would it lose accuracy for the implementer? If not, cut.
+1. **The chain holds** — the diagnosis explains the problem; the approach answers it; architecture and logic reach "done means".
+2. **Every line earns its place** — walk the document with the test in `references/design-doc-shape.md`. A fact stated twice keeps one home; a section with
+   nothing new is deleted; a decision nobody would contest goes.
+3. **Stranger test** — could a teammate who has never opened the codebase repeat the solution, name its decisions and say what it costs after one read? The view
+   shows components, not a call chain.
+4. **Placeholders, contradictions, ambiguity** — no TBDs; sections agree; a requirement readable two ways gets one reading, stated. Status set.
 
 Fix inline; no second review.
 
@@ -85,8 +83,7 @@ Fix inline; no second review.
 
 > "Design written and committed to `<path>`[, ADR at `<adr-path>`]. Please review it and let me know if you want any changes before we move on."
 
-Wait for explicit approval; on changes, apply them and re-run the self-review. On approval set the header Status to `approved`. The ADR, if any, is reviewed at
-this same gate.
+Wait for explicit approval; on changes, apply them and re-run the self-review. On approval set the header Status to `approved`.
 
 ## Re-entering from executing-plans
 
@@ -99,6 +96,6 @@ deviation line, and the roadmap if the order changes. Re-review at the gate; ame
 | Thought                                                      | Reality                                                                           |
 |--------------------------------------------------------------|-----------------------------------------------------------------------------------|
 | "The request says what to build, I'll design that"           | The request is a solution. Find the need first; the design is about the need.     |
-| "I'll paste the class so the implementer can't get it wrong" | Paste the contract; a body only when the mechanism is the decision.               |
+| "I'll paste the class so the implementer can't get it wrong" | Show the rule and the contract; the body is the implementer's.                    |
 | "Context needs the call chain so readers understand"         | Readers need the problem and the diagnosis. Call chains are conversation residue. |
-| "I'll add a future-optimizations section"                    | YAGNI. A property → Guarantees; an idea → `docs/followups.md`.                    |
+| "I'll note this assumption so the reader knows"              | Check it in the code or ask. An assumption on the page is a question not asked.   |

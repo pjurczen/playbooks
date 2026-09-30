@@ -1,73 +1,68 @@
-# The design doc — kinds of work, sections, altitude
+# The design doc — what it holds, and at what altitude
 
-The design doc is the trace of brainstorming's five stages: Problem and Diagnosis are stages one and two, Approach and Decisions stage three, Design, Contracts
-and Guarantees stage four, the rest stage five. A design has two readers. A teammate who has never opened the codebase reads the narrative — Problem, Diagnosis,
-Approach, Decisions, Design — in a few minutes. The implementer — a person or a model in another session, with none of the brainstorming conversation — works
-from the precision layer, Contracts and Guarantees, plus the plan. Each layer stays pure: no rationale inside Contracts, no declarations inside Approach. Length
-is whatever completeness needs; padding is what serves neither.
+A design explains how a problem gets solved, to a teammate who will review it and present it and has not opened the code. It works when that reader can, after
+one read, repeat the solution, argue with its decisions and say what it costs. The implementer in another session reads the same document and then the plan;
+what only the implementer needs — every unit to touch, the order, the tests — belongs to the plan.
+
+## The test for every line
+
+Does the reader learn something here that is not already on the page and that they could not see by opening the code? If not, it goes. Three rules follow:
+
+- **One fact, one place.** A decision, a rule or a consequence is stated once, in the section that owns it. Another section that needs it names it and moves on.
+- **A section exists when it has content.** Problem, Diagnosis, Approach and Architecture always; the others only when there is something to say. No "None."
+  lines, and nothing written because the list has a heading for it.
+- **Concrete before prose.** A rule as pseudo-code or a table, a surface as a signature, a structure as a diagram. Prose carries what those cannot: the why.
+
+Length follows the work. A bigger feature takes more pages; an unfocused design is cut, whatever its size.
 
 ## Sections
 
 The shape is the example for your kind (`example-design-<kind>.md`). Header: Status (`draft` | `approved`), then Ticket, ADR and Initiative links where they
-exist. Sections in order; what each must hold:
+exist. Sections in order:
 
-### Problem — narrative
+### Problem
 
 One paragraph (an initiative may take three): what hurts, for whom, why now; for greenfield work, who it's for and the constraints. The need, not the requested
-solution. No lists, no call chains, no findings. End with a sentence starting " Done means" — the observable outcome.
+solution. No lists, no call chains, no findings. End with a sentence starting "Done means" — the observable outcome.
 
-### Diagnosis — narrative
+### Diagnosis
 
 One paragraph: the cause of the problem in structural terms a reader can check — which mechanisms, data or boundaries produce the pain, and what constrains the
-fix. Name components, not methods; no call chains, no numbered findings. This is the sentence everything after it hangs on, and the one a reviewer should be
-able to disagree with. A hypothesis exploration disproved becomes a scenario in the plan, not a paragraph here.
+fix. Name components, not methods. This is the sentence everything after it hangs on, and the one a reviewer should be able to disagree with.
 
-### Approach — narrative
+### Approach
 
-One paragraph stating what we will do, as an idea a teammate could repeat in a sentence. Then the one to three alternatives it beat, one to three sentences
-each: what it was, the trade-off that killed it, when it would become right. If an ADR exists it owns the rationale: one line and a link. When implementation
-diverges from the approved design, edit Design and Contracts so they stay true and add one line here starting "Deviation:" — never an amendment.
+One paragraph stating what we will do, as an idea a teammate could repeat in a sentence. Then the alternatives seriously considered, usually one or two: what it
+was, the trade-off that killed it, when it would become right. If an ADR exists it owns the rationale: one line and a link. When implementation diverges from
+the approved design, edit the design so it stays true and add one line here starting "Deviation:" — never an amendment.
 
-### Decisions — narrative
+### Decisions
 
-The decisions this design makes, one line each: the decision, the alternative rejected, why. Most are below writing-adr's bar and live here; the ones that pass
-it link to their ADR instead of restating it. No decision hides in prose elsewhere, and no resolved decision sits under Open questions.
+The choices inside the approach that a reviewer might make differently, most consequential first: the decision, what was rejected, why. A choice nobody would
+contest is not a decision, and neither is a note that something stays as it is. The ones that pass writing-adr's bar link to their ADR instead of restating it.
 
-### Design — narrative
+### Architecture
 
-The views a reader needs to understand the problem and the solution — usually one to three, each opening with the question it answers; `design-views.md` says
-which view answers which question. Then one bullet per component: name, new / changed / removed, responsibility. Components and responsibilities, not call
-sites; the plan enumerates those.
+Which parts of the system take part, who owns what, and where the new piece sits: one view, a second only when it answers a different question
+(`design-views.md`). Then one bullet per component: name, new / changed / removed, what it is responsible for and what it must not do. Components are what a
+teammate would draw on a whiteboard — modules, services, stores — with the class name in brackets where it helps to find one. Mappers, stubs, build files and
+test support are the plan's.
 
-The kind of work falls out of the chosen approach, and it says which views to draw and what a contract is here. Add a row when a kind is missing.
+### Logic
 
-| Kind                                | Views                                    | Contracts are                          | Typical guarantees                        |
-|-------------------------------------|------------------------------------------|----------------------------------------|-------------------------------------------|
-| Feature in an existing codebase     | structure; behaviour when a flow changes | signatures, endpoints                  | parity for untouched behaviour            |
-| Greenfield system or service        | context first, then structure            | the external surface: API, CLI, config | the properties the surface promises       |
-| Replacement or refactor             | structure, before → after                | the changed declarations               | invariants preserved, parity              |
-| Integration with an external system | behaviour, with the failure paths        | messages, endpoints                    | delivery semantics, timeout bounds        |
-| Data-model change                   | data; rollout                            | schema, migration steps                | no data loss; old readers keep working    |
-| User-facing flow                    | state, process                           | screens, states, events                | every state reachable and exitable        |
-| Infrastructure or deployment        | context; rollout                         | resources, configuration               | a rollback path; the downtime claim       |
-| Cross-cutting policy                | structure                                | the rule as an interface               | applies everywhere, and how it's enforced |
-| Initiative (`initiative-design.md`) | context, structure, rollout              | the shared contracts                   | hold at every intermediate state          |
+What gets built: the rules, algorithms, state machines and mappings that carry the solution. Each appears once, in its most concrete form — pseudo-code, a
+decision table, a state diagram — under the name of the component that owns it. Write it at the level of the rule: something a domain expert could check and a
+test could follow branch by branch. No language syntax, no error plumbing, and nothing that is merely the obvious way to implement a contract; the body stays
+the implementer's. Work that only moves or wires things has no Logic section.
 
-**The mechanism, when it is the decision.** Most designs need no code: the contracts fix the surface and a competent implementer fills the body. But when an
-algorithm's complexity, a concurrency scheme, a state machine or a data structure *is* the solution — when an implementer given only the contracts would
-plausibly build something materially different — the design carries it here: pseudo-code or a minimal sketch, as long as it needs to be to remove that ambiguity
-and no longer, with the property it buys stated as a guarantee. Never code that is merely the obvious way to implement a decision made elsewhere; that is what
-rots in a design.
+### Contracts
 
-### Contracts — precision
+The surface others build against, where it is new or changed: public signatures with a one-line doc stating semantics and failure behaviour; endpoints with
+request and response shapes; schemas and migration steps; configuration keys; states and the events between them. Bodies, private members and unchanged
+declarations stay out. A repeating pattern is shown once.
 
-The surface the rest of the world sees, at the altitude of a declaration: public signatures with a one-line doc stating semantics including failure behaviour;
-endpoints with request and response shapes; schemas and migration steps; configuration keys and flags; screens, states and the events between them. Annotations
-that carry semantics (scope, transaction) stay; bodies, private members, fields and boilerplate go. A changed existing thing: its declaration plus one line
-saying what changes. A repeating pattern is shown once.
-
-**Structural rules** — three to five, derived from the Design view, that the gates can check: which components may depend on which; who owns which
-responsibility; length or complexity limits where they differ from `.claude/gates.md`. Milestone one of the plan wires any rule the map doesn't enforce yet.
+When the architecture implies a structural rule a gate can check — who may depend on whom, who owns what — state it here in one line; milestone one of the plan
+wires any such rule `.claude/gates.md` doesn't enforce yet.
 
 ```java
 // a contract: what the implementer must match, what a reviewer can check
@@ -83,26 +78,29 @@ POST /reports/{name}/render  → 202 { jobId }                 an endpoint contr
                              → 409 if a render for {name} is already queued
 ```
 
-### Guarantees — precision
+### Consequences
 
-G1 … Gn: three to seven numbered properties the design holds, each one sentence a single test can falsify, in the form " when X, then Y". A guarantee no
-scenario could prove is a risk, and moves there. The last one states what must *not* change — "none" if nothing. The plan's scenarios cite these numbers; this
-is the section a team review should attack.
-
-### Assumptions
-
-Defaults taken without asking, one line each; if a reader disagrees with a line, the design changes. "None." when there are none — never omit the section.
+What the solution changes and costs beyond its goal, most serious first: behaviour that changes for users or callers, what stops working, what rollout or
+operation now needs, what could go wrong with the approach, what a reader would expect it to cover and it does not. Close with what stays the same when a reader
+would worry about it. A rejected alternative is not repeated here as something left out.
 
 ### Open questions
 
-One line each: the question, who answers it, by which milestone. "None." when there are none — never omit the section. An open question the design doesn't
-record becomes a silent guess.
+Only what someone outside the session must answer: the question, who answers it, what it blocks. What the code can answer is looked up; what the user can answer
+is asked during brainstorming; neither is written down as an assumption.
 
-### Risks — narrative
+## Kinds of work
 
-What could go wrong with the approach itself. Ask whether compatibility, migration, rollout or observability applies; if so it is a risk or an out-of-scope
-line, never an omission. Execution risks — ordering, hidden callers, big-bang compile steps — belong to the plan.
+The kind falls out of the chosen approach, and it says which view to draw and what logic and contracts usually are. Add a row when a kind is missing.
 
-### Out of scope
-
-What this deliberately does not do, one line each.
+| Kind                                | Views                                   | Logic is usually                    | Contracts are                          |
+|-------------------------------------|-----------------------------------------|-------------------------------------|----------------------------------------|
+| Feature in an existing codebase     | structure; behaviour if order matters   | the new rule or algorithm           | signatures, endpoints                  |
+| Greenfield system or service        | context first, then structure           | the core rules of the domain        | the external surface: API, CLI, config |
+| Replacement or refactor             | structure, before → after               | what the new path does differently  | the changed declarations               |
+| Integration with an external system | behaviour, with the failure paths       | retry, timeout, idempotency         | messages, endpoints                    |
+| Data-model change                   | data; rollout                           | migration and backfill              | schema, migration steps                |
+| User-facing flow                    | state, process                          | transitions and validation          | screens, states, events                |
+| Infrastructure or deployment        | context; rollout                        | failover and rollback               | resources, configuration               |
+| Cross-cutting policy                | structure                               | the rule itself                     | the rule as an interface               |
+| Initiative (`initiative-design.md`) | context, structure, rollout             | the coexistence mechanism           | the shared contracts                   |

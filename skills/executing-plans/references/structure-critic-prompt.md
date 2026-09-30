@@ -11,7 +11,7 @@ the point.
 ## Inputs
 
 - **Milestone diff:** the changes between `<MILESTONE_BASE_SHA>` and `<HEAD_SHA>` (run `git diff <MILESTONE_BASE_SHA>..<HEAD_SHA>` to see it)
-- **Design contracts and structural rules:** `<DESIGN_DOC_PATH>`, sections Contracts and Guarantees
+- **Design:** `<DESIGN_DOC_PATH>`, sections Architecture (who owns what), Logic and Contracts (with their dependency rules)
 - **Gate output:** the result of the repo's gates from `.claude/gates.md` on the touched files:
 
 ```
@@ -27,7 +27,7 @@ A function sits at one level, and a reader should never have to change level mid
 - **Translation** — mapping, parsing, formatting between representations: request to command, row to entity, entity to response.
 - **Mechanism** — I/O, persistence, transport, caching, threading.
 
-They are the four circles of a clean architecture seen from inside one function. The plan names a level for every new method; hold the code to it.
+They are the four circles of a clean architecture seen from inside one function. The design says which component owns which rule; hold the code to both.
 
 ## What to look for
 

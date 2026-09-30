@@ -2,13 +2,16 @@
 
 Contents: rules for every view · context · structure · behaviour · state · data · process · rollout
 
-A view is a diagram plus the question it answers, stated in the sentence before it. Draw the views a reader needs to understand the problem and the solution —
-usually one to three — and none that doesn't change a reader's understanding. The prose after a view explains it; neither is self-sufficient. Mermaid, because
-GitHub, GitLab, Bitbucket and the JetBrains preview render it natively; never `dot` in a design — that notation is for skill files, read by the agent.
+A view is a diagram plus the question it answers, stated in the sentence before it. The first view of a design shows which parts of the system take part and who
+owns what — context or structure; a second view is drawn only when it answers a different question, and none that doesn't change a reader's understanding. The
+prose after a view explains it; neither is self-sufficient. Mermaid, because GitHub, GitLab, Bitbucket and the JetBrains preview render it natively; never `dot`
+in a design — that notation is for skill files, read by the agent.
 
 ## Rules for every view
 
 - One idea per diagram. If it needs more than ~15 nodes, split it into two views with two questions.
+- Nodes are what a teammate would draw on a whiteboard — modules, services, stores, external systems — never the classes of the diff. Edges say what flows or
+  who depends on whom, never a method call; a sequence of method names is a call chain, and belongs nowhere in a design.
 - Node labels are names, at most four words. Edge labels are verb phrases, at most three — never a bare `uses`.
 - No signatures, no `<br/>` paragraphs, no instance numbers, no styling directives.
 - A replacement shows before → after as two subgraphs of one structure view.
@@ -42,7 +45,8 @@ flowchart LR
 
 ## Behaviour — in what order does it happen?
 
-A request or event travelling through components over time, including the failure path. The view for integrations and for any flow that changes.
+A request or event travelling through components over time, including the failure path. The view for integrations, and for a flow whose order is the point — not
+a substitute for the structure view.
 
 ```mermaid
 sequenceDiagram

@@ -9,12 +9,11 @@ Implement the plan in the main session, milestone by milestone; subagents only w
 
 ## Before you start
 
-1. Read the plan file once. Extract: the goal, the changes and call-site tables, the behaviours to verify, the full list of milestones with their done-when
-   criteria. Read the design it links for the contracts and guarantees, and `references/structure-critic-prompt.md` once: its four levels are the words the
-   plan's altitude clauses use, and the critic holds your code to its checklist.
-2. Re-read it critically. Any milestone unclear? Any missing dependency? Any behaviour you can't see how to verify? Raise it with the user before any code is
-   written. The plan's *Stop and ask if* list stays binding throughout: when a condition hits mid-milestone, stop and ask — don't pick an interpretation and
-   build on it.
+1. Read the plan file once. Extract: the goal, the parts involved, and each milestone's *Builds*, *After it* and *Proven by*. Read the design it links for the
+   architecture, the logic and the contracts, and `references/structure-critic-prompt.md` once: the critic holds your code to its checklist.
+2. Re-read it critically. Any milestone unclear? Any behaviour you can't see how to verify? Raise it with the user before any code is written. The plan's
+   *Checked* lines are what its order rests on: when the code contradicts one, or a milestone cannot reach its *After it* state, stop and ask — don't pick an
+   interpretation and build on it.
 3. Confirm the workspace chosen during brainstorming (branch, path, `BASE_SHA` from the using-git-worktrees report). Invoke **using-git-worktrees** only if
    there is none yet — the user brought their own plan.
 4. One TODO per milestone.
@@ -27,8 +26,8 @@ messages, note it's partial, continue.
 
 ## Clean code defaults
 
-"Smallest thing that passes" means smallest *that sits where the plan put it*: each function at the one level the plan names for it, a rule in the unit that
-owns its data, translation in the adapter, no abstraction without a second caller. The critic holds the diff to the same checklist after green.
+"Smallest thing that passes" means smallest *that sits where the design put it*: each rule in the component the design's Logic names, each function at one
+level, translation in the adapter, no abstraction without a second caller. The critic holds the diff to the same checklist after green.
 
 ## The milestone loop
 
@@ -45,7 +44,7 @@ Run it. It must fail because the behaviour is missing, not from a typo or an imp
 
 ### Step 3 — Implement smallest thing (GREEN)
 
-Write the smallest code that makes the test pass, at the level and in the unit the plan names. No "while I'm here" features.
+Write the smallest code that makes the test pass, in the part the plan names. No "while I'm here" features.
 
 ### Step 4 — Run tests + nearby smoke
 
@@ -55,21 +54,21 @@ Run the milestone tests, a quick smoke of nearby behaviour, and the gates from `
 
 Re-read the milestone goal. Look at the diff for *only this milestone*. Answer:
 
-- **Did I meet the goal?** Each done-when criterion?
+- **Did I meet the goal?** Is the system in the milestone's *After it* state, with everything under *Proven by* green?
 - **Did I leave anything broken?** Any test elsewhere this change might have affected?
 - **Anything surprising worth noting?** Discovered helper, unexpected coupling, sharp edge?
 
-If something's off: fix in place before continuing. If the code had to differ from the design's Contracts or Design: edit the design so it stays true and add
-one `Deviation:` line under its Approach — the end-of-feature reviewer compares against the design as written. If something's a note for later: add it to your
-in-session `## Findings` block (see "Findings" below).
+If something's off: fix in place before continuing. If the code had to differ from the design's Architecture, Logic or Contracts: edit the design so it stays
+true and add one `Deviation:` line under its Approach — the end-of-feature reviewer compares against the design as written. If something's a note for later: add
+it to your in-session `## Findings` block (see "Findings" below).
 
-"Added X but didn't wire the call sites the plan named" is incomplete milestone work, not a finding — fix it now.
+"Added X but didn't move the callers the milestone covers" is incomplete milestone work, not a finding — fix it now.
 
 ### Step 6 — Structure critic
 
-Dispatch ONE fresh subagent with `references/structure-critic-prompt.md`: this milestone's diff, the design's Contracts with their structural rules, the gate
-output. It returns at most six findings by location with the move, or "none"; a "design issue" goes to the circuit-breaker. The model that wrote the long method
-doesn't see it in the same context; a fresh one with a checklist does.
+Dispatch ONE fresh subagent with `references/structure-critic-prompt.md`: this milestone's diff, the design's Architecture and Contracts, the gate output. It
+returns at most six findings by location with the move, or "none"; a "design issue" goes to the circuit-breaker. The model that wrote the long method doesn't
+see it in the same context; a fresh one with a checklist does.
 
 ### Step 7 — Refactor pass
 

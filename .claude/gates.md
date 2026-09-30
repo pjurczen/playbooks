@@ -17,7 +17,7 @@ the skill library.
 - One gate block per skill; Red Flags tables only on the six discipline skills, ≤ 4 rows; no per-skill announce lines; no `dot` graphs.
 - Frontmatter `name` matches the directory; description in "Use …, to …" shape.
 - Every `references/` link resolves; no brand names in skills.
-- The three example designs and the eval fixture carry the eleven design sections in order.
+- The three example designs and the eval fixture carry the core design sections (Problem, Diagnosis, Approach, Architecture), only known sections, in order.
 - No bold marker split by a line wrap; no merged headings or bullets.
 - Prose lines are at most 160 columns; tables, fences and frontmatter are exempt. `scripts/reflow-md.py` rewraps a file without changing its content.
 

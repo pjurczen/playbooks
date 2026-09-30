@@ -1,6 +1,6 @@
 # Example design — a replacement in an existing codebase
 
-Two overlapping mechanisms become one explicit service. A narrative a teammate can follow without the codebase, then the contracts the implementer must match.
+Two overlapping mechanisms become one explicit service: what replaces what, the decisions, the batch rule that gets built, the new surface and what it costs.
 Its plan is `../../writing-plans/references/example-plan-replacement.md`; together the two are complete, and nothing is said twice.
 
 ---
@@ -27,9 +27,8 @@ happens.
 ## Approach
 
 Replace both with one explicit, stateless domain service, ProduktRecalculationService, offering two operations: recalculate one already-loaded offer in memory,
-or recalculate an explicit list of offers as a batch. The batch orders discount-giving offers before discount-receiving ones — they are its input — and reuses
-the proven three-phase pattern: read all, compute in memory on worker threads, reconcile and finalise on the main thread. Batch callers name their offers
-instead of draining hidden request state. This design instantiates the rule recorded in the ADR above.
+or recalculate an explicit list of offers as a batch that may compute in parallel. Batch callers name their offers instead of draining hidden request state.
+This design instantiates the rule recorded in the ADR above.
 
 - Keep the deferral and route the discount loop through it — rejected. Its batching never materialises, since only two flows ever mark more than one offer, and
   it keeps the flush point hidden in request state. It would only become right if most callers genuinely batched, which none do.
@@ -43,9 +42,9 @@ instead of draining hidden request state. This design instantiates the rule reco
 - Discount-giving offers are recalculated first inside the batch, not by the caller — rejected caller ordering because every caller would repeat it.
 - The health-declaration flush stays synchronous at finalise — the lazy variant is an earlier, unimplemented ADR and out of scope here.
 
-## Design
+## Architecture
 
-What replaces what:
+What replaces what?
 
 ```mermaid
 flowchart LR
@@ -53,28 +52,45 @@ flowchart LR
     direction TB
     C1[Callers] -->|mark dirty| COL[Request-scoped collector]
     C1 -->|discount-giving finalised| LOOP[Sequential discount loop]
-    LOOP -->|flush per offer| GW1[ProduktGateway]
-    COL -->|request end| EVP[AngebotKvEventProcessor]
+    LOOP -->|flush per offer| GW1[Product gateway]
+    COL -->|request end| EVP[Event processor]
     EVP --> GW1
     EVP --> GD1[Health-declaration flush]
   end
   subgraph After
     direction TB
-    C2[Callers] -->|offer or list| SVC[ProduktRecalculationService]
-    SVC --> GW2[ProduktGateway]
-    SVC -->|finalise each| FIN[AngebotMutationService]
+    C2[Callers] -->|offer or list| SVC[Recalculation service]
+    SVC --> GW2[Product gateway]
+    SVC -->|finalise each| FIN[Mutation service]
     FIN --> GD2[Health-declaration flush]
   end
 ```
 
-- **ProduktRecalculationService** (new) — the only entry point for product recalculation. Single offer: calls the gateway on the loaded instance and reconciles
-  side effects; no reload. Batch: marks each offer's health declaration dirty, splits discount-giving from discount-receiving, recalculates the giving ones
-  first, then runs the three-phase parallel pass over the rest; every recalculated offer is finalised through the mutation service.
-- **AngebotMutationService** (changed) — finalise flushes health declarations directly. The event processor that hid the recalculation drain and the flush
-  behind one call is removed.
-- **RollenService** (changed) — on a discount-giving finalise it computes the dependent list and hands it to the batch. Its own loop is gone.
+- **Recalculation service** (new, `ProduktRecalculationService`) — the only entry point for product recalculation, and the only caller of the product gateway
+  for it. Stateless; holds nothing between calls.
+- **Mutation service** (changed) — finalise flushes health declarations directly. It does not know the recalculation service; the dependency runs the other way.
+- **Roles service** (changed) — on a discount-giving finalise it computes the dependent offers and hands the list to the batch. Its own loop is gone.
 - **Callers** (changed) — hand the service one loaded offer or an explicit list. Nobody marks anything dirty any more.
 - **Removed** — the request-scoped collector and its service, the event processor, the sequential loop.
+
+## Logic
+
+**The batch** — in the recalculation service. Discount-giving offers go first because their result is the input of the receiving ones; the three phases keep
+every database access on the main thread, which is what makes the middle one safe to parallelise.
+
+```
+recalculate(offers, editor):
+  unknown offer number              → fail the whole batch before anything is recalculated
+  mark each offer's health declaration dirty
+  giving, receiving = split by discount role
+  giving: recalculate one by one
+  receiving, in three phases:
+    read all                          main thread
+    compute in memory                 worker threads, no persistence
+    reconcile and finalise with editor  main thread, offer by offer
+```
+
+**Fan-out runs one way** — in the roles service. A changed discount-giving offer recalculates its receivers; a changed receiver recalculates only itself.
 
 ## Contracts
 
@@ -85,58 +101,21 @@ public class ProduktRecalculationService {
    /** One already-loaded offer, recalculated in memory on that instance. No reload, no flush. A gateway failure propagates and leaves the offer unmodified. */
    public void recalculate(Angebot angebot, ProduktCalculationContext context);
 
-   /*** Explicit batch. Marks each offer's health declaration dirty, recalculates discount-giving
-    * offers first, then the rest in a three-phase parallel pass; finalises every offer with the
-    * given editor. Empty list: no-op. An unknown offer number fails the whole batch before any
-    * recalculation starts.
-    */
+   /** Explicit batch, as under Logic; finalises every offer with the given editor. Empty list: no-op. */
    public void recalculateAngebote(List<AngebotNr> angebotNrn, Bearbeiter bearbeiter);
 }
 ```
 
-```java
-// AngebotMutationService — signatures unchanged; both overloads now flush health
-// declarations directly instead of going through AngebotKvEventProcessor.
-public ETag finalisiereAenderung(Bearbeiter bearbeiter, Angebot angebot);
-public ETag finalisiereAenderung(Angebot angebot);
-```
+Dependency rule: callers reach the product gateway for recalculation only through the recalculation service.
 
-```java
-// RollenService — signature unchanged; delegates to recalculateAngebote instead of looping.
-public void calculateRabattnehmendeAngebote(Angebot rabattgebendesAngebot, Bearbeiter bearbeiter);
-```
+## Consequences
 
-**Structural rules**
-
-- Only ProduktRecalculationService calls the product gateway for recalculation; callers never do.
-- The mutation service does not depend on the recalculation service; the dependency runs the other way.
-- The batch's three phases (split, compute, finalise) are separate functions under the map's limits.
-
-## Guarantees
-
-1. When any caller needs a product recalculation, then it goes through ProduktRecalculationService; no request-scoped state participates.
-2. When a batch holds discount-giving and discount-receiving offers, then the giving ones are recalculated first.
-3. When a discount-receiving offer is mutated, then its discount-giving offer is not recalculated; only the reverse fans out.
-4. When a batch recalculates an offer, then that offer is finalised and its health declaration synchronised exactly as today — the copy flow included.
-5. When a batch computes, then computation runs in memory on worker threads and persistence and finalisation happen on the main thread only.
-6. When the family-discount, copy, person-data and partner-data scenarios run, then premiums and roles equal today's.
-7. Must not change: health-declaration dirty marking, the customer-advisor gate and the synchronous external call at finalise.
-
-## Assumptions
-
-- Every caller that today marks a single offer dirty holds the loaded offer at that point, so the single-offer operation needs no lookup.
+- The discount path has never run in parallel in production. The three-phase split makes it safe in theory; the suite has to prove it.
+- Callers must now know when they hold a batch. Nothing quietly merges marks any more, so a caller that recalculates offers one by one pays for each.
+- Caching in the discount-giving lookup is not part of this; it is a recorded follow-up.
+- Unchanged: premiums and roles in the family-discount, copy, person-data and partner-data flows; health-declaration dirty marking and the customer-advisor
+  gate.
 
 ## Open questions
 
-- Should a batch skip an unknown offer number or fail as a whole? Contracts say fail-whole; the domain owner confirms by milestone 1.
-
-## Risks
-
-- The discount path has never run in parallel in production. The three-phase split is what makes it safe in theory; the suite has to prove it.
-- Callers must now know when they hold a batch; nothing quietly merges marks any more.
-
-## Out of scope
-
-- Lazy health-declaration synchronisation (an earlier, never-implemented ADR) — it stays synchronous.
-- The command model, the side-effect reconciler and the product gateway contract.
-- Caching in the discount-giving lookup (separate follow-up).
+- Should a batch skip an unknown offer number instead of failing as a whole? — domain owner; needed before the first caller moves to the service.
