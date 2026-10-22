@@ -1,0 +1,17 @@
+{
+  "id": "reportgen-unified-cache",
+  "docs": [
+    {"kind": "design", "path": "../fixtures/designs/2026-09-17-unified-cache.md"}
+  ],
+  "task": {
+    "request": "The two caches in reportgen — the memo and the file cache — keep getting out of sync and every module invalidates by hand. I want one cache with an explicit TTL. Design it.",
+    "brief": "Purpose: one cache, one place that decides validity; callers stop touching memo or file storage directly. Constraints: keep the CLI flags and the report output unchanged; the three existing tests must stay green; no new dependencies. Success: --fresh re-reads every source exactly once; a restart within the TTL serves sources from disk without a data read. Workspace: a new feature branch in the current checkout, no worktree. Ticket: RG-42. There is no existing initiative."
+  },
+  "facts": [
+    {"q": "Which single component decides whether a cached value is still valid?", "a": "One cache component (ReportCache); callers no longer touch the memo or the file storage directly."},
+    {"q": "What must stay unchanged by this work?", "a": "The CLI flags, the report output and the three existing tests; no new dependencies."},
+    {"q": "What does a --fresh run guarantee about source reads?", "a": "Every source is re-read exactly once."},
+    {"q": "What happens on a restart within the TTL?", "a": "Sources are served from disk without reading the data files."},
+    {"q": "How does a fresh run invalidate cached values?", "a": "By key prefix through the cache's single invalidation entry point, not by purging two stores."}
+  ]
+}

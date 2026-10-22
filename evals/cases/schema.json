@@ -1,0 +1,39 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "design eval case",
+  "description": "One design, or an initiative plus its slices, with the optional task, facts and transcript the checks can use. Paths are relative to this file.",
+  "type": "object",
+  "required": ["id", "docs"],
+  "additionalProperties": false,
+  "properties": {
+    "id": {"type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]*$", "description": "Path-safe case id; names the share/ and trace files."},
+    "docs": {
+      "type": "array", "minItems": 1,
+      "items": {
+        "type": "object", "required": ["kind", "path"], "additionalProperties": false,
+        "properties": {
+          "kind": {"enum": ["design", "initiative", "slice"]},
+          "path": {"type": "string"},
+          "initiative": {"type": "string", "description": "For a slice: the path of its initiative, which must also be in docs."}
+        }
+      }
+    },
+    "task": {
+      "type": "object", "additionalProperties": false,
+      "properties": {
+        "request": {"type": "string", "description": "The original ask, as the user phrased it."},
+        "brief": {"type": "string", "description": "The answers given to clarifying questions, or any steering."}
+      }
+    },
+    "facts": {
+      "type": "array",
+      "description": "Expected answers about what was decided, for the comprehension probe. Derived from the conversation, not from the document.",
+      "items": {"type": "object", "required": ["q", "a"], "additionalProperties": false, "properties": {"q": {"type": "string"}, "a": {"type": "string"}}}
+    },
+    "transcript": {"type": "string", "description": "Markdown export of the session that produced the design; used by `design facts`."},
+    "repo": {
+      "type": "object", "additionalProperties": false,
+      "properties": {"commit": {"type": "string", "description": "Recorded for the deferred claims-match-code check; never written to share/."}}
+    }
+  }
+}
