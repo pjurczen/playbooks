@@ -135,3 +135,18 @@ def test_run_case_judged_end_to_end(smoke_case, tmp_path):
     client2 = Client(model="test-model", backend=scripted(judge=judge), cache_dir=tmp_path / "c2")
     run_case(case, flow=flow, variant="baseline", rep=1, client=client2, metrics=["alternatives-with-reasons"], units_from=flow / "baseline")
     assert all(r.schema is JudgeOut for r in client2.backend.requests)
+
+
+def test_parallel_batches_give_the_same_checks(smoke_case, tmp_path):
+    case = load_case(smoke_case)
+
+    def judge(req):
+        ids = [l.split('"')[1] for l in req.question.splitlines() if l.startswith("<unit id=")]
+        return {"metric": req.question.split("`")[1], "checks": [{"unit": u, "verdict": "fail" if u.endswith("3") else "pass", "quote": DEC1 if u.endswith("3") else "", "reason": "r"} for u in ids]}
+
+    runs = []
+    for workers in (1, 4):
+        client = Client(model="test-model", backend=scripted(judge=judge))
+        res = run_case(case, flow=tmp_path / f"w{workers}", client=client, metrics=["paragraph-earns-place"], workers=workers)
+        runs.append(sorted((c.unit, c.verdict) for c in res.checks))
+    assert runs[0] == runs[1] and any(v == "fail" for _, v in runs[0])

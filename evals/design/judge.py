@@ -4,6 +4,7 @@ from __future__ import annotations
 import hashlib
 import json
 import re
+from concurrent.futures import ThreadPoolExecutor
 from dataclasses import dataclass, field
 from pathlib import Path
 
@@ -156,33 +157,45 @@ def _chunks(items: list, n: int) -> list[list]:
     return [items[i : i + n] for i in range(0, len(items), n)]
 
 
-def judge_rubric(client: Client, rubric: R.Rubric, doc: Doc, ex: Extraction, votes: int = 1) -> list[Check]:
+def _judge_batch(client: Client, rubric: R.Rubric, system: str, document: str, batch: list[tuple[str, str]], v: int, label: str) -> dict | CallFailed:
+    """One judge call for one batch (plus a targeted retry for units it left out). Returns unit -> CheckOut, or the failure."""
+    try:
+        out: JudgeOut = client.parse(JudgeOut, system=system, document=document, question=prompts.judge_question(rubric, batch),
+                                     effort="low", max_tokens=4000, label=label, tag=f"v{v}")
+    except CallFailed as e:
+        return e
+    got = {c.unit: c for c in out.checks}
+    missing = [u for u in batch if u[0] not in got]
+    if missing:
+        try:
+            out2 = client.parse(JudgeOut, system=system, document=document, question=prompts.judge_question(rubric, missing),
+                                effort="low", max_tokens=4000, label=label + "-missing", tag=f"v{v}")
+            got.update({c.unit: c for c in out2.checks if c.unit in {m[0] for m in missing}})
+        except CallFailed:
+            pass
+    return got
+
+
+def judge_rubric(client: Client, rubric: R.Rubric, doc: Doc, ex: Extraction, votes: int = 1, workers: int = 1) -> list[Check]:
     units = units_for(rubric, doc, ex)
     if not units:
         return []
     system = prompts.system_prompt()
     document = prompts.document_block(doc.name, prompts.marked_document(doc.text, ex))
     per_unit: dict[str, list[tuple[str, str, str]]] = {uid: [] for uid, _ in units}
+    batches = _chunks(units, rubric.batch)
     for v in range(max(1, votes)):
-        for b, batch in enumerate(_chunks(units, rubric.batch)):
-            label = f"{rubric.id}-{doc.id}-b{b}-v{v}"
-            got: dict = {}
-            try:
-                out: JudgeOut = client.parse(JudgeOut, system=system, document=document, question=prompts.judge_question(rubric, batch),
-                                             effort="low", max_tokens=4000, label=label, tag=f"v{v}")
-                got = {c.unit: c for c in out.checks}
-            except CallFailed as e:
+        jobs = [(b, batch, f"{rubric.id}-{doc.id}-b{b}-v{v}") for b, batch in enumerate(batches)]
+        if workers > 1 and len(jobs) > 1:
+            with ThreadPoolExecutor(max_workers=workers) as pool:
+                results = list(pool.map(lambda j: _judge_batch(client, rubric, system, document, j[1], v, j[2]), jobs))
+        else:
+            results = [_judge_batch(client, rubric, system, document, j[1], v, j[2]) for j in jobs]
+        for (b, batch, _label), got in zip(jobs, results):
+            if isinstance(got, CallFailed):
                 for uid, _ in batch:
-                    per_unit[uid].append(("unknown", "", f"no verdict: {e.failure_class}"))
+                    per_unit[uid].append(("unknown", "", f"no verdict: {got.failure_class}"))
                 continue
-            missing = [u for u in batch if u[0] not in got]
-            if missing:
-                try:
-                    out2 = client.parse(JudgeOut, system=system, document=document, question=prompts.judge_question(rubric, missing),
-                                        effort="low", max_tokens=4000, label=label + "-missing", tag=f"v{v}")
-                    got.update({c.unit: c for c in out2.checks if c.unit in {m[0] for m in missing}})
-                except CallFailed:
-                    pass
             for uid, _ in batch:
                 c = got.get(uid)
                 if c is None:
@@ -279,7 +292,7 @@ def reuse_units(units_from: Path, case_id: str, doc: Doc, ex: Extraction) -> boo
 
 def run_case(case: Case, *, flow: Path, variant: str = "baseline", rep: int = 0, mechanical_only: bool = False, metrics: list[str] | None = None,
              model: str | None = None, votes: int = 1, share_task: bool = False, units_from: Path | None = None, max_calls: int | None = None,
-             client: Client | None = None) -> RunResult:
+             client: Client | None = None, workers: int = 1) -> RunResult:
     docs = load_docs(case)
     ex = {d.id: mechanical.extract(d.text) for d in docs}
     vdir = flow / variant
@@ -305,7 +318,7 @@ def run_case(case: Case, *, flow: Path, variant: str = "baseline", rep: int = 0,
             if r.id in MECHANICAL and (mechanical_only or not judged or r.id not in CANDIDATES_ONLY):
                 checks.extend(MECHANICAL[r.id](d, ex[d.id], docs))
             if judged:
-                checks.extend(judge_rubric(client, r, d, ex[d.id], votes))
+                checks.extend(judge_rubric(client, r, d, ex[d.id], votes, workers=workers))
     scores = [score(r, checks) for r in chosen]
     covariates: dict = {}
     for d in docs:
@@ -314,7 +327,7 @@ def run_case(case: Case, *, flow: Path, variant: str = "baseline", rep: int = 0,
                 covariates[k] = covariates.get(k, 0) + v
     usage = client.usage.to_dict(client.model) if client else {"calls": 0, "cost_usd": 0.0, "in_tokens": 0, "out_tokens": 0}
     errors = list(client.errors) if client else []
-    meta = {"tool_version": __version__, "timestamp": output.now_iso(), "model": client.model if client else None, "votes": votes,
+    meta = {"tool_version": __version__, "timestamp": output.now_iso(), "model": client.model if client else None, "votes": votes, "workers": workers,
             "prompt_hash": prompt_hash(), "mechanical_only": mechanical_only, "units_from": str(units_from) if units_from else None,
             "cost_usd": usage.get("cost_usd") or 0.0, "in_tokens": usage.get("in_tokens", 0), "out_tokens": usage.get("out_tokens", 0),
             "calls": usage.get("calls", 0), "cached_calls": usage.get("cached_calls", 0), "replayed_cost_usd": usage.get("replayed_cost_usd"),

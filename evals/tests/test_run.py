@@ -59,3 +59,18 @@ def test_filter_reason_withholds_code_looking_text():
     for bad in ("see `memo.py`", "reportgen/sources.py reads files", "the load_source helper", "at line 42", "sources.py:12"):
         assert output.filter_reason(bad, doc)[1] is True
     assert output.filter_reason("the `ReportCache` owns validity", doc)[1] is False  # backticks around a name the document uses are fine
+
+
+def test_cli_dir_judges_every_document(tmp_path, capsys):
+    import shutil
+    from pathlib import Path as P
+    d = tmp_path / "designs"; d.mkdir()
+    src = P(__file__).resolve().parents[1] / "fixtures/designs/2026-09-17-unified-cache.md"
+    shutil.copy(src, d / "2026-01-01-a.md"); shutil.copy(src, d / "2026-01-02-b.md"); (d / "README.md").write_text("# not a design\n")
+    flow = str(tmp_path / "flow")
+    assert main(["judge", "--dir", str(d), "--flow", flow, "--mechanical-only"]) == 0
+    out = capsys.readouterr().out
+    assert "[1/2] a:" in out and "[2/2] b:" in out and "total cost this run" in out
+    assert len((P(flow) / "baseline" / "results.jsonl").read_text().splitlines()) == 2
+    assert main(["judge", "--dir", str(d), "--flow", flow, "--mechanical-only", "--skip-done"]) == 0
+    assert "already judged, skipped" in capsys.readouterr().out

@@ -19,6 +19,8 @@ Commands:
 uv run design judge cases/reportgen-unified-cache.json --flow private/runs/smoke --mechanical-only
 uv run design judge --doc path/to/design.md --flow <dir>                    # quick form, no case file
 uv run design judge --initiative init.md --doc slice-1.md --doc slice-2.md --flow <dir>
+uv run design judge --dir private/designs --flow private/runs/baseline [--votes 3] [--skip-done]   # every document, one case each
+                                                                      # --parallel 4 (default) runs a case's judge calls concurrently; cases run one after another
 uv run design digest <flow>                                                  # regenerate digest.md files from traces
 ```
 

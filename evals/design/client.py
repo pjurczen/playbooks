@@ -8,6 +8,7 @@ from __future__ import annotations
 import hashlib
 import json
 import os
+import threading
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any, Protocol
@@ -198,6 +199,11 @@ class Client:
     def __post_init__(self) -> None:
         if self.backend is None:
             self.backend = AnthropicBackend()
+        self._lock = threading.Lock()
+
+    def _account(self, usage: dict, cached: bool = False) -> None:
+        with self._lock:
+            self.usage.add(usage, cached=cached)
 
     def parse(self, schema: type[BaseModel], *, system: str, document: str, question: str, effort: str = "low", max_tokens: int = 4000,
               label: str = "call", attempts: int = 3, tag: str = "") -> BaseModel:
@@ -205,19 +211,21 @@ class Client:
         req = Request(schema, system, document, question, self.model, effort, max_tokens, nonce=tag)
         cached = self._cache_get(req)
         if cached is not None:
-            self.usage.add(cached.get("usage", {}), cached=True)
+            self._account(cached.get("usage", {}), cached=True)
             return schema.model_validate(cached["output"])
         last: CallFailed | None = None
         for attempt in range(1, attempts + 1):
-            if self.max_calls is not None and self.usage.calls - self.usage.cached_calls >= self.max_calls:
+            with self._lock:
+                over_budget = self.max_calls is not None and self.usage.calls - self.usage.cached_calls >= self.max_calls
+            if over_budget:
                 raise CallFailed("budget", f"--max-calls {self.max_calls} reached before {label}")
             req.nonce = tag if attempt == 1 else f"{tag}/attempt-{attempt}"
             try:
                 out, usage, _stop = self.backend.parse(req)
-                self.usage.add(usage)
+                self._account(usage)
                 parsed = schema.model_validate(out)
             except CallFailed as e:
-                self.usage.add(e.usage)
+                self._account(e.usage)
                 self._record_error(label, attempt, e.failure_class, str(e), e.usage)
                 last = e
                 continue
@@ -263,4 +271,5 @@ class Client:
             (self.raw_dir / f"{label}-a{attempt}.json").write_text(json.dumps(out, indent=2, ensure_ascii=False), encoding="utf-8")
 
     def _record_error(self, label: str, attempt: int, failure_class: str, message: str, usage: dict) -> None:
-        self.errors.append({"label": label, "attempt": attempt, "failure_class": failure_class, "message": message, "model": self.model, "usage": usage})
+        with self._lock:
+            self.errors.append({"label": label, "attempt": attempt, "failure_class": failure_class, "message": message, "model": self.model, "usage": usage})
