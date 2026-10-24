@@ -122,6 +122,28 @@ def _digest(a: argparse.Namespace) -> int:
     if n == 0:
         print("no traces found", file=sys.stderr)
         return 1
+    from .digest import render_flow
+
+    out = flow / "digest.md"
+    out.write_text(render_flow(flow), encoding="utf-8")
+    print(out)
+    return 0
+
+
+def _facts(a: argparse.Namespace) -> int:
+    from .client import Client, has_credentials
+    from .facts import draft_facts, write_draft
+
+    if not has_credentials():
+        print("no Anthropic credentials: put ANTHROPIC_API_KEY in evals/.env (see example.env)", file=sys.stderr)
+        return 2
+    case = load_case(a.case)
+    client = Client(**({"model": a.model} if a.model else {}))
+    facts = draft_facts(client, case, a.source)
+    path = write_draft(case, facts)
+    for f in facts:
+        print(f"- {f['q']}\n    {f['a']}")
+    print(f"\n{len(facts)} draft facts written to {path}; edit them, then move the good ones into the case's \"facts\" list")
     return 0
 
 
@@ -170,10 +192,11 @@ def build_parser() -> argparse.ArgumentParser:
     e.add_argument("--model")
     e.set_defaults(fn=_extract)
 
-    f = sub.add_parser("facts", help="draft fact questions from a transcript or brief")
+    f = sub.add_parser("facts", help="draft fact questions from a transcript or brief, for you to edit into the case")
     f.add_argument("case")
     f.add_argument("--from", dest="source", choices=["transcript", "brief"], default="transcript")
-    f.set_defaults(fn=_not_yet("facts"))
+    f.add_argument("--model")
+    f.set_defaults(fn=_facts)
     return p
 
 

@@ -14,7 +14,7 @@ from .client import CallFailed, Client
 from .extraction import LLM_KINDS, extract_llm
 from .mechanical import Extraction, Unit
 from .output import Check
-from .schemas import JudgeOut
+from .schemas import EquivalenceOut, JudgeOut, ReaderOut
 
 
 @dataclass
@@ -114,13 +114,20 @@ MECHANICAL = {
     "references-resolve": lambda doc, ex, docs: _references_resolve(doc, docs),
 }
 CANDIDATES_ONLY: set[str] = set()  # mechanical parts that only propose units for a judge
-JUDGE_PENDING = {"diagram-stands-alone"}  # judge items not implemented yet
+JUDGE_PENDING: set[str] = set()
 
 
 # ------------------------------------------------------------ judged rubrics
 
 def units_for(rubric: R.Rubric, doc: Doc, ex: Extraction) -> list[tuple[str, str]]:
-    """(unit id, text shown to the judge) for every unit this rubric asks about in this document."""
+    """(unit id, text shown to the judge) for every unit this rubric asks about in this document; items expand to unit:item."""
+    base = _base_units(rubric, doc, ex)
+    if rubric.items:
+        return [(f"{uid}:{item}", f"[{item}] {text}") for uid, text in base for item in rubric.items]
+    return base
+
+
+def _base_units(rubric: R.Rubric, doc: Doc, ex: Extraction) -> list[tuple[str, str]]:
     k = rubric.unit
     if k == "doc":
         return [("doc", "The whole document.")]
@@ -222,8 +229,36 @@ def judge_rubric(client: Client, rubric: R.Rubric, doc: Doc, ex: Extraction, vot
         else:
             final = "unverified" if any(x[0] == "unverified" for x in vs) else "unknown"
             pick = next((x for x in vs if x[0] == final), vs[0])
-        checks.append(Check(rubric.id, uid, doc.id, final, quote=pick[1], reason=pick[2], votes=[x[0] for x in vs], source="judge",
+        unit_id, item = (uid.split(":", 1) + [None])[:2] if rubric.items and ":" in uid else (uid, None)
+        checks.append(Check(rubric.id, unit_id, doc.id, final, quote=pick[1], reason=pick[2], item=item, votes=[x[0] for x in vs], source="judge",
                             category=pick[3] if final == "fail" else ""))
+    return checks
+
+
+def judge_facts(client: Client, rubric: R.Rubric, case: Case, docs: list[Doc], ex: dict[str, Extraction]) -> list[Check]:
+    """The comprehension probe: a reader answers the fact-sheet questions from the document(s) alone; a second call judges each answer."""
+    if not case.facts:
+        return []
+    system = prompts.system_prompt()
+    document = "\n\n".join(prompts.document_block(d.name, prompts.marked_document(d.text, ex[d.id])) for d in docs)
+    try:
+        reader: ReaderOut = client.parse(ReaderOut, system=system, document=document, question=prompts.reader_question(case.facts),
+                                         effort="low", max_tokens=4000, label="facts-reader")
+    except CallFailed as e:
+        return [Check(rubric.id, f"fact-{i:02d}", docs[0].id, "unknown", reason=f"no answers: {e.failure_class}", source="judge") for i in range(1, len(case.facts) + 1)]
+    answers = [a.answer for a in reader.answers]
+    checks = []
+    for i, f in enumerate(case.facts, 1):
+        given = answers[i - 1] if i - 1 < len(answers) else "not stated"
+        block = prompts.equivalence_block(f["q"], f["a"], given)
+        try:
+            eq: EquivalenceOut = client.parse(EquivalenceOut, system=system, document=block, question=prompts.equivalence_question(),
+                                              effort="low", max_tokens=600, label=f"facts-eq-{i:02d}")
+            verdict, why = ("pass" if eq.equivalent else "fail"), eq.reason
+        except CallFailed as e:
+            verdict, why = "unknown", f"no judgement: {e.failure_class}"
+        reason, _ = output.filter_reason(f"Q: {f['q']} | reader: {given} | {why}", "\n".join(d.text for d in docs) + " " + f["q"] + " " + f["a"])
+        checks.append(Check(rubric.id, f"fact-{i:02d}", docs[0].id, verdict, reason=reason, source="judge"))
     return checks
 
 
@@ -343,6 +378,8 @@ def run_case(case: Case, *, flow: Path, variant: str = "baseline", rep: int = 0,
                 checks.extend(MECHANICAL[r.id](d, ex[d.id], docs))
             if judged:
                 checks.extend(judge_rubric(client, r, d, ex[d.id], votes, workers=workers))
+        if not mechanical_only and "facts" in r.needs:
+            checks.extend(judge_facts(client, r, case, docs, ex))
     for r in chosen:
         if r.derived_from and not mechanical_only:
             checks.extend(derive(r, checks))

@@ -22,6 +22,8 @@ uv run design judge --initiative init.md --doc slice-1.md --doc slice-2.md --flo
 uv run design judge --dir private/designs --flow private/runs/baseline [--votes 3] [--skip-done]   # every document, one case each
                                                                       # --parallel 4 (default) runs a case's judge calls concurrently; cases run one after another
 uv run design digest <flow>                                                  # regenerate digest.md files from traces
+uv run design facts private/cases/<case>.json [--from brief]                 # draft a fact sheet for the comprehension probe; edit, then add to the case
+uv run design extract <case.json> --out <dir>                               # units.json and claims.md without judging
 ```
 
 A run writes into `<flow>/<variant>/` (put flows under `private/runs/`, which is git-ignored): `results.jsonl` (one row per case and rep, hillclimb-compatible),
@@ -31,4 +33,5 @@ units, the checks with their quotes, and `digest.md`. Absolute paths, the commit
 Internal documents and their cases go in `private/` (git-ignored except its README); the schema is `cases/schema.json` and `cases/reportgen-unified-cache.json`
 is the public smoke case on the reportgen fixture. The older harness (`evals.json`, `grade.py`, `run-setup.sh`, `fixtures/`, `results/`) is unchanged.
 
-Status: milestone 1 (mechanical metrics, layout, notebook shell). Judged metrics, extraction, facts and the aggregate digest follow.
+Rubrics live in `design/rubrics/` (one file per metric, sources in the frontmatter); prompt text in `design/prompts/`. Judge model, votes and concurrency are
+flags; the per-run cache under `private/` makes a repeated run free.

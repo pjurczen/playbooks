@@ -165,3 +165,36 @@ def test_header_line_and_short_units(doc_and_ex):
     # a one-word unit cannot carry a four-word quote; the verdict stands without one
     assert _verify(rubric, doc, "fail", "", "placeholder section", "None.") == ("fail", "", "placeholder section")
     assert _verify(rubric, doc, "fail", "", "no quote", "a longer unit that should have quoted something") [0] == "unverified"
+
+
+def test_every_rubric_runs_end_to_end_with_a_scripted_judge(smoke_case, tmp_path):
+    """All shipped rubrics produce checks on the smoke case: doc-level, per-unit, items, derived and the comprehension probe."""
+    from design.schemas import EquivalenceOut, ReaderOut
+    case = load_case(smoke_case)
+
+    def handler(req):
+        if req.schema is ExtractionOut:
+            return extraction_payload()
+        if req.schema is ReaderOut:
+            return {"answers": [{"question": f["q"], "answer": f["a"]} for f in case.facts]}
+        if req.schema is EquivalenceOut:
+            return {"equivalent": True, "reason": "same fact"}
+        ids = [l.split('"')[1] for l in req.question.splitlines() if l.startswith("<unit id=")]
+        metric = req.question.split("`")[1]
+        return {"metric": metric, "checks": [{"unit": u, "verdict": "pass", "quote": ALT, "reason": "ok", "category": ""} for u in ids]}
+
+    client = Client(model="test-model", backend=ScriptedBackend(handler), cache_dir=tmp_path / "c")
+    res = run_case(case, flow=tmp_path / "flow", client=client)
+    ids = {s["id"]: s for s in res.scores}
+    expected = {"problem-before-solution", "non-goals", "downsides", "decision-up-front", "boundary-visible", "open-questions-separated",
+                "describes-coexistence", "code-justified", "overview-altitude", "detail-justified", "component-responsibility",
+                "headings-carry-meaning", "structure-drawn", "diagram-earns-place", "prose-adds-to-diagram", "diagram-stands-alone",
+                "transmits-facts", "paragraph-earns-place", "alternatives-with-reasons", "decision-has-reason", "no-fact-twice",
+                "wall-of-text", "stray-hedges"}
+    assert expected <= set(ids), expected - set(ids)
+    assert "success-criterion" not in ids  # optional: only when named
+    assert ids["transmits-facts"]["total"] == len(case.facts) and ids["transmits-facts"]["value"] == 1.0
+    assert ids["code-justified"]["total"] == 3 and ids["headings-carry-meaning"]["total"] >= 9
+    items = {c.item for c in res.checks if c.metric == "diagram-stands-alone" and c.source == "judge"}
+    assert items == {"kinds-clear", "standalone", "key"}
+    assert all(s["value"] is not None for s in res.scores if s["scoring"] != "count"), [s["id"] for s in res.scores if s["value"] is None]

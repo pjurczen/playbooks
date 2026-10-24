@@ -84,3 +84,122 @@ def render_from_trace(trace_path: Path) -> str:
             if isinstance(v, (int, float)):
                 cov[k] = cov.get(k, 0) + v
     return render(t["case_id"], t["variant"], t["rep"], t["docs"], t["scores"], t["checks"], cov, t.get("meta", {}))
+
+
+# ------------------------------------------------------------ the flow digest: all cases, all variants
+
+def _load_rows(vdir: Path) -> list[dict]:
+    f = vdir / "results.jsonl"
+    return [json.loads(ln) for ln in f.read_text(encoding="utf-8").splitlines() if ln.strip()] if f.is_file() else []
+
+
+def _load_checks(vdir: Path) -> list[dict]:
+    out = []
+    for t in sorted((vdir / "traces").glob("*.json")) if (vdir / "traces").is_dir() else []:
+        tr = json.loads(t.read_text(encoding="utf-8"))
+        for c in tr["checks"]:
+            out.append({**c, "case": tr["case_id"], "rep": tr["rep"]})
+    return out
+
+
+def _scorings(vdir: Path) -> dict[str, dict]:
+    kinds: dict[str, dict] = {}
+    for t in sorted((vdir / "traces").glob("*.json")) if (vdir / "traces").is_dir() else []:
+        for sc in json.loads(t.read_text(encoding="utf-8"))["scores"]:
+            kinds.setdefault(sc["id"], {"name": sc["name"], "scoring": sc["scoring"], "direction": sc["direction"]})
+    return kinds
+
+
+def _mean(xs: list[float]) -> float | None:
+    xs = [x for x in xs if x is not None]
+    return sum(xs) / len(xs) if xs else None
+
+
+def render_flow(flow: Path) -> str:
+    """digest.md for a whole flow: metric by case per variant, variant means against the baseline with its spread, failure shares by category."""
+    flow = Path(flow)
+    variants = sorted(p.name for p in flow.iterdir() if (p / "results.jsonl").is_file())
+    variants.sort(key=lambda v: (v != "baseline", v))
+    out = [f"# {flow.name}: all documents, all variants", ""]
+    if not variants:
+        return "\n".join(out + ["No runs yet."])
+    kinds: dict[str, dict] = {}
+    per_variant: dict[str, dict[str, dict[str, list[float]]]] = {}  # variant -> metric -> case -> values over reps
+    for v in variants:
+        kinds.update({k: d for k, d in _scorings(flow / v).items() if k not in kinds})
+        table: dict[str, dict[str, list[float]]] = {}
+        for r in _load_rows(flow / v):
+            for m, val in r["grade"].items():
+                table.setdefault(m, {}).setdefault(r["prompt_id"], []).append(val)
+        per_variant[v] = table
+    metrics = sorted(kinds)
+
+    def show(m: str, v: float | None) -> str:
+        if v is None:
+            return "–"
+        return str(int(round(v))) if kinds.get(m, {}).get("scoring") == "count" else f"{v:.2f}"
+
+    for v in variants:
+        cases = sorted({c for m in per_variant[v] for c in per_variant[v][m]})
+        reps = max((len(vals) for m in per_variant[v] for vals in per_variant[v][m].values()), default=1)
+        out += [f"## {v}: metric by document" + (f" (mean over {reps} reps)" if reps > 1 else ""), "",
+                "| metric | " + " | ".join(cases) + " |", "|---|" + "---|" * len(cases)]
+        for m in metrics:
+            row = per_variant[v].get(m, {})
+            out.append(f"| `{m}` | " + " | ".join(show(m, _mean(row.get(c, []))) for c in cases) + " |")
+        out.append("")
+
+    base = variants[0]
+    out += [f"## Variants against `{base}`", "",
+            "Mean over documents. The spread is the min to max of the baseline's per-document means across its reps; a variant counts as moved only when its mean lies outside that spread, and with a single baseline rep there is no noise floor.", "",
+            "| metric | direction | " + " | ".join(variants) + " | spread | moved |", "|---|---|" + "---|" * len(variants) + "---|---|"]
+    for m in metrics:
+        means = []
+        for v in variants:
+            means.append(_mean([_mean(vals) for vals in per_variant[v].get(m, {}).values()]))
+        base_rows = per_variant[base].get(m, {})
+        rep_means = []
+        nreps = max((len(vals) for vals in base_rows.values()), default=0)
+        if nreps > 1:
+            for i in range(nreps):
+                rep_means.append(_mean([vals[i] for vals in base_rows.values() if len(vals) > i]))
+        spread = (min(rep_means), max(rep_means)) if len(rep_means) > 1 else None
+        moved = []
+        for v, mv in zip(variants[1:], means[1:]):
+            if mv is None or means[0] is None:
+                moved.append("–")
+            elif spread is None:
+                moved.append("no noise floor")
+            else:
+                better = (mv > means[0]) == (kinds[m]["direction"] == "higher")
+                moved.append(("better" if better else "worse") if (mv < spread[0] or mv > spread[1]) else "within spread")
+        out.append(f"| `{m}` | {kinds[m]['direction']} | " + " | ".join(show(m, x) for x in means) + " | "
+                   + (f"{show(m, spread[0])}–{show(m, spread[1])}" if spread else "–") + " | " + (", ".join(moved) if moved else "–") + " |")
+    out.append("")
+
+    out += ["## What fails most", ""]
+    for v in variants:
+        checks = _load_checks(flow / v)
+        if not checks:
+            continue
+        out += [f"### {v}", "", "| metric | fail | unknown | pass | total | fail share | categories |", "|---|---|---|---|---|---|---|"]
+        by: dict[str, list[dict]] = {}
+        for c in checks:
+            by.setdefault(c["metric"], []).append(c)
+        rows = []
+        for m, cs in by.items():
+            fail = sum(1 for c in cs if c["verdict"] == "fail")
+            unk = sum(1 for c in cs if c["verdict"] in ("unknown", "unverified"))
+            pas = sum(1 for c in cs if c["verdict"] == "pass")
+            total = len(cs)
+            share = None if kinds.get(m, {}).get("scoring") == "count" else (fail / total if total else None)
+            cats: dict[str, int] = {}
+            for c in cs:
+                if c["verdict"] == "fail" and c.get("category"):
+                    cats[c["category"]] = cats.get(c["category"], 0) + 1
+            rows.append((share if share is not None else -1, m, fail, unk, pas, total, share, cats))
+        for _, m, fail, unk, pas, total, share, cats in sorted(rows, reverse=True):
+            out.append(f"| `{m}` | {fail} | {unk} | {pas} | {total} | {'–' if share is None else f'{share:.2f}'} | "
+                       + (" · ".join(f"{k} {n}" for k, n in sorted(cats.items(), key=lambda kv: -kv[1])) or "") + " |")
+        out.append("")
+    return "\n".join(out)

@@ -55,3 +55,24 @@ def judge_question(rubric: Rubric, units: list[tuple[str, str]]) -> str:
     if rubric.categories:
         categories = "For every fail, set category to exactly one of: " + ", ".join(rubric.categories) + ". For a pass or unknown leave category empty."
     return fill(template("judge-question"), metric=rubric.id, name=rubric.name, rubric=rubric.body, units=listing, categories=categories)
+
+
+def reader_question(facts: list[dict]) -> str:
+    listing = "\n".join(f"{i}. {f['q']}" for i, f in enumerate(facts, 1))
+    return fill(template("reader"), questions=listing)
+
+
+def equivalence_block(question: str, expected: str, given: str) -> str:
+    return fill(template("equivalence-block"), question=question, expected=expected, given=given)
+
+
+def equivalence_question() -> str:
+    return template("equivalence")
+
+
+def facts_question() -> str:
+    return template("facts")
+
+
+def record_block(name: str, text: str) -> str:
+    return fill(template("document"), name=name, document=text)
