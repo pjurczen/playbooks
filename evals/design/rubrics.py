@@ -8,7 +8,7 @@ from pathlib import Path
 
 UNITS = ("doc", "paragraph", "heading", "code_block", "diagram", "duplicate_pair", "overview_sentence", "decision", "component",
          "claim", "detailed_part", "relational_passage", "fact", "slice")
-NEEDS = ("mechanical", "extraction", "facts", "set", "judge")
+NEEDS = ("mechanical", "extraction", "facts", "set", "judge", "derived")
 
 
 @dataclass
@@ -24,6 +24,11 @@ class Rubric:
     batch: int = 10
     sources: list[str] = field(default_factory=list)
     optional: bool = False
+    scope: str = ""  # for decision units: "key" restricts the rubric to key decisions
+    categories: list[str] = field(default_factory=list)  # a judge labels every fail with one of these
+    derived_from: str = ""  # computed from another rubric's checks instead of its own judge calls
+    category: str = ""  # with derived_from: the category of the source checks that count as fails here
+    items: list[str] = field(default_factory=list)  # judge items per unit (unit:item)
     body: str = ""
     path: Path | None = None
 
@@ -85,7 +90,9 @@ def _from_file(path: Path) -> Rubric:
     return Rubric(
         id=meta["id"], name=meta["name"], unit=meta["unit"], scoring=meta["scoring"], direction=meta.get("direction", "higher"),
         applies_to=meta.get("applies_to", ["design", "initiative", "slice"]), needs=needs, quote_required=meta.get("quote_required", "both"),
-        batch=int(meta.get("batch", 10)), sources=meta.get("sources", []), optional=bool(meta.get("optional", False)), body=body, path=path,
+        batch=int(meta.get("batch", 10)), sources=meta.get("sources", []), optional=bool(meta.get("optional", False)),
+        scope=str(meta.get("scope", "")), categories=list(meta.get("categories", [])), derived_from=str(meta.get("derived_from", "")),
+        category=str(meta.get("category", "")), items=list(meta.get("items", [])), body=body, path=path,
     )
 
 
@@ -115,6 +122,8 @@ def select(rubrics: dict[str, Rubric], metrics: list[str] | None, *, mechanical_
         if not metrics and r.optional:
             continue
         if mechanical_only and (r.id not in (mechanical_ids or set()) if mechanical_ids is not None else not r.has_mechanical):
+            continue
+        if r.derived_from and (mechanical_only or (metrics and r.derived_from not in metrics)):
             continue
         if "facts" in r.needs and not has_facts:
             continue

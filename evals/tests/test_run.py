@@ -23,7 +23,7 @@ def test_mechanical_run_writes_layout_and_keeps_paths_private(smoke_case, tmp_pa
     row = json.loads((v / "results.jsonl").read_text().splitlines()[-1])
     assert row["prompt_id"] == case.id and "wall-of-text" in row["grade"] and row["perf"]["diagrams"] == 1
     ids = {s["id"] for s in res.scores}
-    assert {"wall-of-text", "stray-hedges", "no-fact-twice", "diagram-stands-alone"} <= ids
+    assert {"wall-of-text", "stray-hedges", "diagram-stands-alone"} <= ids and "no-fact-twice" not in ids  # derived: needs the judge
     assert "references-resolve" not in ids  # single-doc case
 
 

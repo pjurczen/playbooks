@@ -51,4 +51,7 @@ def extraction_question() -> str:
 def judge_question(rubric: Rubric, units: list[tuple[str, str]]) -> str:
     """units: (id, text shown to the judge)."""
     listing = "\n\n".join(f"<unit id=\"{uid}\">\n{txt}\n</unit>" for uid, txt in units)
-    return fill(template("judge-question"), metric=rubric.id, name=rubric.name, rubric=rubric.body, units=listing)
+    categories = ""
+    if rubric.categories:
+        categories = "For every fail, set category to exactly one of: " + ", ".join(rubric.categories) + ". For a pass or unknown leave category empty."
+    return fill(template("judge-question"), metric=rubric.id, name=rubric.name, rubric=rubric.body, units=listing, categories=categories)

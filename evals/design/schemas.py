@@ -15,6 +15,12 @@ class Quoted(_Strict):
     summary: str
 
 
+class DecisionOut(_Strict):
+    quote: str
+    summary: str
+    scope: Literal["key", "minor"]
+
+
 class ComponentOut(_Strict):
     name: str
     status: Literal["new", "changed", "removed", "existing"]
@@ -37,7 +43,7 @@ class Span(_Strict):
 
 
 class ExtractionOut(_Strict):
-    key_decisions: list[Quoted]
+    key_decisions: list[DecisionOut]
     components: list[ComponentOut]
     system_claims: list[Quoted]
     relational_passages: list[RelationalOut]
@@ -51,6 +57,7 @@ class CheckOut(_Strict):
     verdict: Literal["pass", "fail", "unknown"]
     quote: str
     reason: str
+    category: str
 
 
 class JudgeOut(_Strict):

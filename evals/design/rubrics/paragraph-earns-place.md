@@ -7,6 +7,7 @@ direction: higher
 needs: [mechanical, judge]
 quote_required: fail
 batch: 10
+categories: [repeat, stale, placeholder, lead-in, code-level, padding, other]
 sources:
   - Mayer 2021, coherence principle (exclude extraneous material; median d 0.86)
   - Aghajani et al. 2020 (superfluous content, conciseness)
@@ -29,3 +30,7 @@ Unknown when you cannot tell whether the fact is available elsewhere without see
 
 Evidence: for every fail, quote the other passage of the document that already carries the same content; when the problem is code-level description or padding,
 quote the sentence that shows it. A pass needs no quote.
+
+Category for every fail: repeat (the content is stated elsewhere on the page), stale (it describes something the document elsewhere says was removed or
+changed), placeholder (an empty section, "None.", "TBD"), lead-in (it only announces what follows), code-level (it describes how the code works at a level a
+reader gets by opening it), padding (it restates the point just made or adds words without a fact), other.

@@ -50,8 +50,19 @@ def render(case_id: str, variant: str, rep: int, docs: list[dict], scores: list[
     for mid, cs in by_metric.items():
         out.append(f"### {names.get(mid, mid)} (`{mid}`)")
         out.append("")
+        if all(c.get("source") == "derived" for c in cs):
+            out.append(f"{len(cs)} paragraph(s): " + ", ".join(c["unit"] for c in cs) + ". Details under the metric these are derived from.")
+            out.append("")
+            continue
+        cats = {}
         for c in cs:
-            tag = f"[{c['unit']}{':' + c['item'] if c.get('item') else ''}] {c['verdict']}"
+            if c.get("category"):
+                cats[c["category"]] = cats.get(c["category"], 0) + 1
+        if cats:
+            out.append("By category: " + " · ".join(f"{k} {v}" for k, v in sorted(cats.items(), key=lambda kv: -kv[1])))
+            out.append("")
+        for c in cs:
+            tag = f"[{c['unit']}{':' + c['item'] if c.get('item') else ''}] {c['verdict']}" + (f" ({c['category']})" if c.get("category") else "")
             line = f"- {tag}"
             if c.get("quote"):
                 line += f' — "{_clip(c["quote"])}"'

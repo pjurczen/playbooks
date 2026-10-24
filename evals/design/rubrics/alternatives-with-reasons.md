@@ -7,6 +7,7 @@ direction: higher
 needs: [extraction, judge]
 quote_required: pass
 batch: 5
+scope: key
 sources:
   - Ubl, Design Docs at Google (alternatives considered is one of the most important sections)
   - Rust RFC template (why is this design the best in the space of possible designs)
@@ -15,7 +16,8 @@ sources:
   - SEI Views and Beyond rule 5 (record the alternatives you rejected and why)
 ---
 
-You are given key decisions found in the document, each with the sentence where the document makes it.
+You are given the key decisions found in the document (choices that change a boundary, a contract or a mechanism others depend on, or carry a cost a reviewer
+would weigh), each with the sentence where the document makes it. Minor choices are judged elsewhere.
 
 For each decision, decide whether the document names at least one other option that could really have been taken for this decision, including doing nothing or
 keeping things as they are, and gives the reason that option lost.

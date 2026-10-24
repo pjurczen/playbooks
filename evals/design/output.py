@@ -29,7 +29,8 @@ class Check:
     reason: str = ""
     item: str | None = None
     votes: list[str] = field(default_factory=list)
-    source: str = "mechanical"  # mechanical | judge
+    source: str = "mechanical"  # mechanical | judge | derived
+    category: str = ""
 
     def to_dict(self) -> dict:
         return asdict(self)

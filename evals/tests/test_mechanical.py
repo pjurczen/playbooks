@@ -39,7 +39,7 @@ def test_blocks_and_ids():
     ex = M.extract(SAMPLE)
     kinds = [(u.id, u.kind, u.meta.get("form")) for u in ex.units if u.kind != "duplicate_pair"]
     assert kinds[0] == ("h01", "heading", None)
-    assert ("p01", "paragraph", "paragraph") in kinds
+    assert ("p01", "paragraph", "header") in kinds  # the Status line
     assert ("p03", "paragraph", "list_item") in kinds
     assert ("p05", "paragraph", "table") in kinds and ex.get("p05").meta["rows"] == 2
     assert ex.get("p06").meta.get("caption_for") == "g01"  # "What replaces what?" introduces the diagram

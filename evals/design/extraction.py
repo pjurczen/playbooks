@@ -77,6 +77,7 @@ def extract_llm(client: Client, doc: Doc, ex: Extraction, *, max_attempts: int =
     ex.spans["open_questions"] = _valid_paragraphs(ex, data["open_questions_span"]["paragraphs"])
     ex.covariates.update({
         "decisions": sum(1 for u in ex.units if u.kind == "decision"),
+        "key_decisions": sum(1 for u in ex.units if u.kind == "decision" and u.meta.get("scope") == "key"),
         "components": sum(1 for u in ex.units if u.kind == "component"),
         "claims": sum(1 for u in ex.units if u.kind == "claim"),
     })

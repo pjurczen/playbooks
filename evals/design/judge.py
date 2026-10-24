@@ -110,11 +110,10 @@ def _references_resolve(doc: Doc, docs: list[Doc]) -> list[Check]:
 MECHANICAL = {
     "wall-of-text": lambda doc, ex, docs: _wall_of_text(doc, ex),
     "stray-hedges": lambda doc, ex, docs: _stray_hedges(doc, ex),
-    "no-fact-twice": lambda doc, ex, docs: _no_fact_twice_candidates(doc, ex),
     "diagram-stands-alone": lambda doc, ex, docs: _diagram_mechanical(doc, ex),
     "references-resolve": lambda doc, ex, docs: _references_resolve(doc, docs),
 }
-CANDIDATES_ONLY = {"no-fact-twice"}  # the mechanical part only proposes units; the judge decides
+CANDIDATES_ONLY: set[str] = set()  # mechanical parts that only propose units for a judge
 JUDGE_PENDING = {"diagram-stands-alone"}  # judge items not implemented yet
 
 
@@ -126,13 +125,16 @@ def units_for(rubric: R.Rubric, doc: Doc, ex: Extraction) -> list[tuple[str, str
     if k == "doc":
         return [("doc", "The whole document.")]
     if k == "paragraph":
-        return [(u.id, u.text) for u in ex.by_kind(k) if not u.meta.get("caption_for")]
+        return [(u.id, u.text) for u in ex.by_kind(k) if not u.meta.get("caption_for") and u.meta.get("form") != "header"]
     if k in ("heading", "code_block", "diagram"):
         return [(u.id, u.text) for u in ex.by_kind(k)]
     if k == "duplicate_pair":
         return [(u.id, f"A ({u.meta['a']['unit']}): {u.meta['a']['text']}\nB ({u.meta['b']['unit']}): {u.meta['b']['text']}") for u in ex.by_kind(k)]
     if k == "decision":
-        return [(u.id, f"{u.meta.get('summary', '')}\nWhere the document makes it: \"{u.text}\"") for u in ex.by_kind(k)]
+        decs = ex.by_kind(k)
+        if rubric.scope:
+            decs = [u for u in decs if u.meta.get("scope", "key") == rubric.scope]
+        return [(u.id, f"{u.meta.get('summary', '')} [{u.meta.get('scope', 'key')}]\nWhere the document makes it: \"{u.text}\"") for u in decs]
     if k == "component":
         return [(u.id, f"{u.meta.get('name', '')} ({u.meta.get('status', '')}): \"{u.text}\"") for u in ex.by_kind(k)]
     if k == "claim":
@@ -182,7 +184,7 @@ def judge_rubric(client: Client, rubric: R.Rubric, doc: Doc, ex: Extraction, vot
         return []
     system = prompts.system_prompt()
     document = prompts.document_block(doc.name, prompts.marked_document(doc.text, ex))
-    per_unit: dict[str, list[tuple[str, str, str]]] = {uid: [] for uid, _ in units}
+    per_unit: dict[str, list[tuple[str, str, str, str]]] = {uid: [] for uid, _ in units}
     batches = _chunks(units, rubric.batch)
     for v in range(max(1, votes)):
         jobs = [(b, batch, f"{rubric.id}-{doc.id}-b{b}-v{v}") for b, batch in enumerate(batches)]
@@ -194,14 +196,18 @@ def judge_rubric(client: Client, rubric: R.Rubric, doc: Doc, ex: Extraction, vot
         for (b, batch, _label), got in zip(jobs, results):
             if isinstance(got, CallFailed):
                 for uid, _ in batch:
-                    per_unit[uid].append(("unknown", "", f"no verdict: {got.failure_class}"))
+                    per_unit[uid].append(("unknown", "", f"no verdict: {got.failure_class}", ""))
                 continue
-            for uid, _ in batch:
+            for uid, utext in batch:
                 c = got.get(uid)
                 if c is None:
-                    per_unit[uid].append(("unknown", "", "no verdict returned"))
+                    per_unit[uid].append(("unknown", "", "no verdict returned", ""))
                     continue
-                per_unit[uid].append(_verify(rubric, doc, c.verdict, c.quote.strip(), c.reason.strip()))
+                verdict, quote, reason = _verify(rubric, doc, c.verdict, c.quote.strip(), c.reason.strip(), utext)
+                category = c.category.strip().lower() if rubric.categories else ""
+                if category and category not in rubric.categories:
+                    category = "other"
+                per_unit[uid].append((verdict, quote, reason, category if verdict == "fail" else ""))
     checks = []
     for uid, vs in per_unit.items():
         decided = [x for x in vs if x[0] in ("pass", "fail")]
@@ -212,18 +218,36 @@ def judge_rubric(client: Client, rubric: R.Rubric, doc: Doc, ex: Extraction, vot
         elif f > p:
             final, pick = "fail", next(x for x in decided if x[0] == "fail")
         elif decided:
-            final, pick = "unknown", (decided[0][0], decided[0][1], f"votes split {p}-{f}: " + decided[0][2])
+            final, pick = "unknown", (decided[0][0], decided[0][1], f"votes split {p}-{f}: " + decided[0][2], "")
         else:
             final = "unverified" if any(x[0] == "unverified" for x in vs) else "unknown"
             pick = next((x for x in vs if x[0] == final), vs[0])
-        checks.append(Check(rubric.id, uid, doc.id, final, quote=pick[1], reason=pick[2], votes=[x[0] for x in vs], source="judge"))
+        checks.append(Check(rubric.id, uid, doc.id, final, quote=pick[1], reason=pick[2], votes=[x[0] for x in vs], source="judge",
+                            category=pick[3] if final == "fail" else ""))
     return checks
 
 
-def _verify(rubric: R.Rubric, doc: Doc, verdict: str, quote: str, reason: str) -> tuple[str, str, str]:
+def derive(rubric: R.Rubric, checks: list[Check]) -> list[Check]:
+    """A derived rubric re-reads another rubric's checks: a fail there with the named category is a fail here, the rest pass through."""
+    out = []
+    for c in checks:
+        if c.metric != rubric.derived_from:
+            continue
+        if c.verdict == "fail":
+            v = "fail" if c.category == rubric.category else "pass"
+        else:
+            v = c.verdict
+        out.append(Check(rubric.id, c.unit, c.doc, v, quote=c.quote if v == "fail" else "", reason=c.reason if v == "fail" else "",
+                         votes=list(c.votes), source="derived", category=c.category if v == "fail" else ""))
+    return out
+
+
+def _verify(rubric: R.Rubric, doc: Doc, verdict: str, quote: str, reason: str, unit_text: str = "") -> tuple[str, str, str]:
     """Apply the evidence rule and the leak filter to one judge answer."""
     reason, _withheld = output.filter_reason(reason, doc.text)
     required = verdict in ("pass", "fail") and rubric.quote_required in (verdict, "both")
+    if required and unit_text and T.word_count(unit_text) < 4:
+        required = False  # a unit shorter than a quote is its own evidence ("None.")
     if quote:
         span = T.find_quote(doc.text, quote)
         if span:
@@ -311,7 +335,7 @@ def run_case(case: Case, *, flow: Path, variant: str = "baseline", rep: int = 0,
                       has_facts=bool(case.facts), multi_doc=len(docs) > 1)
     checks: list[Check] = []
     for r in chosen:
-        judged = not mechanical_only and "judge" in r.needs and r.id not in JUDGE_PENDING
+        judged = not mechanical_only and "judge" in r.needs and r.id not in JUDGE_PENDING and not r.derived_from
         for d in docs:
             if d.kind not in r.applies_to:
                 continue
@@ -319,6 +343,9 @@ def run_case(case: Case, *, flow: Path, variant: str = "baseline", rep: int = 0,
                 checks.extend(MECHANICAL[r.id](d, ex[d.id], docs))
             if judged:
                 checks.extend(judge_rubric(client, r, d, ex[d.id], votes, workers=workers))
+    for r in chosen:
+        if r.derived_from and not mechanical_only:
+            checks.extend(derive(r, checks))
     scores = [score(r, checks) for r in chosen]
     covariates: dict = {}
     for d in docs:

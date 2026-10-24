@@ -19,7 +19,7 @@ LONG_PARAGRAPH_SENTENCES = 7
 DUPLICATE_MIN_WORDS = 8
 DUPLICATE_SIMILARITY = 0.5
 
-PROSE_FORMS = {"paragraph", "list_item", "table", "blockquote"}
+PROSE_FORMS = {"paragraph", "list_item", "table", "blockquote", "header"}
 CAPTION_MAX_CHARS = 160
 
 
@@ -269,7 +269,12 @@ def extract(text: str) -> Extraction:
     units: list[Unit] = []
     counters = {"p": 0, "h": 0, "c": 0, "g": 0}
     prev_prose: Unit | None = None
+    seen_section = False
     for form, s, e, body, meta in _blocks(text):
+        if form == "heading" and meta.get("level", 1) >= 2:
+            seen_section = True
+        if form == "paragraph" and not seen_section and body.lstrip().startswith("Status:"):
+            form = "header"  # the status line under the title: metadata, not prose to judge
         if form in PROSE_FORMS:
             counters["p"] += 1
             sents = T.sentences(body) if form != "table" else [body] * meta.get("rows", 1)
