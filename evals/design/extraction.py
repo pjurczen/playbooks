@@ -52,7 +52,7 @@ def extract_llm(client: Client, doc: Doc, ex: Extraction, *, max_attempts: int =
     report: dict = {}
     for attempt in range(1, max_attempts + 1):
         out: ExtractionOut = client.parse(ExtractionOut, system=system, document=document, question=question, effort="medium",
-                                          max_tokens=8000, label=f"extract-{doc.id}" + ("" if attempt == 1 else f"-r{attempt}"))
+                                          max_tokens=16000, label=f"extract-{doc.id}" + ("" if attempt == 1 else f"-r{attempt}"))
         data = out.model_dump()
         anchored: list[Anchored] = []
         total = dropped = 0

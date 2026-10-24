@@ -139,6 +139,8 @@ class AnthropicBackend:
         usage = {k: getattr(resp.usage, k, 0) or 0 for k in ("input_tokens", "output_tokens", "cache_read_input_tokens", "cache_creation_input_tokens")}
         if resp.stop_reason == "refusal":
             raise CallFailed("refusal", f"model refused: {getattr(resp, 'stop_details', None)}", usage)
+        if resp.stop_reason == "max_tokens":
+            raise CallFailed("truncated", f"output hit max_tokens={req.max_tokens}; raise the ceiling for this call", usage)
         parsed = resp.parsed_output
         if parsed is None:
             raise CallFailed("schema", "response did not parse into the schema", usage)
