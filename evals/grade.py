@@ -76,8 +76,8 @@ def grade_2(out, repo, fixture_design):
     shared = sentences(t) & sentences(Path(fixture_design).read_text()) if fixture_design else set()
     ex.append(("No sentence of the plan is copied from the design", len(shared) == 0, f"{len(shared)} shared: {list(shared)[:2]}"))
     ex.append(("The plan is at most 800 words", 0 < words(t) <= 800, f"{words(t)} words"))
-    idents = re.findall(r"`[^`\n]+`", FENCE.sub("", t))
-    ex.append(("The plan names at most 15 backticked identifiers", bool(t) and len(idents) <= 15, f"{len(idents)} backticked spans"))
+    idents = [m for m in re.findall(r"`([^`\n]+)`", FENCE.sub("", t)) if " " not in m.strip()]  # a command with spaces is a check, not a name
+    ex.append(("The plan names at most 15 backticked identifiers (a command with spaces is a check, not a name)", bool(t) and len(idents) <= 15, f"{len(idents)} backticked names: {idents[:6]}"))
     return ex
 
 def grade_3(out, repo):

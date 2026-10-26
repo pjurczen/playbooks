@@ -51,7 +51,7 @@
         "The plan has no 'Stop and ask' list",
         "No sentence of the plan is copied from the design",
         "The plan is at most 800 words",
-        "The plan names at most 15 backticked identifiers"
+        "The plan names at most 15 backticked identifiers (a command with spaces is a check, not a name)"
       ]
     },
     {
