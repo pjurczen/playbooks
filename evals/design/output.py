@@ -55,10 +55,15 @@ _CODE_EXT = re.compile(r"\.(py|js|mjs|ts|tsx|jsx|java|kt|go|rb|cs|php|rs|swift|s
 _CAMEL = re.compile(r"^[a-z]+[A-Z][A-Za-z0-9]*$")
 _SNAKE = re.compile(r"^[a-z0-9]+_[a-z0-9_]+$")
 _LINE_REF = re.compile(r"\bline\s+\d+\b|\.\w{1,5}:\d+\b")
+_PATHY = re.compile(r"^(/|\./|\.\./|~/)|.*/.*/")  # starts like a path, or two or more slashes
 
 
 def filter_reason(reason: str, doc_text: str) -> tuple[str, bool]:
-    """Withhold a judge's reason when it names something that looks like code and is not in the document."""
+    """Withhold a judge's reason when it names something that looks like code and is not in the document.
+
+    A slash compound in plain English (field/value, and/or) is not a path; a token is path-like when it starts like one, has two or
+    more slashes, or a segment carries a code extension.
+    """
     if _LINE_REF.search(reason):
         return WITHHELD, True
     norm_doc = T.normalize(doc_text)
@@ -66,7 +71,8 @@ def filter_reason(reason: str, doc_text: str) -> tuple[str, bool]:
         bare = tok.strip(".,;:()[]{}\"'`*")
         if not bare:
             continue
-        looks_like_code = "/" in bare or "\\" in bare or _CODE_EXT.search(bare) or _CAMEL.match(bare) or _SNAKE.match(bare)
+        pathy = "\\" in bare or ("/" in bare and (_PATHY.match(bare) or any(_CODE_EXT.search(seg) for seg in bare.split("/"))))
+        looks_like_code = pathy or _CODE_EXT.search(bare) or _CAMEL.match(bare) or _SNAKE.match(bare)
         if looks_like_code and T.normalize(bare) not in norm_doc:
             return WITHHELD, True
     return reason, False

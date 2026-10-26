@@ -349,6 +349,16 @@ def reuse_units(units_from: Path, case_id: str, doc: Doc, ex: Extraction) -> boo
 
 # ------------------------------------------------------------ the run
 
+def _previous_trace(vdir: Path, case_id: str, rep: int) -> dict | None:
+    p = vdir / "traces" / f"{case_id}_rep{rep}.json"
+    return json.loads(p.read_text(encoding="utf-8")) if p.exists() else None
+
+
+def _same_units(previous: dict, docs: list[Doc], ex: dict[str, Extraction]) -> bool:
+    prev = {d["sha256"]: [u["id"] for u in d["units"]] for d in previous["units"]["docs"]}
+    return all(prev.get(d.sha256) == [u.id for u in ex[d.id].units] for d in docs)
+
+
 def run_case(case: Case, *, flow: Path, variant: str = "baseline", rep: int = 0, mechanical_only: bool = False, metrics: list[str] | None = None,
              model: str | None = None, votes: int = 1, share_task: bool = False, units_from: Path | None = None, max_calls: int | None = None,
              client: Client | None = None, workers: int = 1) -> RunResult:
@@ -368,6 +378,12 @@ def run_case(case: Case, *, flow: Path, variant: str = "baseline", rep: int = 0,
     all_rubrics = R.load_rubrics()
     chosen = R.select(all_rubrics, metrics, mechanical_only=mechanical_only, mechanical_ids=set(MECHANICAL), doc_kinds={d.kind for d in docs},
                       has_facts=bool(case.facts), multi_doc=len(docs) > 1)
+    previous = _previous_trace(vdir, case.id, rep) if metrics else None
+    if previous and not _same_units(previous, docs, ex):
+        raise RuntimeError(f"{case.id}: the units differ from the existing trace in {vdir}; pass --units-from {vdir} to reuse them, "
+                           "or write into a new variant")
+    if metrics and not mechanical_only:  # re-judging a metric re-derives what depends on it
+        chosen += [r for r in all_rubrics.values() if r.derived_from in {c.id for c in chosen} and r not in chosen]
     checks: list[Check] = []
     for r in chosen:
         judged = not mechanical_only and "judge" in r.needs and r.id not in JUDGE_PENDING and not r.derived_from
@@ -384,6 +400,11 @@ def run_case(case: Case, *, flow: Path, variant: str = "baseline", rep: int = 0,
         if r.derived_from and not mechanical_only:
             checks.extend(derive(r, checks))
     scores = [score(r, checks) for r in chosen]
+    rejudged = sorted(r.id for r in chosen)
+    if previous:  # keep every metric this run did not touch
+        checks = [Check(**c) for c in previous["checks"] if c["metric"] not in rejudged] + checks
+        order = list(all_rubrics)
+        scores = sorted([s for s in previous["scores"] if s["id"] not in rejudged] + scores, key=lambda s: order.index(s["id"]))
     covariates: dict = {}
     for d in docs:
         for k, v in ex[d.id].covariates.items():
@@ -396,6 +417,7 @@ def run_case(case: Case, *, flow: Path, variant: str = "baseline", rep: int = 0,
             "cost_usd": usage.get("cost_usd") or 0.0, "in_tokens": usage.get("in_tokens", 0), "out_tokens": usage.get("out_tokens", 0),
             "calls": usage.get("calls", 0), "cached_calls": usage.get("cached_calls", 0), "replayed_cost_usd": usage.get("replayed_cost_usd"),
             "extraction": extraction_report,
+            "rejudged": rejudged if previous else None,
             "failed_attempts": len(errors)}
     private_meta = {**meta, "usage": usage, "case_path": str(case.source) if case.source else None, "doc_paths": [str(d.path) for d in docs],
                     "repo": case.repo, "flow": str(flow), "task": case.task, "errors": errors}

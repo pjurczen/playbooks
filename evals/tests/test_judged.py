@@ -139,6 +139,14 @@ def test_run_case_judged_end_to_end(smoke_case, tmp_path):
     client2 = Client(model="test-model", backend=scripted(judge=judge), cache_dir=tmp_path / "c2")
     run_case(case, flow=flow, variant="baseline", rep=1, client=client2, metrics=["alternatives-with-reasons"], units_from=flow / "baseline")
     assert all(r.schema is JudgeOut for r in client2.backend.requests)
+    # re-judging one metric into the same run keeps the others and re-derives what depends on it
+    client3 = Client(model="test-model", backend=scripted(judge=judge), cache_dir=tmp_path / "c3")
+    res3 = run_case(case, flow=flow, variant="baseline", client=client3, metrics=["paragraph-earns-place"], units_from=flow / "baseline")
+    assert {s["id"] for s in res3.scores} == {"paragraph-earns-place", "alternatives-with-reasons", "stray-hedges", "no-fact-twice"}
+    assert {c.metric for c in res3.checks} >= {"alternatives-with-reasons", "no-fact-twice"}
+    trace = json.loads(res3.trace_path.read_text())
+    assert trace["meta"]["rejudged"] == ["no-fact-twice", "paragraph-earns-place"]
+    assert {s["id"] for s in trace["scores"]} == {s["id"] for s in res3.scores}
 
 
 def test_parallel_batches_give_the_same_checks(smoke_case, tmp_path):

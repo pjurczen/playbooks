@@ -59,6 +59,10 @@ def test_filter_reason_withholds_code_looking_text():
     for bad in ("see `memo.py`", "reportgen/sources.py reads files", "the load_source helper", "at line 42", "sources.py:12"):
         assert output.filter_reason(bad, doc)[1] is True
     assert output.filter_reason("the `ReportCache` owns validity", doc)[1] is False  # backticks around a name the document uses are fine
+    for plain in ("names JPA, a library/technology, as the choice", "a code-style field/value", "pass and/or fail"):
+        assert output.filter_reason(plain, doc)[1] is False  # an English slash compound is not a path
+    for pathy in ("see src/report/cache.py", "in ./config", "under ~/.config/x", "a/b/c"):
+        assert output.filter_reason(pathy, doc)[1] is True
 
 
 def test_cli_dir_judges_every_document(tmp_path, capsys):
