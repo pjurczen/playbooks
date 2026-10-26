@@ -5,11 +5,6 @@ cd "$(dirname "$0")/.."
 fail=0
 DISCIPLINE="using-playbooks brainstorming executing-plans verifying-before-done debugging consolidating-docs"
 
-budget() { case "$1" in finishing-branch|executing-plans|consolidating-docs) echo 1500;; writing-adr) echo 1200;; using-playbooks) echo 500;; *) echo 1000;; esac; }
-
-echo "== word budgets =="
-for f in skills/*/SKILL.md; do n=$(basename "$(dirname "$f")"); w=$(wc -w < "$f"); lim=$(budget "$n"); [ "$w" -le "$lim" ] || { echo "  OVER $n: $w > $lim"; fail=1; }; done
-
 echo "== frontmatter name matches directory; description in 'Use …, to …' shape =="
 for d in skills/*/; do n=$(sed -n 's/^name: //p' "$d/SKILL.md"); [ "$n" = "$(basename "$d")" ] || { echo "  MISMATCH $d -> $n"; fail=1; }; sed -n 's/^description: //p' "$d/SKILL.md" | grep -q '^Use .*, to ' || { echo "  DESCRIPTION SHAPE $d"; fail=1; }; done
 

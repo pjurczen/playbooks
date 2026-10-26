@@ -7,12 +7,11 @@ the skill library.
 - Tests: the eval loop in `evals/` — run manually on Opus per CLAUDE.md; not a single command
 - Lint: not enforced
 - Format: not enforced
-- Complexity and length: `scripts/check-skills.sh` — word budgets per skill, one gate per skill, Red Flags placement
+- Complexity and length: `scripts/check-skills.sh` — one gate per skill, Red Flags placement; no word cap
 - Structure (dependencies, layers): `scripts/check-skills.sh` — reference links resolve, no stale names, no reflow damage
 - Duplication: not enforced
 
 ## Rules enforced
-- Word budgets: ≤ 1,000 per SKILL.md; 1,500 for `finishing-branch`, `executing-plans`, `consolidating-docs`; 1,200 for `writing-adr`; 500 for `using-playbooks`.
 - One gate block per skill; Red Flags tables only on the six discipline skills, ≤ 4 rows; no per-skill announce lines; no `dot` graphs.
 - Frontmatter `name` matches the directory; description in "Use …, to …" shape.
 - Every `references/` link resolves; no brand names in skills.

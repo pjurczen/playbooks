@@ -25,8 +25,8 @@ Skill files are prompts. Instruction count degrades adherence and early instruct
 
 - **YAML frontmatter required:** `name` (kebab-case, matches directory) and `description` in the shape "Use [trigger], to [goal]" — what and when, never a
   summary of the steps.
-- **Budget in words, not lines** (`wc -w`, tables included): ≤ 1,000 per SKILL.md; ≤ 1,500 for runbooks (`finishing-branch`, `executing-plans`,
-  `consolidating-docs`); ≤ 1,200 for `writing-adr`, whose two lists are the skill; ≤ 500 for `using-playbooks`, which is loaded every session.
+- **No word cap.** Length is judged on the read-through: a rule with its reason beats a shorter rule without one, and a section that needs room gets it.
+  `using-playbooks` stays short because it is loaded every session.
 - **One gate per skill, first, with its reason, in normal register.** Everything else is a rule with a reason; caps live only inside that gate.
 - **One rule, one owner.** A rule lives in the skill or companion that owns it; other skills point to it and never restate it.
 - **Red Flags tables only where discipline is the point** (`using-playbooks`, `brainstorming`, `executing-plans`, `verifying-before-done`, `debugging`,
