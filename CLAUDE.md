@@ -73,8 +73,8 @@ Verification is empirical, and a skill change does not ship on judgment alone.
    python3 -c "import json; json.load(open('hooks/hooks.json'))"
    bash -n hooks/session-start && CLAUDE_PLUGIN_ROOT=$(pwd) hooks/session-start | python3 -m json.tool
    ```
-2. **Run the gate:** `scripts/check-skills.sh` — the structural checks in `.claude/gates.md` (budgets, one gate per skill, Red Flags placement, links, example
-   sections, reflow damage). It runs before every commit that touches `skills/`.
+2. **Run the gate:** `scripts/check-skills.sh` — the structural checks in `.claude/gates.md` (budgets, one gate per skill, Red Flags placement, links, reflow
+   damage). It runs before every commit that touches `skills/`.
 3. **Run the evals.** Two harnesses. `evals/evals.json` holds the prompts and mechanical expectations (trigger, skip, ADR shape, commit placement);
    `evals/fixtures/` the fixture repos; `evals/run-setup.sh <eval-id> <run-dir>` prepares a run; `evals/grade.py` grades it. Runs live outside the repo in
    `../playbooks-workspace/iteration-N/eval-*/<config>/run-1/`, one subagent per run **on Opus** (the model that runs these skills), with a snapshot of the
