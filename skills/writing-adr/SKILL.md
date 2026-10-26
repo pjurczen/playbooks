@@ -11,7 +11,8 @@ consolidating-docs promotes `proposed` to `accepted` at landing but never writes
 
 ## When this runs — and when to skip
 
-- **Fired by brainstorming** after design approval — the normal path: the decision is fresh and no code exists yet.
+- **Fired by brainstorming** once the approach is chosen, so the `proposed` ADR commits with the design — the normal path: the decision is fresh and no code
+  exists yet.
 - **Fired by writing-plans** (mid-pipeline entry) or **consolidating-docs** (fallback at landing) — from the design doc, never the diff.
 - **Invoked directly** — "ADR this", "write down why we chose X".
 
