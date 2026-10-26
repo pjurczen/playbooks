@@ -11,7 +11,7 @@ the point.
 ## Inputs
 
 - **Milestone diff:** the changes between `<MILESTONE_BASE_SHA>` and `<HEAD_SHA>` (run `git diff <MILESTONE_BASE_SHA>..<HEAD_SHA>` to see it)
-- **Design:** `<DESIGN_DOC_PATH>`, sections Architecture (who owns what), Logic and Contracts (with their dependency rules)
+- **Design:** `<DESIGN_DOC_PATH>`: who owns what, the rules, the contracts and the dependency rules it states
 - **Gate output:** the result of the repo's gates from `.claude/gates.md` on the touched files:
 
 ```

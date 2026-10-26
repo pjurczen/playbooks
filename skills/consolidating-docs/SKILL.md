@@ -64,8 +64,8 @@ ADRs are handled once, up front, and never from inside the per-file loop below. 
 2. **Reconcile.** The end-of-feature reviewer reported whether the Decision is still true of the code. If it drifted, amend the Decision in place — it's still
    `proposed`.
 3. **Promote.** Flip `proposed` → `accepted (<landing date>)`. Update the index if the map names one.
-4. **Fallback** — no ADR on the branch, but the design doc's Approach section clears writing-adr's bar (the user brought their own design, or brainstorming
-   missed it)? Invoke **writing-adr** once, from the design doc — not from the diff.
+4. **Fallback** — no ADR on the branch, but the design's chosen approach clears writing-adr's bar (the user brought their own design, or brainstorming missed
+   it)? Invoke **writing-adr** once, from the design doc — not from the diff.
 
 Most features have no ADR to promote and don't earn one at the fallback. That's the normal outcome, not a gap.
 

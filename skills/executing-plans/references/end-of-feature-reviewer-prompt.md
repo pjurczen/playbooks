@@ -30,8 +30,8 @@ Do NOT trust the implementer's narrative. Read the actual code.
 **Design alignment**
 
 - Does the implementation match the design's architecture and components?
-- Does the code implement every rule in the design's Logic, in the component that owns it, and match every signature in its Contracts, including any
-  `Deviation:` lines under Approach? Name any it doesn't.
+- Does the code implement every rule the design states, in the component that owns it, and match every contract it gives? Name every difference: it goes into
+  the PR description.
 - Was anything added that wasn't in the design? (Scope creep.)
 - If the branch adds a `proposed` ADR: is its Decision still true of the code? Name any drift — consolidating-docs reconciles the ADR from your answer.
 

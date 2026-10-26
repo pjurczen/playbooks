@@ -26,7 +26,7 @@ messages, note it's partial, continue.
 
 ## Clean code defaults
 
-"Smallest thing that passes" means smallest *that sits where the design put it*: each rule in the component the design's Logic names, each function at one
+"Smallest thing that passes" means smallest *that sits where the design put it*: each rule in the component the design makes its owner, each function at one
 level, translation in the adapter, no abstraction without a second caller. The critic holds the diff to the same checklist after green.
 
 ## The milestone loop
@@ -58,17 +58,17 @@ Re-read the milestone goal. Look at the diff for *only this milestone*. Answer:
 - **Did I leave anything broken?** Any test elsewhere this change might have affected?
 - **Anything surprising worth noting?** Discovered helper, unexpected coupling, sharp edge?
 
-If something's off: fix in place before continuing. If the code had to differ from the design's Architecture, Logic or Contracts: edit the design so it stays
-true and add one `Deviation:` line under its Approach — the end-of-feature reviewer compares against the design as written. If something's a note for later: add
-it to your in-session `## Findings` block (see "Findings" below).
+If something's off: fix in place before continuing. If the code has to differ from the design: a changed decision (the approach, a contract others build
+against, a consequence) stops the milestone and goes back to brainstorming for re-approval; anything smaller is a finding that reaches the PR description, and
+the end-of-feature reviewer reports every difference. If something's a note for later: add it to your in-session `## Findings` block (see "Findings" below).
 
 "Added X but didn't move the callers the milestone covers" is incomplete milestone work, not a finding — fix it now.
 
 ### Step 6 — Structure critic
 
-Dispatch ONE fresh subagent with `references/structure-critic-prompt.md`: this milestone's diff, the design's Architecture and Contracts, the gate output. It
-returns at most six findings by location with the move, or "none"; a "design issue" goes to the circuit-breaker. The model that wrote the long method doesn't
-see it in the same context; a fresh one with a checklist does.
+Dispatch ONE fresh subagent with `references/structure-critic-prompt.md`: this milestone's diff, the design's parts and contracts, the gate output. It returns
+at most six findings by location with the move, or "none"; a "design issue" goes to the circuit-breaker. The model that wrote the long method doesn't see it in
+the same context; a fresh one with a checklist does.
 
 ### Step 7 — Refactor pass
 

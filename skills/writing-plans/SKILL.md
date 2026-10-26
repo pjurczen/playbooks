@@ -21,15 +21,16 @@ approved on a guess.
 1. **Scope.** A design that sprawls across independent subsystems goes back to brainstorming as an initiative. Intersecting items in `docs/followups.md` are
    folded in explicitly, as milestones or parts of them. Entered without brainstorming (the user brought a design)? Apply **writing-adr**'s bar to its approach
    and invoke it before planning if it clears and no ADR exists on the branch.
-2. **Decompose.** From the design's Architecture, list the parts of the system the work touches — modules and components — and for each the tests that cover it
-   today and the tests it needs. Read the code of every part now: the plan is written from the code, not from the design's description of it.
+2. **Decompose.** From the parts the design names, list what the work touches — modules and components — and for each the tests that cover it today and the
+   tests it needs. Read the code of every part now: the plan is written from the code, not from the design's description of it.
 3. **Order.** Cut the work into milestones, each a state the system can stay in: it builds, every existing suite is green, and something new is observable. What
    everything else depends on comes first; the riskiest unknown comes early, while changing course is cheap.
 4. **Walk it.** Take each milestone from the state the previous one leaves and ask what it breaks at the moment it is made. A changed shared type, signature or
    dependency version breaks every user at once: the milestone takes all of them along, or old and new coexist — an overload, an adapter, a flag — until a later
    milestone removes the old one, and the plan says which. Check each premise where it lives: resolve the dependency, open the generated type, list the callers,
    run the suite that must stay green. Revert any probe; planning leaves only the plan.
-5. **Settle what the walk found.** A premise that fails changes the order, or the design — edited with a `Deviation:` line and shown to the user first.
+5. **Settle what the walk found.** A premise that fails changes the order, or the design — a changed decision goes back to brainstorming for re-approval before
+   the plan is presented.
 
 ## The plan shape
 
@@ -43,8 +44,8 @@ The shape is `references/example-plan-replacement.md` — read it before writing
   - *Builds* — what, in which parts.
   - *After it* — the state of the system: what works the new way, what still runs the old way, what coexists. Always building and green.
   - *Why here* — what it depends on, or what risk it retires; left out when the order is obvious.
-  - *Proven by* — the tests, by scenario or suite name and home, at the level of behaviour. For a rule in the design's Logic, name the rule and say "one
-    scenario per branch" rather than repeating it. Each milestone starts with these red.
+  - *Proven by* — the tests, by scenario or suite name and home, at the level of behaviour. For a rule the design states, name the rule and say "one scenario
+    per branch" rather than repeating it. Each milestone starts with these red.
 - **Checked** — what the walk verified, one line each: the fact, and how it was checked. Only the premises the order rests on.
 - **Open** — only what neither the repo nor the user could settle: what it is, what it blocks, and the milestone that finds out first. Left out when empty.
 
@@ -58,7 +59,7 @@ nothing the design already says: responsibilities, logic, contracts and conseque
 
 1. **The walk happened** — every *After it* was checked, not assumed; each premise has its line under Checked.
 2. **Nothing breaks in between** — no milestone changes something shared without taking its users along or saying how old and new coexist.
-3. **Coverage** — every rule in the design's Logic and every contract has a test in some milestone; every part is built in one.
+3. **Coverage** — every rule the design states and every contract has a test in some milestone; every part is built in one.
 4. **Overlap** — a sentence the design already says is deleted; component names match the design's.
 5. **Readable** — could the user say, after a few minutes, why milestone two comes before three?
 

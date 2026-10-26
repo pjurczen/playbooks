@@ -40,7 +40,7 @@ The shape is `references/example-roadmap.md` — read it before writing. Its sec
 ## Self-review
 
 1. Every slice lands on its own, and the old path keeps serving whatever the slice doesn't cover.
-2. The initiative design's coexistence mechanism supports this order — its Consequences say which orders it supports.
+2. The initiative design's coexistence mechanism supports this order — the initiative design says which orders it supports.
 3. Every shared contract is introduced by some slice, and no slice needs a contract a later slice introduces.
 4. The first slice is a skeleton or the riskiest piece, not the easiest.
 5. The exit criterion is observable.
