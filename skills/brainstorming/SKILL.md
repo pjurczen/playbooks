@@ -5,7 +5,7 @@ description: Use before any non-trivial creative work (a feature, a component, a
 
 # Brainstorming
 
-The design is read once, by a developer who knows the codebase and then by an implementer in another session; everything here serves that one read.
+The design is read once, by a developer who knows the codebase and then by an implementer in another session; everything here serves that read.
 
 <HARD-GATE>
 No code, scaffolding, dependency or writing-plans until the user approves the written design. Three sentences can be enough; the approval is what matters,
@@ -56,9 +56,9 @@ contracts that get built; what it costs and what changes for callers; what is st
 - **Code** only as a declaration with its semantics, or a rule a test can follow branch by branch.
 - **Name what a reader would expect and you leave out**, and what gets worse.
 
-**Initiatives.** When old and new must coexist while landing, or the work needs several approvals, this design is the initiative design: target state,
-coexistence mechanism, shared contracts, in `docs/playbooks/initiatives/` on the base branch, handed to **writing-roadmap**; each slice then gets an ordinary
-design that inherits from it and never restates it.
+**Initiatives.** Work too big to land as one change ships in slices, the old path serving in between. It gets an initiative design: target state, coexistence
+mechanism, shared contracts, in `docs/playbooks/initiatives/` on the base branch, handed to **writing-roadmap**; each slice then gets an ordinary design that
+inherits from it and never restates it. One change, however many milestones its plan has, is one design.
 
 **Repo conventions.** `.claude/designs.md`, when present, carries the repo's vocabulary, diagram node kinds, where acceptance criteria come from and where story
 gaps go, document locations and extra review questions. Apply it; never restate it.
