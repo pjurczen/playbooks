@@ -41,17 +41,17 @@
       ],
       "fixture": "reportgen+design",
       "prompt": "You are working in the git repository at {REPO}, a small Python project called reportgen. The approved design for the next feature is docs/playbooks/designs/2026-09-17-unified-cache.md (already committed on main). {PREAMBLE}\n\nThe user's request: \"Write the implementation plan for the unified-cache design.\"\n\nThe user is not available during this run: treat the plan as approved at any review gate, and stop before executing anything. There is no docs/followups.md. Do not modify the design.\n\nIf you are not following any skill, write the plan to docs/playbooks/plans/2026-09-17-unified-cache.md in whatever shape you judge best and commit it.\n\n{CLOSING}",
-      "expected_output": "A plan that stands on the design: the parts involved with their tests, milestones in order each with what it builds, the state after it and the tests that prove it, and the premises checked against the repo; no file-by-file change list, no stop-and-ask list, nothing restated from the design.",
+      "expected_output": "An execution list that stands on the design: a goal, numbered milestones in order each with what it does, the state it leaves and the checks that must be green, the premises the order rests on as facts, and open points if any. No parts table, no class or file lists, no scenarios, no test code, nothing restated from the design.",
       "expectations": [
         "A plan file exists under docs/playbooks/plans/ and links the design by filename",
-        "The plan has a Parts involved table with a Tests column",
-        "The plan has an Order section with at least two milestone blocks, each carrying Builds, After it and Proven by",
-        "The plan has a Checked section with at least three entries",
-        "Every milestone's After it names a state of the system, and no milestone is scaffolding only (grader judgment)",
+        "The plan has a Milestones section with at least two numbered milestones, each carrying Does, Leaves and Checks",
+        "The plan has a Checked section with at least one line",
+        "The plan has no Parts involved section and no table with a Tests column",
+        "The plan contains no code fence",
         "The plan has no 'Stop and ask' list",
         "No sentence of the plan is copied from the design",
-        "No code fence in the plan contains statement bodies or exceeds five lines",
-        "The plan is at most 1,000 words"
+        "The plan is at most 800 words",
+        "The plan names at most 15 backticked identifiers"
       ]
     },
     {

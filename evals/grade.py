@@ -62,20 +62,22 @@ def grade_2(out, repo, fixture_design):
     ex = []
     p = first(out / "docs/playbooks/plans", "*.md")
     t = p.read_text() if p else ""
-    ex.append(("A plan file exists under docs/playbooks/plans/ and links the design by filename", p is not None and "unified-cache" in t and "Design" in t, str(p)))
-    parts = section(t, "Parts involved") or ""
-    ex.append(("The plan has a Parts involved table with a Tests column", bool(re.search(r"^\|.*\bTests\b.*\|", parts, re.M | re.I)), ""))
-    order = section(t, "Order") or ""
-    blocks = [b for b in re.split(r"^### ", order, flags=re.M)[1:] if all(k in b.lower() for k in ("builds", "after it", "proven by"))]
-    ex.append(("The plan has an Order section with at least two milestone blocks, each carrying Builds, After it and Proven by", len(blocks) >= 2 and len(blocks) == len(re.findall(r"^### ", order, re.M)), f"{len(blocks)} complete blocks"))
+    ex.append(("A plan file exists under docs/playbooks/plans/ and links the design by filename", p is not None and "unified-cache" in t and "esign" in t, str(p)))
+    ms = section(t, "Milestones") or ""
+    blocks = [b for b in re.split(r"^(?=### |\d+\. )", ms, flags=re.M) if b.strip()]
+    complete = [b for b in blocks if all(re.search(rf"\*{k}\*|\*\*{k}\*\*|\b{k}:", b, re.I) for k in ("Does", "Leaves", "Checks"))]
+    ex.append(("The plan has a Milestones section with at least two numbered milestones, each carrying Does, Leaves and Checks", len(complete) >= 2 and len(complete) == len(blocks), f"{len(complete)} complete of {len(blocks)} blocks"))
     checked = re.findall(r"^- ", section(t, "Checked") or "", re.M)
-    ex.append(("The plan has a Checked section with at least three entries", len(checked) >= 3, f"{len(checked)} entries"))
+    ex.append(("The plan has a Checked section with at least one line", len(checked) >= 1, f"{len(checked)} lines"))
+    parts = bool(re.search(r"^## Parts involved", t, re.M)) or bool(re.search(r"^\|.*\bTests\b.*\|", t, re.M))
+    ex.append(("The plan has no Parts involved section and no table with a Tests column", bool(t) and not parts, ""))
+    ex.append(("The plan contains no code fence", bool(t) and not fences(t), f"{len(fences(t))} fences"))
     ex.append(("The plan has no 'Stop and ask' list", bool(t) and "stop and ask" not in t.lower(), ""))
     shared = sentences(t) & sentences(Path(fixture_design).read_text()) if fixture_design else set()
     ex.append(("No sentence of the plan is copied from the design", len(shared) == 0, f"{len(shared)} shared: {list(shared)[:2]}"))
-    long_f = [b for l, b in fences(t) if len(b.strip().splitlines()) > 5]
-    ex.append(("No code fence in the plan contains statement bodies or exceeds five lines", has_bodies(t) == 0 and not long_f, f"bodies={has_bodies(t)}, long fences={len(long_f)}"))
-    ex.append(("The plan is at most 1,000 words", 0 < words(t) <= 1000, f"{words(t)} words"))
+    ex.append(("The plan is at most 800 words", 0 < words(t) <= 800, f"{words(t)} words"))
+    idents = re.findall(r"`[^`\n]+`", FENCE.sub("", t))
+    ex.append(("The plan names at most 15 backticked identifiers", bool(t) and len(idents) <= 15, f"{len(idents)} backticked spans"))
     return ex
 
 def grade_3(out, repo):
