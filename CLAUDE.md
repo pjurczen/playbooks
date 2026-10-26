@@ -42,16 +42,16 @@ Skill files are prompts. Instruction count degrades adherence and early instruct
 
 This is the actual differentiator from superpowers. The artifacts the *user* reads (design docs, plans) are read first by a person — who reviews them, presents
 them to a team and approves them — and then by an implementer in another session, Opus-class by default. Focus is the bar: every line tells the reader something
-that is not already on the page and not visible in the code. A section filled because a template lists it is the failure to avoid. The conventions:
+that is not already on the page; today's code belongs when it explains the change, never as an inventory. A section filled because a template lists it is the
+failure to avoid. The conventions:
 
 - Every repo the pipeline works in has a `.claude/gates.md` naming its test, lint, complexity and structure commands, or a recorded decline; `setting-up-gates`
   proposes one when it's missing, and executing-plans treats a milestone as green only when tests and gates both pass.
 - A design answers seven questions for a reader who knows the code: what hurts and what done looks like; what causes it; what we will do, what it beat and why;
   which parts take part and who owns what; the rules and contracts that get built; what it costs and what changes for callers; what is still open, in one place.
-  One test per line: does the reader learn something not already on the page and not visible in the code. Headings are the author's; nothing is written down as
-  an assumption, it is looked up in the code or asked. An approved design is frozen: a changed decision returns to brainstorming, everything else goes to the
-  PR. A repo's own conventions (vocabulary, diagram node kinds, where acceptance criteria come from) live in that repo's `.claude/designs.md`, never in the
-  skill.
+  One test per line: does the reader learn something not already on the page. Headings are the author's; nothing is written down as an assumption, it is looked
+  up in the code or asked. An approved design is frozen: a changed decision returns to brainstorming, everything else goes to the PR. A repo's own conventions
+  (vocabulary, diagram node kinds, where acceptance criteria come from) live in that repo's `.claude/designs.md`, never in the skill.
 - An initiative gets a design (target architecture, coexistence mechanism, shared contracts) and a roadmap (slices, order, exit criterion), both on the base
   branch; each slice then gets an ordinary design and plan that inherit from them.
 - Plans are a verified implementation order — the parts of the system involved with their tests, then milestones that each leave the build and the suites green,

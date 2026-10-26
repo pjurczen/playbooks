@@ -86,7 +86,7 @@ After one read, the reader can say:
 - what it costs, and what changes for callers
 - what is still open
 
-Headings are yours. Every line tells the reader something not already on the page and not visible in the code.
+Headings are yours. Every line tells the reader something not already on the page. Today's code belongs when it explains the change, not as an inventory.
 
 **The rules:**
 
