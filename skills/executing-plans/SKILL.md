@@ -9,10 +9,10 @@ Implement the plan in the main session, milestone by milestone; subagents only w
 
 ## Before you start
 
-1. Read the plan file once. Extract: the goal, the parts involved, and each milestone's *Builds*, *After it* and *Proven by*. Read the design it links for the
-   architecture, the logic and the contracts, and `references/structure-critic-prompt.md` once: the critic holds your code to its checklist.
+1. Read the plan file once. Extract: the goal and each milestone's *Does*, *Leaves* and *Checks*. Read the design it links for the architecture, the logic and
+   the contracts, and `references/structure-critic-prompt.md` once: the critic holds your code to its checklist.
 2. Re-read it critically. Any milestone unclear? Any behaviour you can't see how to verify? Raise it with the user before any code is written. The plan's
-   *Checked* lines are what its order rests on: when the code contradicts one, or a milestone cannot reach its *After it* state, stop and ask — don't pick an
+   *Checked* lines are what its order rests on: when the code contradicts one, or a milestone cannot reach its *Leaves* state, stop and ask — don't pick an
    interpretation and build on it.
 3. Confirm the workspace chosen during brainstorming (branch, path, `BASE_SHA` from the using-git-worktrees report). Invoke **using-git-worktrees** only if
    there is none yet — the user brought their own plan.
@@ -36,7 +36,8 @@ hand-off to finishing-branch.
 
 ### Step 1 — Sketch behavioural test(s) (RED)
 
-Use **bdd-testing**: one test per behaviour the milestone adds, behaviour-level, not structural.
+Use **bdd-testing**: one test per behaviour the milestone adds, taken from the rules the design states for the parts its *Does* names; behaviour-level, not
+structural.
 
 ### Step 2 — Watch them fail
 
@@ -54,7 +55,7 @@ Run the milestone tests, a quick smoke of nearby behaviour, and the gates from `
 
 Re-read the milestone goal. Look at the diff for *only this milestone*. Answer:
 
-- **Did I meet the goal?** Is the system in the milestone's *After it* state, with everything under *Proven by* green?
+- **Did I meet the goal?** Is the system in the milestone's *Leaves* state, with every *Checks* line green?
 - **Did I leave anything broken?** Any test elsewhere this change might have affected?
 - **Anything surprising worth noting?** Discovered helper, unexpected coupling, sharp edge?
 
