@@ -2,14 +2,14 @@
 
 Read before drawing. Mermaid, because GitHub, GitLab, Bitbucket and the IDE previews render it; never `dot` in a design.
 
-| The reader asks                                                      | Draw                                                                                                                                                      |
-|----------------------------------------------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------|
+| The reader asks                                                     | Draw                                                                                                                                                                            |
+|---------------------------------------------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | Which parts take part, who owns what, where does the new piece sit? | A structure `flowchart`: nodes typed by role (service, store, external system, adapter), edges labelled with what flows or who depends on whom. The first view of most designs. |
-| In what order does it happen, and what happens when a step fails?    | A `sequenceDiagram` with the failure path, for integrations and for flows whose order is the point.                                                      |
-| What states can it be in, and what moves it?                         | A `stateDiagram-v2` of one entity, screen or job, for user-facing flows and long-running work.                                                            |
-| What changes?                                                        | Before and after as two subgraphs of one structure diagram, or a table; the same names in both, the changed parts marked.                                |
-| What is stored, and how does it relate?                              | An `erDiagram`; the migration is a rollout table.                                                                                                         |
-| In what phases does it land?                                         | A table: phase, what it delivers, what the old path still serves meanwhile.                                                                               |
+| In what order does it happen, and what happens when a step fails?   | A `sequenceDiagram` with the failure path, for integrations and for flows whose order is the point.                                                                             |
+| What states can it be in, and what moves it?                        | A `stateDiagram-v2` of one entity, screen or job, for user-facing flows and long-running work.                                                                                  |
+| What changes?                                                       | Before and after as two subgraphs of one structure diagram, or a table; the same names in both, the changed parts marked.                                                       |
+| What is stored, and how does it relate?                             | An `erDiagram`; the migration is a rollout table.                                                                                                                               |
+| In what phases does it land?                                        | A table: phase, what it delivers, what the old path still serves meanwhile.                                                                                                     |
 
 Rules for every view:
 
