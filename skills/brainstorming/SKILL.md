@@ -63,18 +63,29 @@ inherits from it and never restates it. One change, however many milestones its 
 **Repo conventions.** `.claude/designs.md`, when present, carries the repo's vocabulary, diagram node kinds, where acceptance criteria come from and where story
 gaps go, document locations and extra review questions. Apply it; never restate it.
 
-## Builder check, approval, after
+## Builder check
 
-For a full design, dispatch a fresh subagent with `references/builder-check.md`. Sort what comes back: answered already goes into the document; minor is settled
-and marked as your call; theirs goes to the user in one message, most important first. One round. Then the gate:
+For a full design, dispatch a fresh subagent with `references/builder-check.md`: a builder who knows the codebase reads the design to plan from and reports
+where they would still have to guess. Sort what comes back into three piles. Answered already, by the conversation or the code: put the answer in the document.
+Minor, where a sensible builder could settle it without changing what gets built: settle it and mark it as your call. Theirs, where only the user can answer and
+the answer changes what gets built: bring those to the user in one message, most important first. One round; the check exists to catch what the author cannot
+see, not to reopen the dialogue.
+
+## Approval
 
 > "Design committed to `<path>`[, ADR at `<path>`]. Done means: …. It beat … because …. Costs: …. Open: <n>, owners named. Approve, or tell me what to change."
 
-On changes, rewrite in place. On approval set `Status: approved`; the design is frozen. A changed decision (the approach, a contract others build against, a
-consequence) comes back here for re-approval; anything else goes to the PR description. Re-entry from executing-plans works only that seam.
+Wait for explicit approval. On changes, rewrite the affected sentences in place; why they changed belongs in the commit message, not in the document. On
+approval set `Status: approved`.
+
+## After approval
+
+The approved design is frozen. A changed decision, meaning the approach, a contract others build against or a consequence, comes back here and is re-approved;
+anything smaller goes to the PR description, where the end-of-feature reviewer reports every difference. Re-entry from executing-plans works only that seam:
+keep the workspace, revise the `proposed` ADR in place if the decision changed, and re-review at the gate.
 
 ## Hand-offs
 
-**using-git-worktrees** once the approach is chosen and before the design is committed, so every artifact lands on the feature branch; **writing-adr** when the
-approach is a system-level choice or instantiates a rule the team adopts (its test), the `proposed` ADR committing with the design; after approval
-**writing-plans**, or **writing-roadmap** for an initiative. Nothing else.
+- **using-git-worktrees** once the approach is chosen and before the design is committed, so every artifact lands on the feature branch.
+- **writing-adr** when the approach is a system-level choice or instantiates a rule the team adopts, by its test; the `proposed` ADR commits with the design.
+- **writing-plans** after approval, or **writing-roadmap** for an initiative. Nothing else.
