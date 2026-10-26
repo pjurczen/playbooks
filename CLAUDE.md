@@ -26,8 +26,7 @@ Skill files are prompts. Instruction count degrades adherence and early instruct
 - **YAML frontmatter required:** `name` (kebab-case, matches directory) and `description` in the shape "Use [trigger], to [goal]" — what and when, never a
   summary of the steps.
 - **Budget in words, not lines** (`wc -w`, tables included): ≤ 1,000 per SKILL.md; ≤ 1,500 for runbooks (`finishing-branch`, `executing-plans`,
-  `consolidating-docs`); ≤ 1,200 for `writing-adr`, whose two lists are the skill, and for `brainstorming`, whose method is the skill; ≤ 500 for
-  `using-playbooks`, which is loaded every session.
+  `consolidating-docs`); ≤ 1,200 for `writing-adr`, whose two lists are the skill; ≤ 500 for `using-playbooks`, which is loaded every session.
 - **One gate per skill, first, with its reason, in normal register.** Everything else is a rule with a reason; caps live only inside that gate.
 - **One rule, one owner.** A rule lives in the skill or companion that owns it; other skills point to it and never restate it.
 - **Red Flags tables only where discipline is the point** (`using-playbooks`, `brainstorming`, `executing-plans`, `verifying-before-done`, `debugging`,
@@ -35,7 +34,7 @@ Skill files are prompts. Instruction count degrades adherence and early instruct
 - **No per-skill "Announce at start"** — the bootstrap says to announce once. **`dot` graphs only for a real loop or non-obvious branch**; linear flows are
   numbered lists.
 - **"When to skip" is a standard section** in every directly-invocable skill; pipeline-only skills say "fired by X".
-- **Companions carry a read-when** ("read `references/design-doc-shape.md` before writing"). **Positive framing, reasons over emphasis, no brand names.**
+- **Companions carry a read-when** ("read `references/views.md` before drawing"). **Positive framing, reasons over emphasis, no brand names.**
 - **Structure is checked mechanically, not by prompting.** A structure rule belongs in a gate or in the critic's checklist, never as a lecture in a skill body.
 - **Tone:** senior dev to senior dev. State the rule and the reason; trust the reader.
 
@@ -47,10 +46,12 @@ that is not already on the page and not visible in the code. A section filled be
 
 - Every repo the pipeline works in has a `.claude/gates.md` naming its test, lint, complexity and structure commands, or a recorded decline; `setting-up-gates`
   proposes one when it's missing, and executing-plans treats a milestone as green only when tests and gates both pass.
-- Design docs are the trace of brainstorming's five stages — problem, diagnosis, decision, shape, check. Problem, Diagnosis, Approach (with alternatives) and
-  Architecture (a view of which parts interact and who owns what) always; Decisions, Logic (the rules and algorithms that get built, stated concretely, in the
-  component that owns them), Contracts, Consequences and Open questions when they have content. One fact, one place; no section exists to be filled. Nothing is
-  written down as an assumption: it is looked up in the code or asked.
+- A design answers seven questions for a reader who knows the code: what hurts and what done looks like; what causes it; what we will do, what it beat and why;
+  which parts take part and who owns what; the rules and contracts that get built; what it costs and what changes for callers; what is still open, in one place.
+  One test per line: does the reader learn something not already on the page and not visible in the code. Headings are the author's; nothing is written down as
+  an assumption, it is looked up in the code or asked. An approved design is frozen: a changed decision returns to brainstorming, everything else goes to the
+  PR. A repo's own conventions (vocabulary, diagram node kinds, where acceptance criteria come from) live in that repo's `.claude/designs.md`, never in the
+  skill.
 - An initiative gets a design (target architecture, coexistence mechanism, shared contracts) and a roadmap (slices, order, exit criterion), both on the base
   branch; each slice then gets an ordinary design and plan that inherit from them.
 - Plans are a verified implementation order — the parts of the system involved with their tests, then milestones that each leave the build and the suites green,
@@ -74,11 +75,13 @@ Verification is empirical, and a skill change does not ship on judgment alone.
    ```
 2. **Run the gate:** `scripts/check-skills.sh` — the structural checks in `.claude/gates.md` (budgets, one gate per skill, Red Flags placement, links, example
    sections, reflow damage). It runs before every commit that touches `skills/`.
-3. **Run the evals.** `evals/evals.json` holds the prompts and expectations; `evals/fixtures/` the fixture repos; `evals/run-setup.sh <eval-id> <run-dir>`
-   prepares a run; `evals/grade.py` grades the mechanical expectations into the skill-creator viewer format. Runs live outside the repo in
+3. **Run the evals.** Two harnesses. `evals/evals.json` holds the prompts and mechanical expectations (trigger, skip, ADR shape, commit placement);
+   `evals/fixtures/` the fixture repos; `evals/run-setup.sh <eval-id> <run-dir>` prepares a run; `evals/grade.py` grades it. Runs live outside the repo in
    `../playbooks-workspace/iteration-N/eval-*/<config>/run-1/`, one subagent per run **on Opus** (the model that runs these skills), with a snapshot of the
-   previous skills as the baseline. Aggregate with the skill-creator's `aggregate_benchmark.py` and review in its viewer. A change ships when its delta is
-   non-negative on pass rate and tokens.
+   previous skills as the baseline. The produced design is then judged by `evals/design` (see `evals/README.md`), the old skill's output as variant `baseline`,
+   the new one as `v1`, and `uv run design digest` compares them. A change ships when no judged metric moves worse than the baseline spread, no mechanical
+   expectation is lost and the trivial-change eval still skips. That loop is a smoke test on one small fixture; the real measure is the next production designs
+   judged as a variant against `evals/private/runs/asa`.
 4. **Dogfood.** Load the plugin in a fresh session and run a small real task; "let's make a small react todo list" must trigger `brainstorming` unprompted, and
    a one-sentence rename must not.
 

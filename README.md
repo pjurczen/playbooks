@@ -39,8 +39,8 @@ demand via the `Skill` tool.
 ## What's inside
 
 **Process** (how to approach the work):
-- `brainstorming` — design dialogue → committed design doc a teammate reads once: the architecture, the decisions, the logic that gets built, the contracts and
-  the consequences, each fact in one place; kinds of work from a feature to an initiative
+- `brainstorming` — design dialogue → an approved design that answers, for a reader who knows the code, what hurts, what causes it, what we do and why, who owns
+  what, what gets built, what it costs and what is open; each fact in one place, structure drawn, not narrated
 - `writing-plans` — design → an implementation order verified against the repo: the parts involved, milestones that each leave the system working, the tests
   that prove each; stands on the design, never restates it
 - `writing-roadmap` — initiative design → a roadmap of independently landable slices, their order and exit criterion

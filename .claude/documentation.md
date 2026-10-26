@@ -26,6 +26,8 @@ How documentation is maintained in this repo. Consult this before adding, moving
 
 - Skill files: YAML frontmatter (`name` matches the directory), senior-dev tone, ~150-line soft target, always a "when to skip" carve-out.
 - `docs/DESIGN.md` is historical; record later decisions as dated addenda rather than editing the original sections.
+- A consuming repo layers its design conventions in its own `.claude/designs.md` (vocabulary, diagram node kinds, where acceptance criteria come from and where
+  story gaps go, document locations, extra review questions); the skills stay general and never carry a project's conventions.
 - Commits follow Conventional Commits 1.0.0 (see `skills/milestone-commits/SKILL.md`).
 - Artifacts a user reads (README, design docs, plans): the narrative layer reads in 2–3 minutes; the precision layer (contracts, plan) is complete enough for an
   implementer in another session. Structure and altitude, not length.

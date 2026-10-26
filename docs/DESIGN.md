@@ -729,3 +729,26 @@ and the evidence for it. The per-method altitude clauses of §17 went with the t
 Recorded exception to §14: this change shipped without an eval run, on the user's decision, after reading the skills and a rewrite of the real design. The
 fixture, expectations and grader were updated to the new shapes so the next run measures them. Still not measured: whether an implementer does as well from the
 leaner pair.
+
+## 19. Addendum — one short skill, measured by a judge (2026-10)
+
+§16 made brainstorming a five-stage method with a shape reference, a views catalogue, examples per kind and an initiative reference; §18 removed the mandatory
+sections. Six real designs produced by that skill were then judged with small checks derived from published design-doc practice (Google, Rust RFC, PEP 1, KEP,
+HashiCorp, SoundCloud, ISO 42010, arc42, C4, SEI) and from the LLM-judge literature, one yes/no question per unit with the quoted span as evidence. What failed
+was not shape: open questions scattered through decision text (four of six designs), key decisions without a weighed alternative (22 of 52, one reason literally
+"(user decision)" because the model had asked a multiple-choice question whose options carried no consequences), old and new coexisting inside single designs,
+55 of 373 paragraphs repeating something on the page, diagrams without typed nodes or labelled edges, structure narrated instead of drawn. What passed nearly
+everywhere was what the references spent their words on: non-goals, boundaries, headings, code only where justified.
+
+Two conclusions. The breadth in the references bought nothing the judge could see and cost the maintainer every fix, because each finding meant tuning a
+section; and the failures were about reasons, placement and drawing, which are rules, not sections. So the skill is one file again, with the readability of its
+first version: one question at a time, approaches in a message of their own with what each option buys and costs (so the chosen one's reason exists to be
+written down), a written design described by the seven questions a reader must be able to answer and by rules each tied to a judged metric, initiatives as one
+rule, a builder check by a fresh subagent as the only review, and a freeze after approval: a changed decision returns to brainstorming, everything else goes to
+the PR. Project conventions (vocabulary, diagram node kinds, acceptance criteria) move to a consuming repo's `.claude/designs.md`, so the skill stays general
+and a team's feedback never edits it. A views reference stays, shortened, because diagrams are the content readers value most and the only thing the judge found
+wanting in them was legibility.
+
+The judge is the release bar for designs from here on: the six-design run is the frozen baseline, rubrics do not change while skill variants are compared, and a
+skill change ships when the next production designs, judged as a new variant, move the failing metrics without worsening the passing ones. The fixture-based
+loop remains a smoke test for gross regressions, not evidence.
