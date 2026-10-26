@@ -46,14 +46,16 @@ Save to `docs/playbooks/plans/YYYY-MM-DD-<feature>.md`. The header links the des
 - **Milestones**, numbered, in order. Each:
   - *Does*: what it builds or removes, in which parts.
   - *Leaves*: the state of the system: what runs the new way, what still runs the old way.
-  - *Checks*: what must be green: suites, gates, commands. A new test is named by the rule it proves.
+  - *Checks*: the suites, gates and commands that must be green.
 - **Checked**: the premises the order rests on, one line each, as facts.
 - **Open**: what neither the repo nor the user could settle: what, what it blocks, which milestone finds out. Omitted when empty.
 
 Not in a plan:
 
 - classes, files or signatures: the implementer finds them from the design and the code
-- scenarios or test code: tests anchor to the rules the design states, and executing-plans writes them
+- tests, scenarios or test code: executing-plans writes them from the rules the design states
+- why a milestone sits where it does: the order is the plan
+- how a premise was checked, probe results, baseline output: Checked holds the fact
 - method bodies, commit messages
 - anything the design already says
 
@@ -63,7 +65,7 @@ A plan longer than the order it describes has written the design or the code a s
 
 1. The walk happened: every *Leaves* was checked, not assumed, and each premise has its line under Checked.
 2. Nothing breaks in between: no milestone changes something shared without taking its users along or saying how old and new coexist.
-3. Every rule and contract in the design is built in some milestone and covered by some *Checks* line.
+3. Every rule and contract in the design is built in some milestone.
 4. Nothing the design says is repeated.
 5. Could the user say, after a few minutes, why milestone two comes before three?
 
