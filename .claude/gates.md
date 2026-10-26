@@ -8,16 +8,14 @@ the skill library.
 - Lint: not enforced
 - Format: not enforced
 - Complexity and length: `scripts/check-skills.sh` — word budgets per skill, one gate per skill, Red Flags placement
-- Structure (dependencies, layers): `scripts/check-skills.sh` — reference links resolve, no stale names, example sections in order, no reflow damage
+- Structure (dependencies, layers): `scripts/check-skills.sh` — reference links resolve, no stale names, no reflow damage
 - Duplication: not enforced
 
 ## Rules enforced
-- Word budgets: ≤ 1,000 per SKILL.md; 1,500 for `finishing-branch`, `executing-plans`, `consolidating-docs`; 1,200 for `writing-adr`, `brainstorming`; 500 for
-  `using-playbooks`.
+- Word budgets: ≤ 1,000 per SKILL.md; 1,500 for `finishing-branch`, `executing-plans`, `consolidating-docs`; 1,200 for `writing-adr`; 500 for `using-playbooks`.
 - One gate block per skill; Red Flags tables only on the six discipline skills, ≤ 4 rows; no per-skill announce lines; no `dot` graphs.
 - Frontmatter `name` matches the directory; description in "Use …, to …" shape.
 - Every `references/` link resolves; no brand names in skills.
-- The three example designs and the eval fixture carry the core design sections (Problem, Diagnosis, Approach, Architecture), only known sections, in order.
 - No bold marker split by a line wrap; no merged headings or bullets.
 - Prose lines are at most 160 columns; tables, fences and frontmatter are exempt. `scripts/reflow-md.py` rewraps a file without changing its content.
 

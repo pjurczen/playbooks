@@ -1,7 +1,7 @@
 # Example plan — the order, and why it is believed to work
 
-The plan for `../../brainstorming/references/example-design-replacement.md`. Read the two together: the design has the why, the shape and the logic; this has
-the parts, the order and the evidence. Nothing the design says is repeated.
+The plan for a design that replaces a request-scoped dirty-marking collector with an explicit recalculation service. The design has the why, the shape and the
+logic; this has the parts, the order and the evidence. Nothing the design says is repeated.
 
 ---
 

@@ -33,8 +33,7 @@ approved on a guess.
 
 ## The plan shape
 
-The shape is `references/example-plan-replacement.md` — read it, and its design `../brainstorming/references/example-design-replacement.md`, before writing.
-Save to `docs/playbooks/plans/YYYY-MM-DD-<feature>.md` and commit. Its sections:
+The shape is `references/example-plan-replacement.md` — read it before writing. Save to `docs/playbooks/plans/YYYY-MM-DD-<feature>.md` and commit. Its sections:
 
 - **Header** — links the design, the ADR if any, and the initiative for a slice.
 - **Goal** — one sentence.

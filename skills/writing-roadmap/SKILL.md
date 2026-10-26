@@ -20,7 +20,7 @@ fits one design → plan → execute cycle: that work gets a plan, not a roadmap
 
 ## The shape
 
-The shape is `references/example-roadmap.md` — read it, with its initiative design `../brainstorming/references/example-design-initiative.md`. Its sections:
+The shape is `references/example-roadmap.md` — read it before writing. Its sections:
 
 - **Header** — links the initiative design and its ADR.
 - **Exit criterion** — one sentence: the initiative is done when the end state is reached and the legacy is gone.

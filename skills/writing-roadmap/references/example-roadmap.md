@@ -1,6 +1,7 @@
 # Example roadmap
 
-The roadmap for `../../brainstorming/references/example-design-initiative.md`. Slices, order, exit criterion; nothing a slice plan will own.
+The roadmap for an initiative that replaces a nightly report scheduler with event-driven rendering. Slices, order, exit criterion; nothing a slice plan will
+own.
 
 ---
 

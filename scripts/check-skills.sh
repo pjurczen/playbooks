@@ -5,7 +5,7 @@ cd "$(dirname "$0")/.."
 fail=0
 DISCIPLINE="using-playbooks brainstorming executing-plans verifying-before-done debugging consolidating-docs"
 
-budget() { case "$1" in finishing-branch|executing-plans|consolidating-docs) echo 1500;; writing-adr|brainstorming) echo 1200;; using-playbooks) echo 500;; *) echo 1000;; esac; }
+budget() { case "$1" in finishing-branch|executing-plans|consolidating-docs) echo 1500;; writing-adr) echo 1200;; using-playbooks) echo 500;; *) echo 1000;; esac; }
 
 echo "== word budgets =="
 for f in skills/*/SKILL.md; do n=$(basename "$(dirname "$f")"); w=$(wc -w < "$f"); lim=$(budget "$n"); [ "$w" -le "$lim" ] || { echo "  OVER $n: $w > $lim"; fail=1; }; done
@@ -32,18 +32,6 @@ for f in glob.glob("skills/**/*.md", recursive=True):
         if "<" in m: continue
         if not os.path.exists(os.path.normpath(os.path.join(os.path.dirname(f), m))): print("  MISSING", f, "->", m); bad += 1
     if re.search(r"superpowers", t): print("  BRAND", f); bad += 1
-sys.exit(1 if bad else 0)
-PY
-
-echo "== example designs and the fixture: core sections present, only known sections, in order =="
-python3 - <<'PY' || fail=1
-import re, sys
-S = ["Problem","Diagnosis","Approach","Decisions","Architecture","Logic","Contracts","Consequences","Open questions"]
-CORE = {"Problem","Diagnosis","Approach","Architecture"}
-bad = 0
-for f in ["skills/brainstorming/references/example-design-replacement.md","skills/brainstorming/references/example-design-feature.md","skills/brainstorming/references/example-design-initiative.md","evals/fixtures/designs/2026-09-17-unified-cache.md"]:
-    h = re.findall(r"^## (.+?)\s*$", open(f).read(), re.M)
-    if not CORE <= set(h) or h != [x for x in S if x in h]: print("  SECTIONS", f, h); bad += 1
 sys.exit(1 if bad else 0)
 PY
 
