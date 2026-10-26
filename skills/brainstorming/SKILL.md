@@ -86,7 +86,7 @@ After one read, the reader can say:
 - what it costs, and what changes for callers
 - what is still open
 
-Headings are yours. No section exists because a template lists it.
+Headings are yours. Every line tells the reader something not already on the page and not visible in the code.
 
 **The rules:**
 
