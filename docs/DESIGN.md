@@ -752,3 +752,12 @@ wanting in them was legibility.
 The judge is the release bar for designs from here on: the six-design run is the frozen baseline, rubrics do not change while skill variants are compared, and a
 skill change ships when the next production designs, judged as a new variant, move the failing metrics without worsening the passing ones. The fixture-based
 loop remains a smoke test for gross regressions, not evidence.
+
+## 20. Addendum — the plan is an execution list (2026-10)
+
+§18 turned the plan into a verified order and removed the per-class table, but what it kept still filled pages: a parts table with a tests column, a *Proven by*
+line per milestone that listed scenarios, a *Why here* line, and a Checked section that recorded how each premise was verified. The user's rule is narrower: a
+plan says how the work is decomposed, in what order, and what checks run. Scenarios and rules belong to the design; a single test's detail belongs to the
+implementer; the plan is strictly an execution list. So a milestone has three fields, what it does, the state it leaves and the checks that must be green, the
+parts table and the example are gone, and Checked keeps only the premises, as facts. The walk against the repo stays as the gate, because the failure it
+prevents, a plan approved on a guess, has not changed.

@@ -21,6 +21,12 @@ author's. A consuming repo layers its own conventions (vocabulary, diagram node 
 `.claude/designs.md`; the skill never carries them. The shape reference, the views catalogue, the four examples, the initiative reference and the Node
 word-count script are gone; a 350-word `views.md` (which picture answers which question, and how to make it legible) and the builder-check prompt remain.
 
+**`writing-plans`** is an execution list. Plans had kept growing even after the per-class table went: a parts table with test classes, a scenario list per
+milestone, a why-here line, a record of how each premise was verified. A plan now says how the work is decomposed, in what order, and what checks run: numbered
+milestones, each with what it does, the state it leaves and the checks that must be green, plus the premises the order rests on, stated as facts. No classes,
+files, signatures, scenarios or test code: tests anchor to the rules the design states, and `executing-plans` writes them. The example plan is gone; the skill
+is 656 words.
+
 **The pipeline** follows: `executing-plans`, `writing-plans` and both reviewer prompts no longer edit the design with a `Deviation:` line; `writing-adr` is
 fired once the approach is chosen. The gate drops the example-section check and the 1,200-word exception. Eval 1 expects the reader questions, a Status line, at
 least one view and declaration-only code, not a section set, and the produced document is judged by `evals/design`.

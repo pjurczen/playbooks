@@ -54,9 +54,9 @@ failure to avoid. The conventions:
   (vocabulary, diagram node kinds, where acceptance criteria come from) live in that repo's `.claude/designs.md`, never in the skill.
 - An initiative gets a design (target architecture, coexistence mechanism, shared contracts) and a roadmap (slices, order, exit criterion), both on the base
   branch; each slice then gets an ordinary design and plan that inherit from them.
-- Plans are a verified implementation order — the parts of the system involved with their tests, then milestones that each leave the build and the suites green,
-  with what each builds, the state after it, and the tests that prove it — plus the premises that were checked against the repo while planning. A premise that
-  could be checked is never handed to the implementer as a stop-and-ask. No list of files to edit, no test code, no bodies, and nothing the design already says.
+- Plans are an execution list verified against the repo: milestones in order, each with what it does, the state it leaves and the checks that must be green,
+  plus the premises the order rests on. A premise that could be checked is never handed to the implementer as a stop-and-ask. No parts table, no class or file
+  lists, no scenarios, no test code, and nothing the design already says.
 - Commit messages follow Conventional Commits and describe the *why* of the slice, not a play-by-play of files.
 - ADRs are 2-minute reads at design altitude — no code, no symbols, alternatives named. Written when the decision is made (brainstorming), not when the feature
   lands.
