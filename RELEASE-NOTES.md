@@ -1,5 +1,34 @@
 # Playbooks Release Notes
 
+## v0.12.0 (2026-10-26)
+
+### One short brainstorming skill, measured by a judge
+
+Six real designs produced by the previous brainstorming were judged with small checks derived from published design-doc practice and the LLM-judge literature
+(`evals/design`, a Python tool against the Claude API, one yes/no question per unit with the quoted span as evidence). What failed was not shape: open questions
+scattered through decision text, key decisions without a weighed alternative (one written reason was literally "user decision", because the model had asked a
+multiple-choice question whose options carried no consequences), old and new coexisting inside single designs, one paragraph in five repeating something already
+on the page, diagrams without typed nodes or labelled edges. What passed nearly everywhere was what the skill's 9,500 words of references spent their length on.
+Every finding had meant tuning a section.
+
+**`brainstorming`** is one 986-word file again, with the readability of its first version: look before you ask; one question per message, multiple choice only
+when the options differ in consequence and each says what it buys and costs; play back what you understood, your proposals marked as yours with their reason;
+approaches in a message of their own, keeping things as they are included when credible; a written design described by the seven questions a reader who knows
+the code must be able to answer and by rules each tied to a judged metric (reasons and what each decision beat, one fact one place, open points in one list,
+altitude, structure drawn with typed nodes and labelled edges, code only as declarations or a rule); initiatives as one rule; a builder check by a fresh
+subagent as the only review; a freeze after approval, where a changed decision returns to brainstorming and everything else goes to the PR. Headings are the
+author's. A consuming repo layers its own conventions (vocabulary, diagram node kinds, where acceptance criteria come from, locations, review questions) in its
+`.claude/designs.md`; the skill never carries them. The shape reference, the views catalogue, the four examples, the initiative reference and the Node
+word-count script are gone; a 350-word `views.md` (which picture answers which question, and how to make it legible) and the builder-check prompt remain.
+
+**The pipeline** follows: `executing-plans`, `writing-plans` and both reviewer prompts no longer edit the design with a `Deviation:` line; `writing-adr` is
+fired once the approach is chosen. The gate drops the example-section check and the 1,200-word exception. Eval 1 expects the reader questions, a Status line, at
+least one view and declaration-only code, not a section set, and the produced document is judged by `evals/design`.
+
+Shipped on a smoke loop: two runs each of the new and the old skill on the public fixture task, judged against each other. Every mechanical expectation holds,
+the trivial change still skips, the judge finds the new designs better on alternatives, reasons and repetition and within noise elsewhere; they are a fifth
+longer. The real measure, the next production designs judged as a variant against the frozen six-design baseline, is pending.
+
 ## v0.11.0 (2026-09-30)
 
 ### Focused designs, and plans that are a verified order
