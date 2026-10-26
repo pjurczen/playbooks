@@ -27,3 +27,4 @@ the skill library.
 ## Conventions
 - A structural rule a skill change introduces is added to `scripts/check-skills.sh` and listed here in the same commit.
 - The pre-commit hook in `scripts/hooks/` reflows staged markdown and runs the script; `git config core.hooksPath scripts/hooks` installs it.
+- The same hook refuses a staged notebook that carries cell outputs: outputs can hold private design text, and `evals/private/` is the only home for that.

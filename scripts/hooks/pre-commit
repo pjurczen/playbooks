@@ -16,4 +16,10 @@ if [ -n "$staged" ]; then
   git add $staged
 fi
 
+for nb in $(git diff --cached --name-only --diff-filter=ACMR -- '*.ipynb'); do
+  if git show ":$nb" | python3 -c "import json,sys; sys.exit(1 if any(c.get('outputs') for c in json.load(sys.stdin)['cells']) else 0)"; then :; else
+    echo "pre-commit: $nb has cell outputs; run 'jupyter nbconvert --clear-output --inplace $nb' (outputs may hold private text)" >&2; exit 1
+  fi
+done
+
 scripts/check-skills.sh >/dev/null || { scripts/check-skills.sh; exit 1; }
