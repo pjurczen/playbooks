@@ -76,22 +76,22 @@ Then size the work:
 
 Save to `docs/playbooks/designs/YYYY-MM-DD-<topic>.md`. Title names the change; header `Status: draft | approved · Ticket: …`.
 
-One document in two parts, top and bottom, for two readers.
-
-The top part is for the reviewer, who can stop after it. Having read it they can say:
+After one read, the reader can say:
 
 - what hurts, and what done looks like
+- what causes it
 - what we will do, what it beat, and why
 - which parts take part and who owns what
 - how one case travels through the parts, in order
-- the decisions, each with its reason, and which were made here rather than agreed
+- the rules and contracts that get built
 - what it costs, and what changes for callers
 - what is still open
 
-The bottom part is for the implementer, who reads on: the rules that get built, the contracts others build against, the persistence. The top part names a rule,
-the bottom part states it; nothing is said in both.
-
 Headings are yours. Every line tells the reader something not already on the page. Today's code belongs when it explains the change, not as an inventory.
+
+**Takeaway, then detail.** Every rule, decision and part reads as one line a reviewer can scan, with its detail beneath that line for the implementer: in a
+`<details>` block where the document is read rendered, indented otherwise. The line says what; the detail adds the conditions, the edges and what fails, and
+never repeats the line. A reviewer reads the lines; an implementer opens the detail.
 
 **The rules:**
 
@@ -109,11 +109,11 @@ Headings are yours. Every line tells the reader something not already on the pag
 - Three or more parts, or ordered steps: draw them. One sequence diagram follows one case through the parts in order; that is the walk-through, so no prose
   retells it. The sentence right before a diagram says what question it answers; nodes say what kind of thing they are; edges carry a verb. Prose says why, not
   what the picture shows. Read `references/views.md` before drawing.
-- The rules that get built, numbered and named, grouped by stage when there is an order. Each is a sentence or two under its name: the condition, the result,
-  what fails. An edge the code must handle is a rule, not a plan item.
+- The rules that get built, numbered and named, grouped by stage when there is an order: one line each, the detail beneath. An edge the code must handle is a
+  rule, not a plan item.
 - The contracts others build against, new or changed: a signature with its semantics, an endpoint with its shapes, a message, a schema change.
 - Code only as a declaration, or a rule a test can follow branch by branch.
-- A table is for tabular content: contracts, open points, a mapping. A rule is not a cell, and no cell holds more than one sentence.
+- A table is for tabular content: contracts, open points, a mapping. A cell holds one short sentence; detail is never a cell.
 - One sentence says one thing, in words a teammate would say aloud. A semicolon joining two ideas is two sentences.
 - Say what you leave out, and what gets worse.
 
