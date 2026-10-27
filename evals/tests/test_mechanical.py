@@ -92,3 +92,12 @@ def test_duplicate_pairs():
 def test_link_definitions_are_not_prose():
     ex = M.extract("# T\n\nSee [the story][s] for context.\n\n[s]: https://example.org/story\n[other]: ../x.md\n")
     assert [u.meta["form"] for u in ex.by_kind("paragraph")] == ["paragraph"]
+
+
+def test_fold_markup_is_a_heading_not_a_paragraph():
+    doc = "# T\n\n## Rules\n\n<details>\n<summary><strong>R1 - Admission: reject a repeat before side effects.</strong></summary>\n\nThe guard stays.\nRecovery resumes.\n</details>\n"
+    ex = M.extract(doc)
+    heads = [u for u in ex.units if u.kind == "heading"]
+    assert any(u.text == "R1 - Admission: reject a repeat before side effects." and u.meta.get("summary") for u in heads)
+    paras = [u for u in ex.units if u.kind == "paragraph"]
+    assert all("<" not in u.text for u in paras) and any(u.text.startswith("The guard stays.") for u in paras)

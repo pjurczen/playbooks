@@ -61,6 +61,10 @@ _RULE = re.compile(r"^\s*([-*_])(\s*\1){2,}\s*$")
 _LINK_DEF = re.compile(r"^\s*\[[^\]]+\]:\s*\S+")
 
 
+_DETAILS_TAG = re.compile(r"^\s*</?details>\s*$", re.I)
+_SUMMARY = re.compile(r"^\s*<summary>(.*?)</summary>\s*$", re.I)
+
+
 def _blocks(text: str):
     """Yield (form, start, end, body, meta) blocks in document order."""
     lines = text.split("\n")
@@ -116,6 +120,20 @@ def _blocks(text: str):
             if b:
                 yield b
             yield ("heading", offs[i], offs[i] + len(ln), hm.group(2), {"level": len(hm.group(1))})
+            i += 1
+            continue
+        if _DETAILS_TAG.match(ln):  # a fold's open or close line is markup, not prose
+            b = flush()
+            if b:
+                yield b
+            i += 1
+            continue
+        sm = _SUMMARY.match(ln)
+        if sm:  # a fold's summary is its takeaway line: a heading, not a paragraph
+            b = flush()
+            if b:
+                yield b
+            yield ("heading", offs[i], offs[i] + len(ln), re.sub(r"<[^>]+>", "", sm.group(1)).strip(" *"), {"level": 4, "summary": True})
             i += 1
             continue
         if _RULE.match(ln):
