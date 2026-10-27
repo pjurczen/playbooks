@@ -76,9 +76,9 @@ Then size the work:
 
 Save to `docs/playbooks/designs/YYYY-MM-DD-<topic>.md`. Title names the change; header `Status: draft | approved · Ticket: …`.
 
-Two levels, in this order, for two readers.
+One document in two parts, top and bottom, for two readers.
 
-The first is for the reviewer and can be read alone. After it they can say:
+The top part is for the reviewer, who can stop after it. Having read it they can say:
 
 - what hurts, and what done looks like
 - what we will do, what it beat, and why
@@ -88,8 +88,8 @@ The first is for the reviewer and can be read alone. After it they can say:
 - what it costs, and what changes for callers
 - what is still open
 
-The second is for the implementer: the rules that get built, the contracts others build against, the persistence. The first level names a rule, the second
-states it; nothing is said in both. A reviewer who stops after the first level has what they need to approve; an implementer reads both.
+The bottom part is for the implementer, who reads on: the rules that get built, the contracts others build against, the persistence. The top part names a rule,
+the bottom part states it; nothing is said in both.
 
 Headings are yours. Every line tells the reader something not already on the page. Today's code belongs when it explains the change, not as an inventory.
 
