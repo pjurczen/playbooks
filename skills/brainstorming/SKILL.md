@@ -76,15 +76,20 @@ Then size the work:
 
 Save to `docs/playbooks/designs/YYYY-MM-DD-<topic>.md`. Title names the change; header `Status: draft | approved · Ticket: …`.
 
-After one read, the reader can say:
+Two levels, in this order, for two readers.
+
+The first is for the reviewer and can be read alone. After it they can say:
 
 - what hurts, and what done looks like
-- what causes it
 - what we will do, what it beat, and why
 - which parts take part and who owns what
-- the rules and contracts that get built
+- how one case travels through the parts, in order
+- the decisions, each with its reason, and which were made here rather than agreed
 - what it costs, and what changes for callers
 - what is still open
+
+The second is for the implementer: the rules that get built, the contracts others build against, the persistence. The first level names a rule, the second
+states it; nothing is said in both. A reviewer who stops after the first level has what they need to approve; an implementer reads both.
 
 Headings are yours. Every line tells the reader something not already on the page. Today's code belongs when it explains the change, not as an inventory.
 
@@ -95,18 +100,21 @@ Headings are yours. Every line tells the reader something not already on the pag
   beat. A why names a goal, a constraint, a cost or a risk; who decided, what already exists or what a guide says is not a why. What it beat is the nearest
   other option and the one cost that ruled it out, in a clause, not a paragraph.
 - One fact, one place. No lead-ins, no "unchanged" unless the reader would worry, no sentence a later edit left stale.
-- A decision the conversation did not make is marked as your call, with its reason. The reviewer sees which decisions have no agreement behind them.
+- A decision the conversation did not make is marked as your call, with its reason, in the decisions list. The body carries no label.
 - Open points in one list, each with an owner or what it blocks. No hedging anywhere else.
 - Each part gets a sentence of what it owns, adapters included; an arrow in a diagram is not a responsibility. A part that changes says what it owns afterwards;
   a part that goes away says what takes over its work. A class name is a fine reference; a call chain is not.
   - Design: "The adapter maps the pairs to the billing service's `InvoiceLine` objects."
   - Trace: "`OrderService.submit` loads the open order, delegates to the domain service and saves."
-- Three or more parts, or ordered steps: draw them. The sentence right before a diagram says what question it answers; nodes say what kind of thing they are;
-  edges carry a verb. Prose says why, not what the picture shows. Read `references/views.md` before drawing.
-- The rules that get built, each stated once in the form a test can follow: the condition, the branches, what fails. An edge the code must handle is a rule, not
-  a plan item.
+- Three or more parts, or ordered steps: draw them. One sequence diagram follows one case through the parts in order; that is the walk-through, so no prose
+  retells it. The sentence right before a diagram says what question it answers; nodes say what kind of thing they are; edges carry a verb. Prose says why, not
+  what the picture shows. Read `references/views.md` before drawing.
+- The rules that get built, numbered and named, grouped by stage when there is an order. Each is a sentence or two under its name: the condition, the result,
+  what fails. An edge the code must handle is a rule, not a plan item.
 - The contracts others build against, new or changed: a signature with its semantics, an endpoint with its shapes, a message, a schema change.
 - Code only as a declaration, or a rule a test can follow branch by branch.
+- A table is for tabular content: contracts, open points, a mapping. A rule is not a cell, and no cell holds more than one sentence.
+- One sentence says one thing, in words a teammate would say aloud. A semicolon joining two ideas is two sentences.
 - Say what you leave out, and what gets worse.
 
 **Initiatives.** Work too big to land as one change ships in slices, the old path serving in between. It gets an initiative design first, in
