@@ -95,6 +95,7 @@ Headings are yours. Every line tells the reader something not already on the pag
   beat. A why names a goal, a constraint, a cost or a risk; who decided, what already exists or what a guide says is not a why. What it beat is the nearest
   other option and the one cost that ruled it out, in a clause, not a paragraph.
 - One fact, one place. No lead-ins, no "unchanged" unless the reader would worry, no sentence a later edit left stale.
+- A decision the conversation did not make is marked as your call, with its reason. The reviewer sees which decisions have no agreement behind them.
 - Open points in one list, each with an owner or what it blocks. No hedging anywhere else.
 - Each part gets a sentence of what it owns, adapters included; an arrow in a diagram is not a responsibility. A part that changes says what it owns afterwards;
   a part that goes away says what takes over its work. A class name is a fine reference; a call chain is not.
