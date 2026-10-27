@@ -10,7 +10,8 @@ and you cannot talk to its author.
 Read it. Report only the questions you would still have to guess at, where a wrong guess changes what gets built: the question, and
 why the answer changes the plan. Rank them, most important first.
 
-Add, one line each: any decision whose reason you cannot find on the page; any statement you cannot tell is settled or still open.
+Add, one line each: any decision whose reason you cannot find on the page; any statement you cannot tell is settled or still open; any two
+statements that contradict each other.
 
 Skip what the document explicitly leaves to the implementer, what you could reasonably decide yourself, and wording.
 

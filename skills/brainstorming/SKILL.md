@@ -91,14 +91,16 @@ Headings are yours. Every line tells the reader something not already on the pag
 **The rules:**
 
 - Problem and cause before any solution. Done as something observable.
-- Every decision says why, and what it beat. "Simpler" only if the page shows what is simpler.
+- A decision is any sentence a reviewer could argue with: an approach, a mechanism, a boundary, a thing kept temporary. It reads what, then why, then what it
+  beat. "Simpler" only if the page shows what is simpler; who decided is not why.
 - One fact, one place. No lead-ins, no "unchanged" unless the reader would worry, no sentence a later edit left stale.
 - Open points in one list, each with an owner or what it blocks. No hedging anywhere else.
-- Parts and responsibilities, not call chains. A class name is a fine reference; a trace is not.
+- Each part gets a sentence of what it owns, adapters included; an arrow in a diagram is not a responsibility. A part that goes away says what takes over its
+  work. A class name is a fine reference; a call chain is not.
   - Design: "The adapter maps the pairs to the billing service's `InvoiceLine` objects."
   - Trace: "`OrderService.submit` loads the open order, delegates to the domain service and saves."
-- Three or more parts, or ordered steps: draw them. Caption, typed nodes, labelled edges; prose says why, not what the picture shows. Read `references/views.md`
-  before drawing.
+- Three or more parts, or ordered steps: draw them. The sentence right before a diagram says what question it answers; nodes say what kind of thing they are;
+  edges carry a verb. Prose says why, not what the picture shows. Read `references/views.md` before drawing.
 - The rules that get built, each stated once in the form a test can follow: the condition, the branches, what fails. An edge the code must handle is a rule, not
   a plan item.
 - The contracts others build against, new or changed: a signature with its semantics, an endpoint with its shapes, a message, a schema change.
