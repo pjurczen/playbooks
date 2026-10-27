@@ -99,6 +99,9 @@ Headings are yours. Every line tells the reader something not already on the pag
   - Trace: "`OrderService.submit` loads the open order, delegates to the domain service and saves."
 - Three or more parts, or ordered steps: draw them. Caption, typed nodes, labelled edges; prose says why, not what the picture shows. Read `references/views.md`
   before drawing.
+- The rules that get built, each stated once in the form a test can follow: the condition, the branches, what fails. An edge the code must handle is a rule, not
+  a plan item.
+- The contracts others build against, new or changed: a signature with its semantics, an endpoint with its shapes, a message, a schema change.
 - Code only as a declaration, or a rule a test can follow branch by branch.
 - Say what you leave out, and what gets worse.
 
@@ -122,7 +125,10 @@ One round. The check catches what the author cannot see; it does not reopen the 
 
 ## Approval
 
-> "Design committed to `<path>`[, ADR at `<path>`]. Done means: …. It beat … because …. Costs: …. Open: <n>, owners named. Approve, or tell me what to change."
+Before the gate: what the code can answer is looked up; what the user can settle is asked, one question at a time. An open point is what neither could settle
+now, and one that could change the approach blocks approval.
+
+> "Design committed to `<path>`[, ADR at `<path>`]. Done means: …. It beat … because …. Costs: …. Open: <n>, <m> blocking. Approve, or tell me what to change."
 
 Wait for explicit approval. On changes, rewrite in place; why it changed goes in the commit message. On approval set `Status: approved`.
 
