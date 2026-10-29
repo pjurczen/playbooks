@@ -102,7 +102,9 @@ never both.
   it beat is the nearest other option and the one cost that ruled it out, in a clause, not a paragraph.
 - One fact, one place. No lead-ins, no "unchanged" unless the reader would worry, no sentence a later edit left stale.
 - A decision the conversation did not make is marked as your call, with its reason, in the decisions list. The body carries no label.
-- Open points in one list, each with an owner and what it blocks; the list ends with the count and how many block approval. No hedging anywhere else.
+- Open points in one list, each with an owner and what it blocks. No hedging anywhere else.
+- The design describes the project, never the session: no record of a check or a review, no list of who clarified what, no reviewer names. A point the session
+  settled goes into the rule or decision it settled.
 - Each part gets a sentence of what it owns, adapters included; an arrow in a diagram is not a responsibility. A part that changes says what it owns afterwards;
   a part that goes away says what takes over its work. A class name is a fine reference; a call chain is not.
   - Design: "The adapter maps the pairs to the billing service's `InvoiceLine` objects."
@@ -134,7 +136,7 @@ design and reports where they would still have to guess. Sort what comes back:
 - **Minor**: settle it yourself; mark it in the document as your call.
 - **Theirs**: bring to the user in one message, most important first.
 
-One round. The check catches what the author cannot see; it does not reopen the dialogue.
+One round. The check catches what the author cannot see; it does not reopen the dialogue, and it leaves no trace in the document.
 
 ## Approval
 
