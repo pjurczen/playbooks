@@ -89,19 +89,20 @@ After one read, the reader can say:
 
 Headings are yours. Every line tells the reader something not already on the page. Today's code belongs when it explains the change, not as an inventory.
 
-**Takeaway, then detail.** Every rule, decision and part reads as one line a reviewer can scan, with its detail beneath that line for the implementer: in a
-`<details>` block where the document is read rendered, indented otherwise. The line says what; the detail adds the conditions, the edges and what fails, and
-never repeats the line. A reviewer reads the lines; an implementer opens the detail.
+**Takeaway, then detail.** Every rule, decision and part reads as one line a reviewer can scan, at most fifteen words, with its detail beneath that line for the
+implementer: in a `<details>` block where the document is read rendered, indented otherwise. The line says what. The detail opens with why and what it beat,
+then adds the conditions, the edges and what fails, and never repeats the line; more than three sentences of detail is a list. An item is a fold or a table row,
+never both.
 
 **The rules:**
 
 - Problem and cause before any solution. Done as something observable.
-- A decision is any sentence a reviewer could argue with: an approach, a mechanism, a boundary, a thing kept temporary. It reads what, then why, then what it
-  beat. A why names a goal, a constraint, a cost or a risk; who decided, what already exists or what a guide says is not a why. What it beat is the nearest
-  other option and the one cost that ruled it out, in a clause, not a paragraph.
+- A decision is any sentence a reviewer could argue with: an approach, a mechanism, a boundary, a thing kept temporary. Its line is the what; its detail opens
+  with the why, then what it beat. A why names a goal, a constraint, a cost or a risk; who decided, what already exists or what a guide says is not a why. What
+  it beat is the nearest other option and the one cost that ruled it out, in a clause, not a paragraph.
 - One fact, one place. No lead-ins, no "unchanged" unless the reader would worry, no sentence a later edit left stale.
 - A decision the conversation did not make is marked as your call, with its reason, in the decisions list. The body carries no label.
-- Open points in one list, each with an owner or what it blocks. No hedging anywhere else.
+- Open points in one list, each with an owner and what it blocks; the list ends with the count and how many block approval. No hedging anywhere else.
 - Each part gets a sentence of what it owns, adapters included; an arrow in a diagram is not a responsibility. A part that changes says what it owns afterwards;
   a part that goes away says what takes over its work. A class name is a fine reference; a call chain is not.
   - Design: "The adapter maps the pairs to the billing service's `InvoiceLine` objects."
@@ -126,8 +127,8 @@ locations, extra review questions. Apply it; never restate it.
 
 ## Builder check
 
-For a full design, dispatch a fresh subagent with `references/builder-check.md`: a builder who knows the codebase reads the design and reports where they would
-still have to guess. Sort what comes back:
+For a full design, once every section is written, dispatch a fresh subagent with `references/builder-check.md`: a builder who knows the codebase reads the
+design and reports where they would still have to guess. Sort what comes back:
 
 - **Answered already**: put the answer in the document.
 - **Minor**: settle it yourself; mark it in the document as your call.
