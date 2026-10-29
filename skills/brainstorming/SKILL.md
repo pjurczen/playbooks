@@ -124,8 +124,8 @@ never both.
 `docs/playbooks/initiatives/` on the base branch: target state, coexistence mechanism, shared contracts. Each slice then gets an ordinary design that inherits
 from it and never restates it. One change is one design, however many milestones its plan has.
 
-**Repo conventions.** `.claude/designs.md`, when present: vocabulary, diagram node kinds, where acceptance criteria come from and where story gaps go, document
-locations, extra review questions. Apply it; never restate it.
+**Repo conventions.** `.claude/designs.md`, when present: the glossary, diagram node kinds, where acceptance criteria come from and where story gaps go,
+document locations, extra review questions. Apply it; never restate it. A glossary term is used as the glossary spells it, never translated.
 
 ## Builder check
 

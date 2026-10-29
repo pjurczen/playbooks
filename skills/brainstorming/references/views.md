@@ -4,7 +4,8 @@ Read before drawing. Mermaid, because GitHub, GitLab, Bitbucket and the IDE prev
 
 | The reader asks                                                     | Draw                                                                                                                                                                            |
 |---------------------------------------------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| Which parts take part, who owns what, where does the new piece sit? | A structure `flowchart`: nodes typed by role (service, store, external system, adapter), edges labelled with what flows or who depends on whom. The first view of most designs. |
+| Where does the change sit among the contexts and the outside world? | A context `flowchart`: the bounded contexts or systems and the external systems, nothing inside any of them. |
+| Which parts inside the context take part, and who owns what?       | A structure `flowchart`: the parts inside one context, typed by role (service, store, adapter, port), edges labelled with what flows or who depends on whom. |
 | In what order does it happen, and what happens when a step fails?   | A `sequenceDiagram` with the failure path, for integrations and for flows whose order is the point.                                                                             |
 | What states can it be in, and what moves it?                        | A `stateDiagram-v2` of one entity, screen or job, for user-facing flows and long-running work.                                                                                  |
 | What changes?                                                       | Before and after as two subgraphs of one structure diagram, or a table; the same names in both, the changed parts marked.                                                       |
@@ -14,6 +15,7 @@ Read before drawing. Mermaid, because GitHub, GitLab, Bitbucket and the IDE prev
 Rules for every view:
 
 - One question per diagram, stated in the caption line before it. A second diagram only for a different question.
+- One level per picture: the contexts and the outside world, or the parts inside one context, never both.
 - Nodes are the parts a team would draw on a whiteboard: modules, services, stores, external systems, the domain's aggregates. Mappers, factories, resolvers and
   the classes of the diff are not nodes unless `.claude/designs.md` says otherwise. More than about a dozen nodes means two diagrams.
 - Every node says what kind of thing it is, by shape, subgraph or a key; every edge is directed and labelled with a verb phrase, never a bare "uses" and never a
