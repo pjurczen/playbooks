@@ -1,5 +1,40 @@
 # Playbooks Release Notes
 
+## v0.13.0 (2026-11-02)
+
+### Structure over flat blobs, and Simplified Technical English
+
+One production design was regenerated nine times from a fixed session, each version judged against the six-design baseline and read by a person. The judge
+scored the later versions near perfect on fourteen of twenty-two checks. The person found them unreadable, and the reason was not on any check: everything was
+flat. The problem was five sentences of equal standing with no cause among them; the decisions were a numbered list in conversation order with the mechanism
+first and the premise fourth; the parts were nineteen bold one-liners; "done", costs and evidence were sentence blocks. The checks measure whether a reason, a
+caption or a section is present, not whether the document has an order.
+
+**`brainstorming`** now asks for the tree before the words. The problem is one sentence that names the cause, the symptoms listed under it, and the consequence;
+"there is no X" is named as not a cause, because it is the solution restated. The first decision answers the cause and each later one is nested, indented, under
+the one it rests on, with a named question above siblings that answer the same one; decisions, rules and parts are list items, because a paragraph cannot be
+indented and the dotted number alone showed no tree. A part says what it owns and never how, so the how is written once, in a decision or a rule. Several things
+of one kind are a list. A parent sentence may summarise its children, which is structure, not repetition. There is no evidence or test section, because it
+restated the done list and the rules every time. The reasons got their own tests along the way: a why names a goal, a constraint, a cost or a risk, never who
+decided or what a guide says; what it beat is the nearest option and the one cost that ruled it out; a decision the conversation did not make is marked as the
+author's call. The design describes the project, never the session: no record of a check, no list of who clarified what. Diagrams gained cases: context and
+structure are two pictures at one level each, a before-and-after when a part goes away, a state diagram for three or more states, and one sequence diagram as
+the walk-through that the prose does not retell. Folds were tried for the detail under each decision and dropped.
+
+**The writing standard is ASD-STE100 Issue 9**, for the design as descriptive text and for the dialogue and the skill as procedural text. `references/ste.md`
+paraphrases all fifty-three rules by number; the specification itself is copyrighted and stays out of the repo, and a consuming repo names its location in
+`.claude/designs.md`. One adaptation: a topic sentence may name a cause or a dependency, which the standard would call abstract, when the facts follow under it.
+**`writing-plans`** follows the same standard with its own copy of the rules. Glossary terms are used as the glossary spells them and never translated; the
+conventions file names the glossary's path so the model can open it.
+
+**The judge** has two new checks that see order rather than presence: the problem names a cause set apart from its symptoms, and the decisions form a tree in
+which a reader meets each premise before the decision that rests on it. Both fail every version up to the seventh and pass from the eighth, which is what the
+reader said. The extractor reads fold markup. Private designs live in `designs/<variant>`.
+
+Measured on the one design: reasons for decisions 0.75 to 0.95 and both new checks from fail to pass between the seventh and ninth versions; repetition rose
+from 2 to 13 in the same span, eleven of them the evidence section now excluded. The reader's verdict on the ninth version is "not great still". Each rule fixes
+the section it names and the next regeneration finds a new place to be flat, and no writing rule recovers a cause the session never spoke aloud.
+
 ## v0.12.0 (2026-10-26)
 
 ### One short brainstorming skill, measured by a judge
