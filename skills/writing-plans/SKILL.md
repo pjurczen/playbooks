@@ -1,6 +1,6 @@
 ---
 name: writing-plans
-description: Use after brainstorming and before any code, to turn an approved design into an execution list: milestones in order, each with what it does, the state it leaves and the checks that must be green.
+description: Use after brainstorming and before any code, to turn an approved design into an execution list - milestones in order, each with what it does, the state it leaves and the checks that must be green.
 ---
 
 # Writing Plans
