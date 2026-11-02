@@ -8,7 +8,8 @@ description: Use before any non-trivial creative work (a feature, a component, a
 Write the design for a developer who knows the codebase. The developer reads the design once, presents it and approves it. An implementer in another session
 reads it once more and plans from it. Every rule here serves those two reads.
 
-Write the design and the dialogue in Simplified Technical English. Read `references/ste.md` before you write.
+Write the design and the dialogue in Simplified Technical English. Read `references/ste.md` before you write. The design is descriptive text. The dialogue is
+procedural text.
 
 <HARD-GATE>
 Do not write code, scaffolding or a dependency before the user approves the written design. Do not invoke writing-plans before that approval. Three sentences
@@ -95,17 +96,16 @@ After one read, the reader can say:
 Choose your own headings. Write a line only if it tells the reader something that is not already on the page. Describe the code of today only where it explains
 the change. Do not write an inventory of the code.
 
-**Takeaway, then detail.** Write each rule, each decision and each part as one line of not more than fifteen words. A reviewer scans the lines. Put the detail
-below the line, for the implementer. Use a `<details>` block when a renderer shows the document. Otherwise indent the detail. The line says what. The detail
-starts with why, then with what it beat. Then the detail adds the conditions, the edges and what fails. The detail does not repeat the line. If the detail has
-more than three sentences, write it as a list. Write each item as a fold or as a table row, not both.
+**One paragraph for each item.** Write each decision, each rule and each part as one short paragraph. The first sentence says what, in not more than fifteen
+words. The next sentences say why, what it beat, the conditions and what fails. Do not repeat the first sentence. Do not use a fold, a table or a code block for
+a decision, a rule or a part.
 
 **The rules:**
 
 - State the problem and its cause before any solution. State "done" as something observable.
-- A decision is a sentence that a reviewer can argue with: an approach, a mechanism, a boundary, a temporary thing. The line of a decision says what. Its detail
-  starts with why, then with what it beat. A "why" names a goal, a constraint, a cost or a risk. "Who decided", "what exists" and "what a guide says" are not a
-  why. "What it beat" is the nearest other option and the one cost that ruled it out, in one clause.
+- A decision is a sentence that a reviewer can argue with: an approach, a mechanism, a boundary, a temporary thing. The first sentence of a decision says what.
+  The next sentences say why, then what it beat. A "why" names a goal, a constraint, a cost or a risk. "Who decided", "what exists" and "what a guide says" are
+  not a why. "What it beat" is the nearest other option and the one cost that ruled it out, in one clause.
 - State each fact once, in one place. Do not write a lead-in. Do not write "unchanged" unless the reader would worry. Delete a sentence that a later edit made
   stale.
 - Mark a decision that the conversation did not make as your call, with its reason, in the list of decisions. Do not put the label in the body.
@@ -119,8 +119,8 @@ more than three sentences, write it as a list. Write each item as a fold or as a
 - Draw three or more parts, or ordered steps. Draw one sequence diagram that follows one case through the parts in order. That diagram is the walk-through. Do
   not retell it in prose. Write the sentence before a diagram to say which question the diagram answers. Let each node say what kind of thing it is. Let each
   edge carry a verb. Use prose to say why, not to say what the picture shows. Read `references/views.md` before you draw.
-- Number and name the rules to build. Group them by stage when there is an order. Write one line for each rule, and the detail below. An edge that the code must
-  handle is a rule, not a plan item.
+- Number and name the rules to build. Group them by stage when there is an order. Write one paragraph for each rule. An edge that the code must handle is a
+  rule, not a plan item.
 - List the contracts that others build against, new or changed: a signature with its semantics, an endpoint with its shapes, a message, a schema change.
 - Write code only as a declaration, or as a rule that a test can follow branch by branch.
 - Use a table only for tabular content: contracts, open points, a mapping. Write one short sentence in each cell. Do not put detail in a cell.
