@@ -23,7 +23,7 @@ A design is descriptive text. Apply sections 1 to 4, 6, 8 and 9 to it. A skill, 
 - 1.11 Do not use different technical nouns for the same item. Do not translate a technical noun.
 - 1.12 You can use a verb that fits a technical verb category.
 - 1.13 Do not use a technical verb as a noun.
-- 1.14 Use American spelling unless an official directive says otherwise. This repository's directive is British spelling.
+- 1.14 Use American spelling unless an official directive says otherwise.
 
 ## Section 2: Multi-word nouns
 
@@ -42,7 +42,8 @@ A design is descriptive text. Apply sections 1 to 4, 6, 8 and 9 to it. A skill, 
 
 ## Section 4: Sentences
 
-- 4.1 Write short and clear sentences. In descriptive text, give each sentence one topic. Do not write an abstract sentence; say how the thing works.
+- 4.1 Write short and clear sentences. In descriptive text, give each sentence one topic. Say how the thing works. An abstract sentence stands only as a topic
+  sentence, with the concrete facts under it (6.5).
 - 4.2 Do not omit a word to make a sentence shorter. Keep the subject, the verb and the articles. Do not use a contraction.
 - 4.3 Use a vertical list for complex text. End the sentence before the list with a colon. Start each item with an uppercase letter. Put a period after an item
   that is a full sentence and after the last item. Do not put a comma or a semicolon after an item.
@@ -64,7 +65,8 @@ A design is descriptive text. Apply sections 1 to 4, 6, 8 and 9 to it. A skill, 
 - 6.2 Use the same key words and key phrases through the text to connect its ideas. Do not change a term once you use it.
 - 6.3 Write not more than 25 words in a sentence.
 - 6.4 Use a paragraph to keep related information together.
-- 6.5 Give each paragraph one topic. Start the paragraph with the sentence that states the topic.
+- 6.5 Give each paragraph one topic. Start the paragraph with the sentence that states the topic. A topic sentence can name a cause or a dependency. The
+  sentences after it give the facts.
 - 6.6 Write not more than six sentences in a paragraph.
 - The imperative is not permitted in descriptive text.
 
