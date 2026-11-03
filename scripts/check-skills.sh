@@ -23,9 +23,10 @@ import re, os, glob, sys
 bad = 0
 for f in glob.glob("skills/**/*.md", recursive=True):
     t = open(f).read()
-    for m in re.findall(r"`((?:\.\./|references/)[^`<]+\.md)`", t):
+    for m in re.findall(r"`((?:\.\./|references/|\$\{CLAUDE_PLUGIN_ROOT\}/)[^`<]+\.md)`", t):
         if "<" in m: continue
-        if not os.path.exists(os.path.normpath(os.path.join(os.path.dirname(f), m))): print("  MISSING", f, "->", m); bad += 1
+        p = m.removeprefix("${CLAUDE_PLUGIN_ROOT}/") if m.startswith("${CLAUDE_PLUGIN_ROOT}/") else os.path.join(os.path.dirname(f), m)
+        if not os.path.exists(os.path.normpath(p)): print("  MISSING", f, "->", m); bad += 1
     if re.search(r"superpowers", t): print("  BRAND", f); bad += 1
 sys.exit(1 if bad else 0)
 PY

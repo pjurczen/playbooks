@@ -21,11 +21,11 @@ author's call. The design describes the project, never the session: no record of
 structure are two pictures at one level each, a before-and-after when a part goes away, a state diagram for three or more states, and one sequence diagram as
 the walk-through that the prose does not retell. Folds were tried for the detail under each decision and dropped.
 
-**The writing standard is ASD-STE100 Issue 9**, for the design as descriptive text and for the dialogue and the skill as procedural text. `references/ste.md`
-paraphrases all fifty-three rules by number; the specification itself is copyrighted and stays out of the repo, and a consuming repo names its location in
-`.claude/designs.md`. One adaptation: a topic sentence may name a cause or a dependency, which the standard would call abstract, when the facts follow under it.
-**`writing-plans`** follows the same standard with its own copy of the rules. Glossary terms are used as the glossary spells them and never translated; the
-conventions file names the glossary's path so the model can open it.
+**The writing standard is ASD-STE100 Issue 9**, for the design as descriptive text and for the dialogue and the skill as procedural text. `references/ste.md` at
+the plugin root, read through `${CLAUDE_PLUGIN_ROOT}`, paraphrases all fifty-three rules by number; the specification itself is copyrighted and stays out of the
+repo, and a consuming repo names its location in `.claude/designs.md`. One adaptation: a topic sentence may name a cause or a dependency, which the standard
+would call abstract, when the facts follow under it. **`writing-plans`** follows the same standard from the same file. Glossary terms are used as the glossary
+spells them and never translated; the conventions file names the glossary's path so the model can open it.
 
 **The judge** has two new checks that see order rather than presence: the problem names a cause set apart from its symptoms, and the decisions form a tree in
 which a reader meets each premise before the decision that rests on it. Both fail every version up to the seventh and pass from the eighth, which is what the

@@ -16,6 +16,7 @@ hooks/hooks.json               — registers the SessionStart hook
 hooks/session-start            — bash script: loads using-playbooks, escapes for JSON, emits hookSpecificOutput.additionalContext
 skills/<name>/SKILL.md         — one skill per directory
 skills/<name>/references/*.md  — documents a step tells the model to read: shapes, worked examples, reviewer prompts
+references/*.md                — documents more than one skill reads, as `${CLAUDE_PLUGIN_ROOT}/references/<file>`
 docs/                          — design rationale and reference notes
 ```
 
@@ -35,6 +36,8 @@ Skill files are prompts. Instruction count degrades adherence and early instruct
   numbered lists.
 - **"When to skip" is a standard section** in every directly-invocable skill; pipeline-only skills say "fired by X".
 - **Companions carry a read-when** ("read `references/views.md` before drawing"). **Positive framing, reasons over emphasis, no brand names.**
+- **A companion two skills share lives once, in the plugin-root `references/`**, read as `${CLAUDE_PLUGIN_ROOT}/references/<file>`. The installed plugin fills
+  that variable; a skill copied alone into a project does not, so the copy must carry the file and point at it.
 - **Structure is checked mechanically, not by prompting.** A structure rule belongs in a gate or in the critic's checklist, never as a lecture in a skill body.
 - **Tone:** senior dev to senior dev. State the rule and the reason; trust the reader.
 

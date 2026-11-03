@@ -8,7 +8,7 @@ description: Use after brainstorming and before any code, to turn an approved de
 A plan is the order the work is done in, and nothing else. The design says what and why; the plan says in which steps, what each step leaves behind and what
 proves it. The user reads it to approve the order; an implementer in another session reads it to execute.
 
-Write in ASD-STE100 (Simplified Technical English). Read `references/ste.md` before you write.
+Write in ASD-STE100 (Simplified Technical English). Read `${CLAUDE_PLUGIN_ROOT}/references/ste.md` before you write.
 
 <HARD-GATE>
 Present a plan only after walking its order against the repo. Every premise a milestone rests on is checked now, by reading the code or running a command. A

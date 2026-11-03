@@ -8,7 +8,8 @@ description: Use before any non-trivial creative work (a feature, a component, a
 Two people read the design: a developer who presents and approves it, and an implementer in another session who plans from it. Every rule here serves those two
 reads.
 
-Write in ASD-STE100 (Simplified Technical English). Read `references/ste.md` before you write. The design is descriptive text. The dialogue is procedural text.
+Write in ASD-STE100 (Simplified Technical English). Read `${CLAUDE_PLUGIN_ROOT}/references/ste.md` before you write. The design is descriptive text. The
+dialogue is procedural text.
 
 <HARD-GATE>
 Do not write code, scaffolding or a dependency before the user approves the written design. Do not invoke writing-plans before that approval. Three sentences
