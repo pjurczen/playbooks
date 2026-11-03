@@ -10,8 +10,8 @@ Implement the plan in the main session, milestone by milestone; subagents only w
 ## Before you start
 
 1. Read the plan file once. Extract: the goal, the decomposition, the behaviours to verify, and each milestone's done-when and *Verified by* lines. Read the
-   design it links for the architecture, the components and the contracts, and `references/structure-critic-prompt.md` once: the critic holds your code to its
-   checklist.
+   design it links for the architecture, the components and the contracts, and `${CLAUDE_PLUGIN_ROOT}/references/structure-critic-prompt.md` once: the critic
+   holds your code to its checklist.
 2. Re-read it critically. Any milestone unclear? Any behaviour you can't see how to verify? Raise it with the user before any code is written. The plan's
    *Assumptions* are what its order rests on: when the code contradicts one, or a milestone cannot reach its done-when, stop and ask — don't pick an
    interpretation and build on it.
@@ -38,6 +38,7 @@ hand-off to finishing-branch.
 ### Step 1 — Sketch behavioural test(s) (RED)
 
 Use **bdd-testing**: one test per behaviour the milestone's *Verified by* names, at the level the plan's behaviours state them; behaviour-level, not structural.
+Build each test with **non-brittle-tests**.
 
 ### Step 2 — Watch them fail
 
@@ -67,9 +68,9 @@ the end-of-feature reviewer reports every difference. If something's a note for 
 
 ### Step 6 — Structure critic
 
-Dispatch ONE fresh subagent with `references/structure-critic-prompt.md`: this milestone's diff, the design's parts and contracts, the gate output. It returns
-at most six findings by location with the move, or "none"; a "design issue" goes to the circuit-breaker. The model that wrote the long method doesn't see it in
-the same context; a fresh one with a checklist does.
+Dispatch ONE fresh subagent with `${CLAUDE_PLUGIN_ROOT}/references/structure-critic-prompt.md`: this milestone's diff, the design's parts and contracts, the
+gate output. It returns at most six findings by location with the move, or "none"; a "design issue" goes to the circuit-breaker. The model that wrote the long
+method doesn't see it in the same context; a fresh one with a checklist does.
 
 ### Step 7 — Refactor pass
 
@@ -78,7 +79,8 @@ immediate callers, and anything your change made worse or exposed — better tha
 needs, not a time-box. Allowed: rename, extract, collapse duplication, remove dead code, simplify a conditional, split the long function you had to modify, move
 a responsibility to the unit that owns it. Not allowed: cleaning code you didn't touch, and changing a contract other code depends on — that is a stop-and-ask,
 never a quiet refactor and never a followup. A bug in touched code is fixed here, with a scenario, and named in the commit; a bug elsewhere is a finding. Tests
-stay green throughout. "Looked, nothing worth doing" is a valid answer; "too big for now" is not — if you touched it, it's yours.
+stay green throughout. "Looked, nothing worth doing" is a valid answer; "too big for now" is not — if you touched it, it's yours. A unit that needs more than
+the critic's moves is a Tier 2 followup and, after landing, a **refactoring** run of its own.
 
 ### Step 8 — Run tests and gates again
 

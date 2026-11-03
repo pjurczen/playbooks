@@ -11,7 +11,7 @@ for d in skills/*/; do n=$(sed -n 's/^name: //p' "$d/SKILL.md"); [ "$n" = "$(bas
 echo "== one gate per skill; Red Flags only on discipline skills, ≤ 4 rows; no announce lines; no dot graphs =="
 for f in skills/*/SKILL.md; do n=$(basename "$(dirname "$f")")
   g=$(grep -cE '^<(HARD-GATE|EXTREMELY-IMPORTANT)>' "$f" || true); [ "$g" -le 1 ] || { echo "  MULTI-GATE $n"; fail=1; }
-  rows=$(awk '/^## Red Flags/{f=1} f&&/^\| "/{c++} END{print c+0}' "$f")
+  rows=$(awk 'tolower($0) ~ /^## red flags/{f=1} f&&/^\| "/{c++} END{print c+0}' "$f")
   if echo " $DISCIPLINE " | grep -q " $n "; then [ "$rows" -le 4 ] || { echo "  ROWS $n: $rows"; fail=1; }; else [ "$rows" -eq 0 ] || { echo "  UNEXPECTED RED FLAGS $n"; fail=1; }; fi
   grep -q "Announce at start" "$f" && { echo "  ANNOUNCE $n"; fail=1; }
   grep -q '```dot' "$f" && { echo "  DOT GRAPH $n"; fail=1; }

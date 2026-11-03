@@ -1,6 +1,6 @@
 {
   "name": "playbooks",
-  "description": "A lean library of workflow skills for Claude Code: brainstorming focused designs, writing verified implementation plans, executing them milestone by milestone with BDD-flavoured tests and a refactor pass.",
+  "description": "A lean library of workflow skills for Claude Code: brainstorming focused designs, writing verified implementation plans, executing them milestone by milestone with BDD-flavoured tests built to survive refactoring, a refactor pass per milestone and a standalone refactoring loop.",
   "version": "0.13.0",
   "author": {
     "name": "Piotr Jurczenko",

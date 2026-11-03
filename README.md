@@ -3,8 +3,8 @@
 A lean, opinionated library of workflow skills for Claude Code.
 
 Playbooks gives Claude a small set of process skills — for designing features, planning, executing in milestones, debugging, testing, and finishing branches —
-that auto-load at the start of every session. The library is intentionally small: fifteen skills, about 13,000 words of markdown in total, and every change to a
-skill is measured against evals before it ships. Less to read, less ceremony, more trust in the model.
+that auto-load at the start of every session. The library is intentionally small: seventeen skills, about 21,000 words of markdown in total, and every change to
+a skill is measured against evals before it ships. Less to read, less ceremony, more trust in the model.
 
 ## Why not just use [superpowers](https://github.com/obra/superpowers)?
 
@@ -55,6 +55,8 @@ demand via the `Skill` tool.
 - `using-git-worktrees` — pick a workspace mode before anything is committed (default: new worktree on a new branch)
 - `setting-up-gates` — propose and wire the lightest linters, complexity limits and architecture tests the stack supports, recorded in `.claude/gates.md`
 - `bdd-testing` — behaviour-shaped tests for code with interesting logic
+- `non-brittle-tests` — how a test is built so it survives refactoring: the caller's surface, honest doubles, named values, controlled time
+- `refactoring` — the standalone loop for code the user names: safety net, compose, move, hidden concepts, until a pass changes nothing
 - `milestone-commits` — one commit per slice, Conventional Commits format
 
 **Cross-cutting**:

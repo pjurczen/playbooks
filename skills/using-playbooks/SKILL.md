@@ -29,6 +29,8 @@ User instructions (repository and user instruction files, the message) override 
 | An approved initiative design without a roadmap                            | **writing-roadmap**                                               |
 | Setting up linters, complexity limits or architecture tests                | **setting-up-gates**                                              |
 | Continuing an initiative that has a roadmap                                | **brainstorming**, for the next slice in the roadmap              |
+| Refactoring or cleaning up code the user names                             | **refactoring**                                                   |
+| Writing, changing or reviewing a test outside a running skill              | **bdd-testing**, then **non-brittle-tests**                       |
 
 The pipeline runs in order — no code before a design, no execution before a plan; an initiative runs brainstorming → writing-roadmap, then the pipeline per
 slice. Work the user has already approved enters where it stands: a design at **writing-plans**, a plan at **executing-plans**.

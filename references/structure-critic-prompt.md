@@ -1,7 +1,7 @@
 # Structure critic prompt
 
-Used by `executing-plans` Step 6 to dispatch one fresh subagent per milestone, after tests and gates are green. The orchestrator fills in the placeholders. The
-critic sees only this milestone's diff, so it cannot be anchored by the context that produced it.
+Used by `executing-plans` Step 6, and by `refactoring` at the end of a pass, to dispatch one fresh subagent per milestone, after tests and gates are green. The
+orchestrator fills in the placeholders. The critic sees only this milestone's diff, so it cannot be anchored by the context that produced it.
 
 ---
 

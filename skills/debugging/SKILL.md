@@ -21,7 +21,8 @@ Root cause before fix. For any bug bigger than a typo: reproduce it, state the r
    causes → find the experiment that discriminates between them.
 4. **Confirm.** Run the cheapest check that proves or disproves the hypothesis (a log line, a debugger stop, a minimal input). Disproved → back to step 2. Don't
    stack a second guess on top of an unconfirmed first.
-5. **Regression test (RED).** Write the behavioural test that fails *because of this bug*, per **bdd-testing**. Watch it fail with the original symptom.
+5. **Regression test (RED).** Write the behavioural test that fails *because of this bug*, per **bdd-testing**, built with **non-brittle-tests**. Watch it fail
+   with the original symptom.
 6. **Fix (GREEN).** Smallest change that addresses the root cause — not the symptom, not the call site that happened to surface it.
 7. **Verify.** Regression test passes, nearby suite stays green. **verifying-before-done** before claiming fixed.
 8. **Commit** per **milestone-commits** — `fix:` type, body states the root cause.
