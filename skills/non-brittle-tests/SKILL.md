@@ -22,26 +22,26 @@ the first test of a task. Where a test goes (acceptance, unit, integration, arch
 
 ## Rules
 
-| ID | Rule |
-|---|---|
-| **B1** | Define the behaviour sentence (Given–When–Then) before the test shape; one behaviour per test. |
-| **B2** | Test through the owned public API, the way a real caller does. |
+| ID     | Rule                                                                                                 |
+|--------|------------------------------------------------------------------------------------------------------|
+| **B1** | Define the behaviour sentence (Given–When–Then) before the test shape; one behaviour per test.       |
+| **B2** | Test through the owned public API, the way a real caller does.                                       |
 | **B3** | Choose the smallest scope that still proves the behaviour; never mock the infrastructure under test. |
-| **D1** | Prefer real collaborators: real → stub → fake → mock. Replace only awkward boundaries. |
-| **D2** | Stubs supply inputs only; never stub the logic under test. |
-| **D3** | Fakes honour the real contract and get a shared contract test. |
-| **D4** | Verify an interaction only when the interaction is the behaviour. |
-| **R1** | Behaviour names, one behaviour, Arrange–Act–Assert separated by blank lines. |
-| **R2** | Every relevant value is a named variable, used to arrange and to expect. |
-| **R3** | Build test objects with creation methods named after the situation. |
-| **R4** | Compose inputs from small named parts; about three parameters per helper. |
-| **R5** | Action helpers hide arguments the behaviour ignores. |
-| **R6** | Name stub, fake and setup steps after the situation they create. |
-| **R7** | No logic in tests; parameterize only rows of the same behaviour. |
-| **R8** | DAMP over premature DRY; keep inline what the test is about. |
-| **A1** | Assert behaviour, not representation. |
-| **A2** | Assert only what the behaviour promises. |
-| **A3** | Control time, randomness, I/O, shared state and order. |
+| **D1** | Prefer real collaborators: real → stub → fake → mock. Replace only awkward boundaries.               |
+| **D2** | Stubs supply inputs only; never stub the logic under test.                                           |
+| **D3** | Fakes honour the real contract and get a shared contract test.                                       |
+| **D4** | Verify an interaction only when the interaction is the behaviour.                                    |
+| **R1** | Behaviour names, one behaviour, Arrange–Act–Assert separated by blank lines.                         |
+| **R2** | Every relevant value is a named variable, used to arrange and to expect.                             |
+| **R3** | Build test objects with creation methods named after the situation.                                  |
+| **R4** | Compose inputs from small named parts; about three parameters per helper.                            |
+| **R5** | Action helpers hide arguments the behaviour ignores.                                                 |
+| **R6** | Name stub, fake and setup steps after the situation they create.                                     |
+| **R7** | No logic in tests; parameterize only rows of the same behaviour.                                     |
+| **R8** | DAMP over premature DRY; keep inline what the test is about.                                         |
+| **A1** | Assert behaviour, not representation.                                                                |
+| **A2** | Assert only what the behaviour promises.                                                             |
+| **A3** | Control time, randomness, I/O, shared state and order.                                               |
 
 ## Workflow for each test
 
@@ -64,9 +64,9 @@ the first test of a task. Where a test goes (acceptance, unit, integration, arch
   refactoring (**refactoring**). A test that breaks during a behaviour-preserving refactoring is brittle: raise its abstraction (B2, D4), don't bend the code to
   it.
 - **Improving existing tests.** Find the behaviour each test protects, then: public entry points instead of private calls (B2), state instead of interactions
-  (D4), real objects or fakes instead of needless mocks (D1, D3), stubs reduced to inputs (D2), one behaviour per test (R1), relevant values into the body (R2),
-  creation and action helpers (R3–R6), logic removed (R7), nondeterminism controlled (A3). Run after each small step; keep the coverage, shorter is not the
-  goal.
+  (D4), real objects or fakes instead of needless mocks (D1, D3), stubs reduced to inputs (D2), one behaviour per test ( R1), relevant values into the body
+  (R2), creation and action helpers (R3–R6), logic removed (R7), nondeterminism controlled (A3). Run after each small step; keep the coverage, shorter is not
+  the goal.
 - **Reviewing.** Classify findings by consequence:
     - *Must fix:* doesn't prove the claimed behaviour; internal detail is the test surface; interaction checks that fail equivalent implementations; expected
       value duplicates production logic; uncontrolled time, randomness, network or shared state; a silenced, skipped or weakened failure; a fake that breaks its
@@ -86,19 +86,19 @@ Every new or changed test passes all of these:
 - [ ] Name states action and outcome; one behaviour; readable without opening helpers (R1).
 - [ ] Relevant values are named variables used in arrange and assert; objects come from situation-named creation methods; the act line shows only relevant
   arguments (R2–R6).
-- [ ] No logic in the test (R7); assertions limited to the promise (A2); time, randomness, I/O and order controlled (A3).
+- [ ] No logic in the test (R7); assertions limited to the promise (A2); time, randomness, I/O and order controlled ( A3).
 - [ ] The tests ran: green, or red for the intended reason.
 
 ## Red flags
 
-| Thought | Reality |
-|---|---|
-| "I'll mock it, that's simpler." | Simpler to write, not to trust. Real collaborators first (D1). |
-| "`verify` proves it was called." | Called is not correct. Assert the outcome (D4). |
-| "A helper with six parameters is fine." | Compose small named parts (R4). |
-| "The literal in the assert is obvious." | Name it once, use it twice (R2). |
-| "The test broke in the refactoring; I'll adapt it to the new internals." | It was brittle. Raise its abstraction (B2). |
-| "It's flaky, add a retry." | Find the uncontrolled input (A3). |
+| Thought                                                                  | Reality                                                        |
+|--------------------------------------------------------------------------|----------------------------------------------------------------|
+| "I'll mock it, that's simpler."                                          | Simpler to write, not to trust. Real collaborators first (D1). |
+| "`verify` proves it was called."                                         | Called is not correct. Assert the outcome (D4).                |
+| "A helper with six parameters is fine."                                  | Compose small named parts (R4).                                |
+| "The literal in the assert is obvious."                                  | Name it once, use it twice (R2).                               |
+| "The test broke in the refactoring; I'll adapt it to the new internals." | It was brittle. Raise its abstraction (B2).                    |
+| "It's flaky, add a retry."                                               | Find the uncontrolled input (A3).                              |
 
 ## Completion report
 

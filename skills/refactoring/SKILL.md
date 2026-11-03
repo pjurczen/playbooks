@@ -77,21 +77,21 @@ last commit consistent and say which pass and method is next.
 
 ## Red flags — keep going
 
-| Thought | Reality |
-|---|---|
-| "The method is shorter now, good enough." | Shorter isn't composed. Run steps 3 and 4. |
-| "These private methods are fine in the service." | Check each: which data does it use? |
-| "The wrapper has a nice name / a decorator." | A forward is not a concept; a decorator that only works through the framework doesn't run on a private method (M8). |
-| "It's a public creation method, step 3 doesn't apply." | Step 3 covers every touched line, also code written this pass. |
-| "I'll name the chain with an explaining variable." | Only for types you can't change. If you own it, let the nearest object answer (T8). |
-| "The move made this variable unnecessary." | Moves don't remove names M3 still needs; check the argument list again. |
-| "Every value has its own variable now." | Variables that only build one value below the level of the rest are a hidden step: a query named after the value (M1) or a creation method on its type (T3); the receiver keeps its domain-type parameter. |
-| "This private method is already a step." | If several of its lines only build one value for the rest, that is a step inside the step (M3). A single read-and-convert pair may stay. |
-| "The domain already uses other verbs, I'll match them." | New names follow the repository's code style. |
-| "`.value` is just unwrapping." | Only in adapters and mappers; elsewhere overload the callee for the tiny type (T8). |
-| "The gate violation was there before." | A touched method must pass the gates, its signature included. |
-| "Same three parameters again, but it works." | That is a missing concept (T1). |
-| "It's just a `list`, there is no type to move the query to." | A queried collection is a missing type: wrap it and move the query in (T9). |
-| "The list is only passed on to the gateway." | If it crosses a port as a domain concept, it is a first-class collection too (T9). |
-| "The conversion only appears in my class." | Search the module first; copies outside the scope are the usual case (T3). |
-| "Tests are slow, I'll run them at the end." | Once per pass, with the fast loop. |
+| Thought                                                      | Reality                                                                                                                                                                                                    |
+|--------------------------------------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| "The method is shorter now, good enough."                    | Shorter isn't composed. Run steps 3 and 4.                                                                                                                                                                 |
+| "These private methods are fine in the service."             | Check each: which data does it use?                                                                                                                                                                        |
+| "The wrapper has a nice name / a decorator."                 | A forward is not a concept; a decorator that only works through the framework doesn't run on a private method (M8).                                                                                        |
+| "It's a public creation method, step 3 doesn't apply."       | Step 3 covers every touched line, also code written this pass.                                                                                                                                             |
+| "I'll name the chain with an explaining variable."           | Only for types you can't change. If you own it, let the nearest object answer (T8).                                                                                                                        |
+| "The move made this variable unnecessary."                   | Moves don't remove names M3 still needs; check the argument list again.                                                                                                                                    |
+| "Every value has its own variable now."                      | Variables that only build one value below the level of the rest are a hidden step: a query named after the value (M1) or a creation method on its type (T3); the receiver keeps its domain-type parameter. |
+| "This private method is already a step."                     | If several of its lines only build one value for the rest, that is a step inside the step (M3). A single read-and-convert pair may stay.                                                                   |
+| "The domain already uses other verbs, I'll match them."      | New names follow the repository's code style.                                                                                                                                                              |
+| "`.value` is just unwrapping."                               | Only in adapters and mappers; elsewhere overload the callee for the tiny type (T8).                                                                                                                        |
+| "The gate violation was there before."                       | A touched method must pass the gates, its signature included.                                                                                                                                              |
+| "Same three parameters again, but it works."                 | That is a missing concept (T1).                                                                                                                                                                            |
+| "It's just a `list`, there is no type to move the query to." | A queried collection is a missing type: wrap it and move the query in (T9).                                                                                                                                |
+| "The list is only passed on to the gateway."                 | If it crosses a port as a domain concept, it is a first-class collection too (T9).                                                                                                                         |
+| "The conversion only appears in my class."                   | Search the module first; copies outside the scope are the usual case (T3).                                                                                                                                 |
+| "Tests are slow, I'll run them at the end."                  | Once per pass, with the fast loop.                                                                                                                                                                         |
