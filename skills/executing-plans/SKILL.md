@@ -9,10 +9,11 @@ Implement the plan in the main session, milestone by milestone; subagents only w
 
 ## Before you start
 
-1. Read the plan file once. Extract: the goal and each milestone's *Does*, *Leaves* and *Checks*. Read the design it links for the architecture, the logic and
-   the contracts, and `references/structure-critic-prompt.md` once: the critic holds your code to its checklist.
+1. Read the plan file once. Extract: the goal, the decomposition, the behaviours to verify, and each milestone's done-when and *Verified by* lines. Read the
+   design it links for the architecture, the components and the contracts, and `references/structure-critic-prompt.md` once: the critic holds your code to its
+   checklist.
 2. Re-read it critically. Any milestone unclear? Any behaviour you can't see how to verify? Raise it with the user before any code is written. The plan's
-   *Checked* lines are what its order rests on: when the code contradicts one, or a milestone cannot reach its *Leaves* state, stop and ask — don't pick an
+   *Assumptions* are what its order rests on: when the code contradicts one, or a milestone cannot reach its done-when, stop and ask — don't pick an
    interpretation and build on it.
 3. Confirm the workspace chosen during brainstorming (branch, path, `BASE_SHA` from the using-git-worktrees report). Invoke **using-git-worktrees** only if
    there is none yet — the user brought their own plan.
@@ -36,8 +37,7 @@ hand-off to finishing-branch.
 
 ### Step 1 — Sketch behavioural test(s) (RED)
 
-Use **bdd-testing**: one test per behaviour the milestone adds, taken from the rules the design states for the parts its *Does* names; behaviour-level, not
-structural.
+Use **bdd-testing**: one test per behaviour the milestone's *Verified by* names, at the level the plan's behaviours state them; behaviour-level, not structural.
 
 ### Step 2 — Watch them fail
 
@@ -55,7 +55,7 @@ Run the milestone tests, a quick smoke of nearby behaviour, and the gates from `
 
 Re-read the milestone goal. Look at the diff for *only this milestone*. Answer:
 
-- **Did I meet the goal?** Is the system in the milestone's *Leaves* state, with every *Checks* line green?
+- **Did I meet the goal?** Does the system meet the milestone's done-when, with every *Verified by* line green?
 - **Did I leave anything broken?** Any test elsewhere this change might have affected?
 - **Anything surprising worth noting?** Discovered helper, unexpected coupling, sharp edge?
 
@@ -102,8 +102,8 @@ here (fix-in-place, boy-scout, defer to followups) will quietly push you to **pa
 - You're **fighting the plan** — each milestone needs more scaffolding than the last to hold together.
 
 These mean *the design is wrong*, not *this milestone is hard*. **STOP — do not keep patching.** Surface what you've learned and re-open brainstorming for the
-affected seam (for a slice, possibly the initiative's; a `proposed` ADR is revised there, in place). The tremors show long before the end-of-feature review,
-which is too late to unwind a wrong abstraction.
+affected seam (for a slice, in the slice design, or in the initiative design it inherits from; a `proposed` ADR is revised there, in place). The tremors show
+long before the end-of-feature review, which is too late to unwind a wrong abstraction.
 
 ## Findings: Tier 1 (in-session) and Tier 2 (followups.md)
 

@@ -25,8 +25,8 @@ The shape is `references/example-roadmap.md` — read it before writing. Its sec
 
 - **Header** — links the initiative design and its ADR.
 - **Exit criterion** — one sentence: the initiative is done when the target state is reached and, for replacement work, the legacy is gone.
-- **Slices** — a table: slice, what it delivers (something a user or operator can observe), depends on, status ( `planned` | `in progress` | `landed`). One or
-  two lines a reader can picture; the details wait for the slice design.
+- **Slices** — a table: slice, what it delivers (something a user or operator can observe), depends on, status (`planned` | `landed`). One or two lines a reader
+  can picture; the details wait for the slice design.
 - **Order** — why this order, and which slices are independent and may run in parallel.
 - **Open questions** — what a later slice must answer before it can be designed.
 
@@ -41,19 +41,20 @@ The shape is `references/example-roadmap.md` — read it before writing. Its sec
 ## Self-review
 
 1. Every slice lands on its own; for replacement work, the old path keeps serving whatever the slice doesn't cover.
-2. The initiative design's intermediate guarantees support this order, including coexistence where needed.
+2. The initiative design's coexistence mechanism, where there is one, supports this order.
 3. Every shared contract is introduced by some slice, and no slice needs a contract a later slice introduces.
 4. The first slice is a skeleton or the riskiest piece, not the easiest.
 5. The exit criterion is observable.
 
 ## Lifecycle
 
-Lives beside the initiative design in `docs/playbooks/initiatives/`, committed to the base branch with the same confirmation. brainstorming flips a slice to
-`in progress` when its design is approved; consolidating-docs flips it to `landed` when it lands and asks whether the initiative is complete when the last one
-does. Reorder or split slices as learning arrives: edit the table, never annotate it.
+Lives beside the initiative design in `docs/playbooks/initiatives/`, committed to the base branch after the confirmation brainstorming asks for before a
+base-branch commit. consolidating-docs flips a slice to `landed` when it lands and asks whether the initiative is complete when the last one does. Reorder or
+split slices as learning arrives: edit the table, never annotate it.
 
 ## User review gate
 
 > "Roadmap written and committed to `<path>`. Please review it; when you're ready, the first slice starts with brainstorming."
 
-Wait for explicit approval. The next slice then enters **brainstorming** in slice mode — nothing else is invoked from here.
+Wait for explicit approval. The next slice then enters **brainstorming**, which reads the initiative from `docs/playbooks/initiatives/` — nothing else is
+invoked from here.

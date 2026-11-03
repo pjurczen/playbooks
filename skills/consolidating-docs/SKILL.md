@@ -69,9 +69,9 @@ ADRs are handled once, up front, and never from inside the per-file loop below. 
 
 Most features have no ADR to promote and don't earn one at the fallback. That's the normal outcome, not a gap.
 
-**Slices.** If the design links an initiative, flip the slice's row in the roadmap to `landed` (both files live on the base branch and travel with the merge).
-When every row is landed, ask whether the initiative is complete; on yes, graduate: the target architecture into the architecture doc, the below-bar decisions
-as sentences there, the coexistence mechanism dropped — and delete the initiative design and the roadmap. The ADRs remain.
+**Slices.** If the design or the plan names an initiative, flip the slice's row in the roadmap to `landed` (both files live on the base branch and travel with
+the merge). When every row is landed, ask whether the initiative is complete; on yes, graduate: the target state into the architecture doc, the decisions it
+settled as sentences there, the coexistence mechanism, where there was one, dropped — and delete the initiative design and the roadmap. The ADRs remain.
 
 ## The consolidation loop
 

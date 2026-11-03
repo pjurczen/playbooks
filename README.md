@@ -13,7 +13,7 @@ markdown — but the philosophy diverges in a few specific ways:
 
 | Topic | Superpowers | Playbooks |
 |-------|-------------|-----------|
-| Plans | Pre-write every test, every method signature, every commit message | An execution list verified against the repo: milestones in order, what each does, the state it leaves, the checks that must be green, and the premises the order rests on. Logic and signatures live in the design; bodies, tests and commit messages stay with the implementer. |
+| Plans | Pre-write every test, every method signature, every commit message | A plan readable in 2-3 minutes: goal, decomposition at component level, behaviours to verify, milestones with a done-when and what verifies them, assumptions checked against the repo. No test code, no method bodies, no commit messages. |
 | Execution | Subagent-driven by default; cheaper models for "mechanical" tasks | Main-session by default, on the main model. Subagents are situational (parallel work, context-heavy lookups). |
 | Commits | One per TDD step (~5 per task, dozens per feature) | One per milestone; uses Conventional Commits. |
 | Testing | Strict TDD, including structural tests | BDD-flavoured: behaviour-shaped tests for code with interesting logic. No tests for enums, dataclasses, thin wrappers. |
@@ -39,10 +39,10 @@ demand via the `Skill` tool.
 ## What's inside
 
 **Process** (how to approach the work):
-- `brainstorming` — design dialogue → an approved design that answers, for a reader who knows the code, what hurts, what causes it, what we do and why, who owns
-  what, what gets built, what it costs and what is open; each fact in one place, structure drawn, not narrated
-- `writing-plans` — design → an execution list verified against the repo: milestones in order, what each does, the state it leaves, the checks that must be
-  green; nothing the design already says
+- `brainstorming` — design dialogue → the approved sections written down (architecture, components, data flow, error handling, testing approach) with their
+  diagrams, checked by a fresh builder subagent, then frozen
+- `writing-plans` — design → a plan readable in 2–3 minutes: goal, decomposition, behaviours to verify, milestones with a done-when and what verifies them,
+  assumptions checked against the repo, open questions
 - `writing-roadmap` — initiative design → a roadmap of independently landable slices, their order and exit criterion
 - `executing-plans` — main-session milestone loop: tests and gates green, a fresh-context structure critic, a refactor pass, one commit per milestone, an
   end-of-feature review
@@ -76,8 +76,8 @@ Each stage produces a small, readable artifact:
 - `docs/playbooks/designs/<date>-<topic>.md` — the design
 - `docs/playbooks/plans/<date>-<feature>.md` — the implementation plan
 - `<adr home>/<date>-<slug>.md` — the decision, if the feature made one (most don't)
-- `docs/playbooks/initiatives/<date>-<topic>.md` and its roadmap — target architecture, coexistence mechanism and slices when work spans several landings
-  (optional)
+- `docs/playbooks/initiatives/<date>-<topic>.md` and its roadmap — target state, shared contracts, the coexistence mechanism for replacement work, and slices
+  when work spans several landings (optional)
 - `docs/followups.md` — durable notes from past work
 
 When a feature lands, `consolidating-docs` promotes the feature's ADR from `proposed` to `accepted`, graduates the remaining durable decisions from its design

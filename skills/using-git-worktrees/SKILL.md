@@ -1,13 +1,13 @@
 ---
 name: using-git-worktrees
-description: Use when a design is approved and before any artifact is committed, to choose a workspace mode and set it up clean — defaults to a new worktree on a new feature branch.
+description: Use when the approach is chosen and before any artifact is committed, to choose a workspace mode and set it up clean — defaults to a new worktree on a new feature branch.
 ---
 
 # Using Git Worktrees
 
-Choose where the work will land before anything is committed. Normally fired from **brainstorming** right after design approval — so the design doc, plan, and
-implementation all end up on the feature branch. Default is a new worktree on a new feature branch — it keeps your current checkout untouched and lets multiple
-features run in parallel.
+Choose where the work will land before anything is committed. Normally fired from **brainstorming** once the approach is chosen, before the design is committed
+— so the design doc, plan, and implementation all end up on the feature branch. Default is a new worktree on a new feature branch — it keeps your current
+checkout untouched and lets multiple features run in parallel.
 
 ## Step 0: Already isolated?
 

@@ -50,16 +50,15 @@ failure to avoid. The conventions:
 
 - Every repo the pipeline works in has a `.claude/gates.md` naming its test, lint, complexity and structure commands, or a recorded decline; `setting-up-gates`
   proposes one when it's missing, and executing-plans treats a milestone as green only when tests and gates both pass.
-- A design answers seven questions for a reader who knows the code: what hurts and what done looks like; what causes it; what we will do, what it beat and why;
-  which parts take part and who owns what; the rules and contracts that get built; what it costs and what changes for callers; what is still open, in one place.
-  One test per line: does the reader learn something not already on the page. Headings are the author's; nothing is written down as an assumption, it is looked
-  up in the code or asked. An approved design is frozen: a changed decision returns to brainstorming, everything else goes to the PR. A repo's own conventions
-  (vocabulary, diagram node kinds, where acceptance criteria come from) live in that repo's `.claude/designs.md`, never in the skill.
-- An initiative gets a design (target architecture, coexistence mechanism, shared contracts) and a roadmap (slices, order, exit criterion), both on the base
-  branch; each slice then gets an ordinary design and plan that inherit from them.
-- Plans are an execution list verified against the repo: milestones in order, each with what it does, the state it leaves and the checks that must be green,
-  plus the premises the order rests on. A premise that could be checked is never handed to the implementer as a stop-and-ask. No parts table, no class or file
-  lists, no scenarios, no test code, and nothing the design already says.
+- A design is the approved conversation written down, in the author's headings: architecture, components, data flow, error handling and testing approach, with a
+  diagram when three or more parts or ordered steps take part. Nothing is written down as an assumption, it is looked up in the code or asked. An approved
+  design is frozen: a changed decision returns to brainstorming, everything else goes to the PR. A repo's own conventions (vocabulary, diagram node kinds, where
+  acceptance criteria come from) live in that repo's `.claude/designs.md`, never in the skill.
+- An initiative gets a design (target state, shared contracts, and for replacement work the coexistence mechanism) and a roadmap (slices, order, exit
+  criterion), both on the base branch; each slice then gets an ordinary design and plan that inherit from them.
+- Plans are readable in 2–3 minutes and describe intent, not implementation: a goal, a decomposition at component level, the behaviours to verify at use-case
+  level, milestones each with a done-when and what verifies it, the assumptions the order rests on checked against the repo, and open questions. A premise that
+  could be checked is never handed to the implementer as a stop-and-ask. No test code, no method bodies, no file contents, no commit messages.
 - Commit messages follow Conventional Commits and describe the *why* of the slice, not a play-by-play of files.
 - ADRs are 2-minute reads at design altitude — no code, no symbols, alternatives named. Written when the decision is made (brainstorming), not when the feature
   lands.

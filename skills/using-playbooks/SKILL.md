@@ -28,7 +28,7 @@ User instructions (repository and user instruction files, the message) override 
 | 2+ independent investigations that can run in parallel                     | **using-parallel-agents**                                         |
 | An approved initiative design without a roadmap                            | **writing-roadmap**                                               |
 | Setting up linters, complexity limits or architecture tests                | **setting-up-gates**                                              |
-| Continuing an initiative that has a roadmap                                | **brainstorming** (next slice)                                    |
+| Continuing an initiative that has a roadmap                                | **brainstorming**, for the next slice in the roadmap              |
 
 The pipeline runs in order — no code before a design, no execution before a plan; an initiative runs brainstorming → writing-roadmap, then the pipeline per
 slice. Work the user has already approved enters where it stands: a design at **writing-plans**, a plan at **executing-plans**.

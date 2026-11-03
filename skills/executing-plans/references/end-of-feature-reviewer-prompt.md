@@ -37,8 +37,8 @@ Do NOT trust the implementer's narrative. Read the actual code.
 
 **Plan alignment**
 
-- Does each milestone correspond to code/commits that reach its *Leaves* state, with its *Checks* green and a behavioural test for every rule the design states
-  in the parts it builds?
+- Does each milestone correspond to code/commits that reach its done-when, with every *Verified by* line green and a behavioural test for every behaviour it
+  names?
 - Are any milestones missing or incomplete?
 
 **Code quality**

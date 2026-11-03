@@ -7,8 +7,6 @@ Qualitative expectations are left to the grader subagent; this script only recor
 import argparse, json, re, subprocess, sys
 from pathlib import Path
 
-REMOVED = {"Guarantees", "Assumptions", "Risks", "Out of scope"}
-STATEMENT = re.compile(r"^\s+(return\b|if\b|for\b|while\b|with\b|try:|except\b|raise\b|self\.\w+\s*=|\w+\s*=\s*[^=]|print\()")
 FENCE = re.compile(r"```(\w*)\n(.*?)```", re.S)
 
 def words(t): return len(t.split())
@@ -16,17 +14,7 @@ def fences(t): return FENCE.findall(t)
 def sentences(t):
     t = FENCE.sub("", t); t = re.sub(r"\|.*?\n", "", t)
     return {s.strip().lower() for s in re.split(r"(?<=[.!?])\s+|\n", t) if len(s.strip()) > 40}
-def has_bodies(text):
-    """Count statement-looking lines in non-mermaid fences. An untagged fence of at most 25 lines is a rule stated
-    concretely (pseudo-code, a decision table) and is exempt wherever it sits; headings are the author's."""
-    bad = 0
-    for lang, body in fences(text):
-        if lang == "mermaid": continue
-        if not lang and len(body.strip().splitlines()) <= 25: continue
-        for line in body.splitlines():
-            if STATEMENT.match(line) and not line.strip().startswith(('"""', "#", "*", "/**", "//")):
-                bad += 1
-    return bad
+
 def section(text, name):
     m = re.search(rf"^## {re.escape(name)}\s*\n(.*?)(?=^## |\Z)", text, re.S | re.M)
     return m.group(1) if m else None
@@ -40,13 +28,8 @@ def grade_1(out, repo):
     t = d.read_text() if d else ""
     ex.append(("A design file exists under docs/playbooks/designs/", d is not None, f"{d}; {words(t)} words" if d else "none found"))
     heads = [h for h in re.findall(r"^## (.+?)\s*$", t, re.M)]
-    ex.append(("The design header carries a Status line (draft or approved)", bool(re.search(r"^Status:\s*(draft|approved)\b", t, re.M | re.I)), (re.search(r"^Status:.*$", t, re.M) or [""])[0] if re.search(r"^Status:.*$", t, re.M) else "no Status line"))
     mm = sum(1 for l, _ in fences(t) if l == "mermaid")
     ex.append(("The design contains at least one mermaid view", mm >= 1, f"{mm} mermaid fences"))
-    b = has_bodies(t)
-    ex.append(("Code fences hold declarations or a short rule: no statement bodies outside an untagged fence of at most 25 lines", b == 0, f"{b} statement-looking lines outside the allowance"))
-    gone = [h for h in heads if h in REMOVED]
-    ex.append(("The design has no Guarantees, Assumptions, Risks or Out of scope section", bool(t) and not gone, f"found: {gone}"))
     hollow = [h for h in heads if re.fullmatch(r"(none\.?)?", (section(t, h) or "").strip(), re.I)]
     ex.append(("No section is a placeholder: none is empty or only a 'None.' line", bool(t) and not hollow, f"hollow: {hollow}"))
     adr = first(out / "docs/adr", "*.md")
@@ -63,21 +46,20 @@ def grade_2(out, repo, fixture_design):
     p = first(out / "docs/playbooks/plans", "*.md")
     t = p.read_text() if p else ""
     ex.append(("A plan file exists under docs/playbooks/plans/ and links the design by filename", p is not None and "unified-cache" in t and "esign" in t, str(p)))
+    needed = ["Goal", "Decomposition", "Behaviours to verify", "Milestones", "Assumptions"]
+    missing = [h for h in needed if not (section(t, h) or "").strip()]
+    ex.append(("The plan has Goal, Decomposition, Behaviours to verify, Milestones and Assumptions sections", bool(t) and not missing, f"missing: {missing}"))
     ms = section(t, "Milestones") or ""
     blocks = [b for b in re.split(r"^(?=### |\d+\. )", ms, flags=re.M) if b.strip()]
-    complete = [b for b in blocks if all(re.search(rf"\*{k}\*|\*\*{k}\*\*|\b{k}:", b, re.I) for k in ("Does", "Leaves", "Checks"))]
-    ex.append(("The plan has a Milestones section with at least two numbered milestones, each carrying Does, Leaves and Checks", len(complete) >= 2 and len(complete) == len(blocks), f"{len(complete)} complete of {len(blocks)} blocks"))
-    checked = re.findall(r"^- ", section(t, "Checked") or "", re.M)
-    ex.append(("The plan has a Checked section with at least one line", len(checked) >= 1, f"{len(checked)} lines"))
-    parts = bool(re.search(r"^## Parts involved", t, re.M)) or bool(re.search(r"^\|.*\bTests\b.*\|", t, re.M))
-    ex.append(("The plan has no Parts involved section and no table with a Tests column", bool(t) and not parts, ""))
+    complete = [b for b in blocks if all(re.search(rf"\b{k}\b", b, re.I) for k in ("Done when", "Verified by"))]
+    ex.append(("The Milestones section has at least two numbered milestones, each carrying Done when and Verified by", len(complete) >= 2 and len(complete) == len(blocks), f"{len(complete)} complete of {len(blocks)} blocks"))
+    assumptions = re.findall(r"^- ", section(t, "Assumptions") or "", re.M)
+    ex.append(("The Assumptions section has at least one line", len(assumptions) >= 1, f"{len(assumptions)} lines"))
     ex.append(("The plan contains no code fence", bool(t) and not fences(t), f"{len(fences(t))} fences"))
     ex.append(("The plan has no 'Stop and ask' list", bool(t) and "stop and ask" not in t.lower(), ""))
     shared = sentences(t) & sentences(Path(fixture_design).read_text()) if fixture_design else set()
     ex.append(("No sentence of the plan is copied from the design", len(shared) == 0, f"{len(shared)} shared: {list(shared)[:2]}"))
     ex.append(("The plan is at most 800 words", 0 < words(t) <= 800, f"{words(t)} words"))
-    idents = [m for m in re.findall(r"`([^`\n]+)`", FENCE.sub("", t)) if " " not in m.strip()]  # a command with spaces is a check, not a name
-    ex.append(("The plan names at most 15 backticked identifiers (a command with spaces is a check, not a name)", bool(t) and len(idents) <= 15, f"{len(idents)} backticked names: {idents[:6]}"))
     return ex
 
 def grade_3(out, repo):
