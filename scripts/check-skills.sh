@@ -3,7 +3,7 @@
 set -uo pipefail
 cd "$(dirname "$0")/.."
 fail=0
-DISCIPLINE="using-playbooks brainstorming executing-plans verifying-before-done debugging consolidating-docs"
+DISCIPLINE="using-playbooks brainstorming writing-plans executing-plans verifying-before-done debugging consolidating-docs"
 
 echo "== frontmatter name matches directory; description in 'Use …, to …' shape =="
 for d in skills/*/; do n=$(sed -n 's/^name: //p' "$d/SKILL.md"); [ "$n" = "$(basename "$d")" ] || { echo "  MISMATCH $d -> $n"; fail=1; }; sed -n 's/^description: //p' "$d/SKILL.md" | grep -q '^Use .*, to ' || { echo "  DESCRIPTION SHAPE $d"; fail=1; }; done

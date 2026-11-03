@@ -12,7 +12,7 @@ the skill library.
 - Duplication: not enforced
 
 ## Rules enforced
-- One gate block per skill; Red Flags tables only on the six discipline skills, ≤ 4 rows; no per-skill announce lines; no `dot` graphs.
+- One gate block per skill; Red Flags tables only on the seven discipline skills, ≤ 4 rows; no per-skill announce lines; no `dot` graphs.
 - Frontmatter `name` matches the directory; description in "Use …, to …" shape.
 - Every `references/` link resolves; no brand names in skills.
 - No bold marker split by a line wrap; no merged headings or bullets.

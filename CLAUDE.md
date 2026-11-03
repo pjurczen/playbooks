@@ -30,8 +30,8 @@ Skill files are prompts. Instruction count degrades adherence and early instruct
   `using-playbooks` stays short because it is loaded every session.
 - **One gate per skill, first, with its reason, in normal register.** Everything else is a rule with a reason; caps live only inside that gate.
 - **One rule, one owner.** A rule lives in the skill or companion that owns it; other skills point to it and never restate it.
-- **Red Flags tables only where discipline is the point** (`using-playbooks`, `brainstorming`, `executing-plans`, `verifying-before-done`, `debugging`,
-  `consolidating-docs`), ≤ 4 rows, each naming an excuse the body doesn't already refute — not a body rule with a quotation mark in front.
+- **Red Flags tables only where discipline is the point** (`using-playbooks`, `brainstorming`, `writing-plans`, `executing-plans`, `verifying-before-done`,
+  `debugging`, `consolidating-docs`), ≤ 4 rows, each naming an excuse the body doesn't already refute — not a body rule with a quotation mark in front.
 - **No per-skill "Announce at start"** — the bootstrap says to announce once. **`dot` graphs only for a real loop or non-obvious branch**; linear flows are
   numbered lists.
 - **"When to skip" is a standard section** in every directly-invocable skill; pipeline-only skills say "fired by X".
