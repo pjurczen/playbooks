@@ -1,5 +1,39 @@
 # Playbooks Release Notes
 
+## v0.14.0 (2026-11-03)
+
+### Back to the July skills, with six keeps, and two skills from the company copy
+
+Nine regenerations of one production design under the September-to-November rules ended with the judge scoring the ninth near perfect on fourteen of twenty-two
+checks and the reader calling it "not great still". Every rule that forced structure into the document fixed the section it named, and the next regeneration
+repeated itself somewhere else. The July skills (v0.6.0) were readable, so they are the base again.
+
+**`brainstorming`** is the July skill: the dialogue, 2–3 approaches, the design presented in sections and written down as the approved sections with their
+diagrams, headings the author's, a self-review for placeholders and contradictions. Six later improvements stay: the ADR at decision time, the views reference
+for diagrams, the builder check, look-before-you-ask with the repo's own `.claude/designs.md`, initiatives with the freeze after approval, and Simplified
+Technical English. Gone: the fixed section sets, the seven reader questions, the decision form with its why and what it beat, folds, one paragraph per item, the
+hierarchy rules. One amendment from the company copy: an initiative can be additive, so the coexistence mechanism and the legacy removal apply to replacement
+work only.
+
+**`writing-plans`** is the July plan, Goal, Decomposition at component level, Behaviours to verify, Milestones, readable in 2–3 minutes, with two things learned
+since. Risk became Assumptions: premises checked in the repo while planning and stated as facts, so none reaches the implementer as "stop and ask". And each
+milestone names what verifies it, the behaviours by number and the suites and gates that must be green. The execution-list shape of v0.12.0 is gone.
+
+**The pipeline** follows. executing-plans reads the July plan again, the reviewer prompt checks done-when and Verified by, and ten pieces of initiative wording
+copied from a reference deleted in v0.12.0 (a slice mode, an in-progress flip from a worktree, an `Initiative:` header) now say what brainstorming says.
+Colleagues had reported the old plan fields and dangling file references; at HEAD neither existed, their copy of the skills was older and had diverged. The 38
+changes pasted back from that copy were judged one by one: the harness-neutral wording for instruction files is kept, the rest re-imported an older plan format
+and a reversed pipeline and is saved outside the repo.
+
+**Two new skills** from the same copy, generalised. `non-brittle-tests` is how a test is built so it survives refactoring: the caller's surface, honest doubles,
+named values, controlled time; bdd-testing still decides whether and what to test. `refactoring` is the standalone pass loop for code the user names, under a
+committed safety net, until a full pass changes nothing; executing-plans step 7 still cleans what a milestone touched. Python examples, one gate each, the rules
+other skills own removed and pointed at. The structure critic's prompt is the rule set both answer to and moves to the plugin root, as the STE reference did: a
+file two skills read lives once in `references/` and is read as `${CLAUDE_PLUGIN_ROOT}/references/<file>`; a skill copied alone into a project carries it.
+
+**Evals.** Eval 1 and 2 expect the restored shapes. The three judge rubrics that measure a named cause and a decision tree stay as a measure of what a reader
+wants, outside the ship bar, since the skill no longer prescribes how to reach them.
+
 ## v0.13.0 (2026-11-02)
 
 ### Structure over flat blobs, and Simplified Technical English

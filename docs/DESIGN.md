@@ -761,3 +761,21 @@ plan says how the work is decomposed, in what order, and what checks run. Scenar
 implementer; the plan is strictly an execution list. So a milestone has three fields, what it does, the state it leaves and the checks that must be green, the
 parts table and the example are gone, and Checked keeps only the premises, as facts. The walk against the repo stays as the gate, because the failure it
 prevents, a plan approved on a guess, has not changed.
+
+## 21. Addendum — the July skills, with six keeps (2026-11)
+
+Between §17 and §20 every change to brainstorming added a structure rule to the produced design: a fixed section set, seven reader questions, a decision form
+with its why and what it beat, folds, one paragraph per item, and finally cause-above-symptoms and decisions as a tree. One production design was regenerated
+nine times from a fixed session under those rules. The judge scored the ninth near perfect on fourteen of twenty-two checks; the reader called it "not great
+still". The pattern across the nine: each rule fixed the section it named, and the next regeneration repeated itself somewhere the rule did not reach. A rule
+set cannot chase a reader's sense of order section by section.
+
+So the July skills (v0.6.0) are the base again. Brainstorming is the dialogue, 2–3 approaches, the design presented in sections and written down as the approved
+sections with their diagrams, headings the author's. Six later improvements stay because each removed a failure the July skill had, not a shape it lacked: the
+ADR at decision time (decisions were lost by landing), the views reference (diagrams were call chains), the builder check (the author cannot see the guesses),
+look-before-you-ask with `.claude/designs.md` (questions the repo answered, vocabulary translated), initiatives with the freeze (coexistence undesigned, designs
+edited mid-build), and Simplified Technical English (sentences nobody could read aloud). An initiative can be additive; coexistence is for replacement work. The
+plan is the July template with Risk turned into checked Assumptions and a Verified by line per milestone, the two things §18 and §20 got right.
+
+The three judge rubrics that measure a named cause and a decision tree stay as a measure of what the reader wants, outside the ship bar. Whether the July voice
+reaches them without a rule is what the next production design shows.
