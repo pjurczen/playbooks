@@ -27,9 +27,10 @@ and a reversed pipeline and is saved outside the repo.
 
 **Two new skills** from the same copy, generalised. `non-brittle-tests` is how a test is built so it survives refactoring: the caller's surface, honest doubles,
 named values, controlled time; bdd-testing still decides whether and what to test. `refactoring` is the standalone pass loop for code the user names, under a
-committed safety net, until a full pass changes nothing; executing-plans step 7 still cleans what a milestone touched. Python examples, one gate each, the rules
-other skills own removed and pointed at. The structure critic's prompt is the rule set both answer to and moves to the plugin root, as the STE reference did: a
-file two skills read lives once in `references/` and is read as `${CLAUDE_PLUGIN_ROOT}/references/<file>`; a skill copied alone into a project carries it.
+committed safety net, until a full pass changes nothing; executing-plans step 7 still cleans what a milestone touched. Python examples with every type
+annotated; the rule catalogues (B1 to A3, M1 to T9) stay as their author wrote them, each with its explanation and example in the skill's references. The
+structure critic's prompt is the rule set both answer to and moves to the plugin root, as the STE reference did: a file two skills read lives once in
+`references/` and is read as `${CLAUDE_PLUGIN_ROOT}/references/<file>`; a skill copied alone into a project carries it.
 
 **Evals.** Eval 1 and 2 expect the restored shapes. The three judge rubrics that measure a named cause and a decision tree stay as a measure of what a reader
 wants, outside the ship bar, since the skill no longer prescribes how to reach them.
