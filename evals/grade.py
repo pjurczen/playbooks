@@ -50,7 +50,7 @@ def grade_2(out, repo, fixture_design):
     missing = [h for h in needed if not (section(t, h) or "").strip()]
     ex.append(("The plan has Goal, Decomposition, Behaviours to verify, Milestones and Assumptions sections", bool(t) and not missing, f"missing: {missing}"))
     ms = section(t, "Milestones") or ""
-    blocks = [b for b in re.split(r"^(?=### |\d+\. )", ms, flags=re.M) if b.strip()]
+    blocks = [b for b in re.split(r"^(?=### |\d+\. )", ms, flags=re.M) if re.match(r"### |\d+\. ", b)]  # prose before the first milestone is not a milestone
     complete = [b for b in blocks if all(re.search(rf"\b{k}\b", b, re.I) for k in ("Done when", "Verified by"))]
     ex.append(("The Milestones section has at least two numbered milestones, each carrying Done when and Verified by", len(complete) >= 2 and len(complete) == len(blocks), f"{len(complete)} complete of {len(blocks)} blocks"))
     assumptions = re.findall(r"^- ", section(t, "Assumptions") or "", re.M)
