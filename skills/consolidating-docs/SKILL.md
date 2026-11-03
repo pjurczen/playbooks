@@ -50,7 +50,7 @@ How documentation is maintained in this repo.
 
 ## Bootstrap — when the map is absent
 
-1. Scan the repo: `README`, `docs/`, any `adr/`, doc conventions in CLAUDE.md.
+1. Scan the repo: `README`, `docs/`, any `adr/`, doc conventions in the repository instructions.
 2. Draft `.claude/documentation.md` in the shape above: the real doc inventory plus routing rules. If the repo has **no** home for decisions at all, propose
    creating one (`docs/adr/` or a `DECISIONS.md`) — propose, don't impose.
 3. Present the draft. On approval, commit it, then continue.
@@ -96,7 +96,7 @@ git grep -n "docs/playbooks/" -- ':(exclude)docs/playbooks'
 ```
 
 Also grep each deleted file's basename. Any hit naming a specific design or plan file is a dangling reference — inline the content or repoint the link, then
-re-run. Mentions of the workspace convention itself (CLAUDE.md explaining where plans live) are fine.
+re-run. Mentions of the workspace convention itself (repository instructions explaining where plans live) are fine.
 
 ## Scope by entry point
 

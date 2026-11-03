@@ -12,7 +12,7 @@ If you were dispatched as a subagent for a specific task, skip this skill — yo
 **When a skill clearly applies to the work in front of you, invoke it with the `Skill` tool before you answer or act.** Skills shape *how* the work is done, so
 running one afterwards is too late. The skip list below is the whole carve-out; don't extend it by analogy.
 
-User instructions (CLAUDE.md, AGENTS.md, the message) override a skill; a skill overrides default behaviour.
+User instructions (repository and user instruction files, the message) override a skill; a skill overrides default behaviour.
 
 ## When to invoke
 

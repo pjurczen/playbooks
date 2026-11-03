@@ -25,7 +25,7 @@ SUPER=$(git rev-parse --show-superproject-working-tree 2>/dev/null)
 
 ## Step 1: Pick a workspace mode
 
-If the user has already declared a preference (CLAUDE.md, AGENTS.md, or the current request), honour it without asking.
+If the user has already declared a preference (the repository's instruction files, or the current request), honour it without asking.
 
 Otherwise, dispatch `AskUserQuestion` (or ask in plain text if your harness lacks the tool) with:
 
